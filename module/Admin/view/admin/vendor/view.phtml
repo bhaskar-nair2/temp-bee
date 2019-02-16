@@ -1,0 +1,225 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+$contExpiryDate="";
+$pathname = UPLOAD_PATH . DIRECTORY_SEPARATOR . "clients" . DIRECTORY_SEPARATOR .$result['vendor']['client_id'];
+if(isset($result['vendor']['contract_exp_date']) && trim($result['vendor']['contract_exp_date'])!=""){
+	$contExpiryDate=$commonService->humanDateFormat($result['vendor']['contract_exp_date']);
+}
+//\Zend\Debug\Debug::dump($result);die;
+?>
+<!-- Main content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>View Client</h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="<?php echo $this->url('clients', array('action' => 'index')); ?>"> Clients</a></li>
+        <li class="active">View Client</li>
+      </ol>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="editVendorInformation" id="editVendorInformation"  method="post" action="<?php echo $this->url('clients', array('action' => 'edit')); ?>" enctype="multipart/form-data" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="companyName" class="col-lg-4 control-label">Company <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" id="companyName" name="companyName" title="Please select company" disabled="disabled">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($company as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['company_id']); ?>" <?php echo(($result['vendor']['company_id']==$val['company_id']) ? "selected='selected'" : "") ?>><?php echo ucwords($val['company_name']); ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendorName" class="col-lg-4 control-label">Client Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['client_name']; ?></p>
+									
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clientCode" class="col-lg-4 control-label">Client Code <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['client_no']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address" class="col-lg-4 control-label">Address <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control readonly" name="address" id="address" placeholder="Address" title="Please enter the address" readonly="readonly"><?php echo str_replace("<br />", '', $result['vendor']['address']); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                    <div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clientCity" class="col-lg-4 control-label">City <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['client_city']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                          <div class="form-group">
+                              <label for="pincode" class="col-lg-4 control-label">Pincode <span class="mandatory">*</span></label>
+                              <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['pin_code']; ?></p>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTax" class="col-lg-4 control-label">Service Tax (%) <span class="mandatory">*</span> </label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['service_tax']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sbcTax" class="col-lg-4 control-label">SBC Tax (%)</label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['sbc_tax']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="kkcTax" class="col-lg-4 control-label">KKC Tax (%) </label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $result['vendor']['kkc_tax']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Contract Expiry Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo $contExpiryDate; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTax" class="col-lg-4 control-label">Contract Copy </label>
+                                <div class="col-lg-6">
+									<?php
+									if(isset($result['vendor']['file_name']) && trim($result['vendor']['file_name'])!="" && file_exists($pathname. DIRECTORY_SEPARATOR.$result['vendor']['file_name'])){
+									?>
+									<div id="fileDiv" style="margin-top:5px;">
+									<a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."clients". DIRECTORY_SEPARATOR .$result['vendor']['client_id']. DIRECTORY_SEPARATOR.$result['vendor']['file_name'] ?>" ><?php echo $result['vendor']['file_name']; ?></a>
+									</div>
+									<?php
+									}
+									?>
+                                    
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTaxPaidByClient" class="col-lg-4 control-label">Service Tax Paid By Client <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo ucwords($result['vendor']['service_tax_paid_by_client']); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<p class="form-control"><?php echo ucwords($result['vendor']['status']); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					  
+                    <h4>Contact Details</h4>
+                    <table id="bookedByTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Contact Name</th>
+                            <th>Phone No</th>
+                            <th>Mobile No</th>
+							<th>Email</th>
+                            
+                        </tr>
+                        </thead>
+						<tbody>
+						<?php
+						$i=1;
+						if(sizeof($result['bookedBy'])>0){
+							foreach($result['bookedBy'] as $bookedBy){
+						?>
+							<tr>
+								<td>
+									<p class="form-control"><?php echo $bookedBy['contact_name']; ?></p>
+								</td>
+								<td>
+									<p class="form-control"><?php echo $bookedBy['phone_no']; ?></p>
+								</td>
+								<td><p class="form-control"><?php echo $bookedBy['mobile_no']; ?></p></td>
+								<td><p class="form-control"><?php echo $bookedBy['email']; ?></p></td>
+								
+							</tr>
+                        
+						<?php
+							$i++;
+							}
+						}else{ ?>
+						<tr>
+                            <td colspan="4">
+                            No data available
+                            </td>
+                        </tr>
+						<?php } ?>
+						</tbody>
+                    </table>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('clients', array('action' => 'index')); ?>" class="btn btn-default">Back</a>
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+    </div>
+
+<script type="text/javascript">
+   
+</script>

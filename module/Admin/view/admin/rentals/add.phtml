@@ -1,0 +1,1516 @@
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12"> Rental</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('rentals', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('rentals', array('action' => 'index')); ?>"> Rentals</a></li>
+                <li class="active">Add Rental</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+<section class="content">
+    <div class="row">
+          <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addRentalInformation" id="addRentalInformation"  method="post" action="<?php echo $this->url('rentals', array('action' => 'add')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="company" class="col-lg-4 control-label">Company Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="company" name="company" title="Please select company" onchange="checkMultipleFieldValidations();getClient();">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($company as $val){
+                                        ?>
+                                        <option value="<?php echo $val['company_id']; ?>"><?php echo ucwords($val['company_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                    <input type="hidden" class="form-control" id="branchId" name="branchId" value="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="client" class="col-lg-4 control-label">Client <span class="mandatory">*</span> </label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="client" name="client" title="Please select client" onchange="checkMultipleFieldValidations();">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="businessUnit" class="col-lg-4 control-label">Bussiness Unit <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="businessUnit" name="businessUnit" title="Please select business unit" onchange="checkMultipleFieldValidations();">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($businessUnitResult as $businessUnit){
+                                            if($businessUnit['unit_id']==2 || $businessUnit['unit_id']==4){
+                                        ?>
+                                        <option value="<?php echo $businessUnit['unit_id'];  ?>"><?php echo ucwords($businessUnit['unit_name']);  ?></option>
+                                        <?php
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                   
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="city" class="col-lg-4 control-label">City <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="city" name="city" title="Please select city">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($cityResult as $city){
+                                        ?>
+                                        <option value="<?php echo $city['city_id'];  ?>"><?php echo ucwords($city['city_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel with-nav-tabs panel-info">
+                                <div class="panel-heading">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"><a href="#hatchbackInfo" data-toggle="tab">HATCHBACK</a></li>
+                                            <li><a href="#tab1info" data-toggle="tab">SEDAN</a></li>
+                                            <li><a href="#suvinfo" data-toggle="tab">SUV</a></li>
+                                            <li><a href="#premiuminfo" data-toggle="tab">PREMIUM</a></li>
+                                            <li><a href="#luxuryinfo" data-toggle="tab">LUXURY</a></li>
+                                            <li><a href="#tempoinfo" data-toggle="tab">TEMPO</a></li>
+                                            
+                                        </ul>
+                                </div>
+                                    <div class="panel-body">
+                                        <div class="tab-content">
+                                            <!-- Start hatchback -->
+                                            <div class="tab-pane fade in active" id="hatchbackInfo">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a  href="#hatchbackLocaluse" data-toggle="tab">Local Use</a></li>
+                                                    <li><a href="#hatchbackAirport" data-toggle="tab">Airport Transfer</a></li>
+                                                </ul>
+                                            
+                                                <div class="tab-content ">
+                                                    <div class="tab-pane active" id="hatchbackLocaluse">
+                                                        <table class="table table-striped table-bordered table-condensed" id="hatchbackTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <th>Next Tariff Hrs</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffHrs1" name="hatchbackTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="5"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffKms1" name="hatchbackTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="50"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffAmt1" name="hatchbackTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackNextTariffHrs1" name="hatchbackNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insHatchbackRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeHatchbackRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffHrs2" name="hatchbackTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="10"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffKms2" name="hatchbackTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="100"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffAmt2" name="hatchbackTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackNextTariffHrs2" name="hatchbackNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insHatchbackRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeHatchbackRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffHrs3" name="hatchbackTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="15"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffKms3" name="hatchbackTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="150"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffAmt3" name="hatchbackTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackNextTariffHrs3" name="hatchbackNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insHatchbackRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeHatchbackRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffHrs4" name="hatchbackTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="20"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffKms4" name="hatchbackTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="200"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackTariffAmt4" name="hatchbackTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackNextTariffHrs4" name="hatchbackNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insHatchbackRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeHatchbackRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="tab-pane" id="hatchbackAirport" style="min-height: 210px;">
+                                                        <table class="table table-striped table-bordered table-condensed" id="hatchbackAirportTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <!--<th>Next Tariff Hrs</th>-->
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackAirportTariffHrs1" name="hatchbackAirportTariffHrs" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="4"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackAirportTariffKms1" name="hatchbackAirportTariffKms" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="40"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="hatchbackAirportTariffAmt1" name="hatchbackAirportTariffAmt" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <!--<td>
+                                                                    <input type="text" id="sedanAirportNextTariffHrs1" name="sedanAirportNextTariffHrs" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>-->
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackPerHrsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Hours <span class="mandatory">*</span></label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum isRequired" id="hatchbackPerHrsPrice" name="hatchbackPerHrsPrice" placeholder="Per Hours Price In Local Use" title="Please enter hatchback extra price per hrs"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackPerKmsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Kms <span class="mandatory">*</span> </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum isRequired" id="hatchbackPerKmsPrice" name="hatchbackPerKmsPrice" placeholder="Per Kms Price" title="Please enter hatchback extra price per kms"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackOutstationPerKmsPrice" class="col-lg-4 control-label">Outstation Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="hatchbackOutstationPerKmsPrice" name="hatchbackOutstationPerKmsPrice" placeholder="Outstation Per Kms Price" onblur="OutstationAmountPerDay('hatchback')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="hatchbackOutstationKmsPerDay" name="hatchbackOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" onblur="OutstationAmountPerDay('hatchback')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="hatchbackDriverAllowanceInDay" name="hatchbackDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="hatchbackDriverAllowanceInNight" name="hatchbackDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="hatchbackOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="hatchbackOutstationAmtPerDay" name="hatchbackOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" readonly="readonly"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            
+                                            
+                                            <div class="tab-pane fade" id="tab1info">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a  href="#sedanLocaluse" data-toggle="tab">Local Use</a></li>
+                                                    <li><a href="#sedanAirport" data-toggle="tab">Airport Transfer</a></li>
+                                                </ul>
+                                            
+                                                <div class="tab-content ">
+                                                    <div class="tab-pane active" id="sedanLocaluse">
+                                                        <table class="table table-striped table-bordered table-condensed" id="sedanTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <th>Next Tariff Hrs</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffHrs1" name="sedanTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="5"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffKms1" name="sedanTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="50"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffAmt1" name="sedanTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanNextTariffHrs1" name="sedanNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSedanRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSedanRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffHrs2" name="sedanTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="10"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffKms2" name="sedanTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="100"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffAmt2" name="sedanTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanNextTariffHrs2" name="sedanNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSedanRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSedanRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffHrs3" name="sedanTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="15"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffKms3" name="sedanTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="150"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffAmt3" name="sedanTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanNextTariffHrs3" name="sedanNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSedanRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSedanRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffHrs4" name="sedanTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="20"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffKms4" name="sedanTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="200"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanTariffAmt4" name="sedanTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanNextTariffHrs4" name="sedanNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSedanRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSedanRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="tab-pane" id="sedanAirport" style="min-height: 210px;">
+                                                        <table class="table table-striped table-bordered table-condensed" id="sedanAirportTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <!--<th>Next Tariff Hrs</th>-->
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="sedanAirportTariffHrs1" name="sedanAirportTariffHrs" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="4"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanAirportTariffKms1" name="sedanAirportTariffKms" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="40"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="sedanAirportTariffAmt1" name="sedanAirportTariffAmt" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <!--<td>
+                                                                    <input type="text" id="sedanAirportNextTariffHrs1" name="sedanAirportNextTariffHrs" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>-->
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanPerHrsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Hours <span class="mandatory">*</span></label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum isRequired" id="sedanPerHrsPrice" name="sedanPerHrsPrice" placeholder="Per Hours Price In Local Use" title="Please enter sedan extra price per hrs"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanPerKmsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Kms <span class="mandatory">*</span> </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum isRequired" id="sedanPerKmsPrice" name="sedanPerKmsPrice" placeholder="Per Kms Price" title="Please enter sedan extra price per kms"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanOutstationPerKmsPrice" class="col-lg-4 control-label">Outstation Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanOutstationPerKmsPrice" name="sedanOutstationPerKmsPrice" placeholder="Outstation Per Kms Price" onblur="OutstationAmountPerDay('sedan')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanOutstationKmsPerDay" name="sedanOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" onblur="OutstationAmountPerDay('sedan')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanDriverAllowanceInDay" name="sedanDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanDriverAllowanceInNight" name="sedanDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanOutstationAmtPerDay" name="sedanOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" readonly="readonly"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="tab-pane fade" id="suvinfo">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a  href="#suvLocaluse" data-toggle="tab">Local Use</a></li>
+                                                    <li><a href="#suvAirportTransfer" data-toggle="tab">Airport Transfer</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="suvLocaluse">
+                                                        <table class="table table-striped table-bordered table-condensed" id="suvTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <th>Next Tariff Hrs</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffHrs1" name="suvTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="5"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffKms1" name="suvTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="50"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffAmt1" name="suvTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvNextTariffHrs1" name="suvNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSuvRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSuvRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffHrs2" name="suvTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="10"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffKms2" name="suvTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="100"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffAmt2" name="suvTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvNextTariffHrs2" name="suvNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSuvRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSuvRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffHrs3" name="suvTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="15"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffKms3" name="suvTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="150"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffAmt3" name="suvTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvNextTariffHrs3" name="suvNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSuvRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSuvRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffHrs4" name="suvTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="20"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffKms4" name="suvTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="200"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvTariffAmt4" name="suvTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvNextTariffHrs4" name="suvNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSuvRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSuvRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="tab-pane" id="suvAirportTransfer" style="min-height: 210px;">
+                                                        <table class="table table-striped table-bordered table-condensed" id="suvAirportTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <!--<th>Next Tariff Hrs</th>-->
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="suvAirportTariffHrs" name="suvAirportTariffHrs" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="4"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvAirportTariffKms" name="suvAirportTariffKms" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="40"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="suvAirportTariffAmt" name="suvAirportTariffAmt" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <!--<td>
+                                                                    <input type="text" id="suvAirportNextTariffHrs1" name="suvAirportNextTariffHrs" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>-->
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvPerHrsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvPerHrsPrice" name="suvPerHrsPrice" placeholder="Per Hours Price In Local Use" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvPerKmsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvPerKmsPrice" name="suvPerKmsPrice" placeholder="Local Use Per Kms Price" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvOutstationPerKmsPrice" class="col-lg-4 control-label">Outstation Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvOutstationPerKmsPrice" name="suvOutstationPerKmsPrice" placeholder="Outstation Per Kms Price" onblur="OutstationAmountPerDay('suv')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="allowance" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvOutstationKmsPerDay" name="suvOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" onblur="OutstationAmountPerDay('suv')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvDriverAllowanceInDay" name="suvDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvDriverAllowanceInNight" name="suvDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvOutstationAmtPerDay" name="suvOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" readonly="readonly"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="premiuminfo">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a  href="#premiumLocaluse" data-toggle="tab">Local Use</a></li>
+                                                    <li><a href="#premiumAirportTransfer" data-toggle="tab">Airport Transfer</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="premiumLocaluse">
+                                                        <table class="table table-striped table-bordered table-condensed" id="premiumTable">
+                                                        <tr>
+                                                            <th>Tariff Hrs</th>
+                                                            <th>Tariff Kms</th>
+                                                            <th>Tariff Amount</th>
+                                                            <th>Next Tariff Hrs</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffHrs1" name="premiumTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="5"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffKms1" name="premiumTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="50"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffAmt1" name="premiumTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumNextTariffHrs1" name="premiumNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                            </td>
+                                                            <td align="center">
+                                                            <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insPremiumRow();"><i class="fa fa-plus"></i></a>
+                                                            <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removePremiumRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffHrs2" name="premiumTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="10"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffKms2" name="premiumTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="100"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffAmt2" name="premiumTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumNextTariffHrs2" name="premiumNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                            </td>
+                                                            <td align="center">
+                                                            <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insPremiumRow();"><i class="fa fa-plus"></i></a>
+                                                            <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removePremiumRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffHrs3" name="premiumTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="15"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffKms3" name="premiumTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="150"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffAmt3" name="premiumTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumNextTariffHrs3" name="premiumNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                            </td>
+                                                            <td align="center">
+                                                            <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insPremiumRow();"><i class="fa fa-plus"></i></a>
+                                                            <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removePremiumRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffHrs4" name="premiumTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="20"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffKms4" name="premiumTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="200"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumTariffAmt4" name="premiumTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="premiumNextTariffHrs4" name="premiumNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                            </td>
+                                                            <td align="center">
+                                                            <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insPremiumRow();"><i class="fa fa-plus"></i></a>
+                                                            <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removePremiumRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    </div>
+                                                    <div class="tab-pane" id="premiumAirportTransfer" style="min-height: 210px;">
+                                                        <table class="table table-striped table-bordered table-condensed" id="premiumAirportTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <!--<th>Next Tariff Hrs</th>-->
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="premiumAirportTariffHrs" name="premiumAirportTariffHrs" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="4"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="premiumAirportTariffKms" name="premiumAirportTariffKms" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="40"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="premiumAirportTariffAmt" name="premiumAirportTariffAmt" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <!--<td>
+                                                                    <input type="text" id="premiumAirportNextTariffHrs" name="premiumAirportNextTariffHrs" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>-->
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumPerHrsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumPerHrsPrice" name="premiumPerHrsPrice" placeholder="Per Hours Price In Local Use" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumPerKmsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumPerKmsPrice" name="premiumPerKmsPrice" placeholder="Local Use Per Kms Price" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumOutstationPerKmsPrice" class="col-lg-4 control-label">Outstation Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumOutstationPerKmsPrice" name="premiumOutstationPerKmsPrice" placeholder="Outstation Per Kms Price"  onblur="OutstationAmountPerDay('premium')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="allowance" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumOutstationKmsPerDay" name="premiumOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" onblur="OutstationAmountPerDay('premium')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumDriverAllowanceInDay" name="premiumDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumDriverAllowanceInNight" name="premiumDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumOutstationAmtPerDay" name="premiumOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" readonly="readonly"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="luxuryinfo">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a  href="#luxuryLocaluse" data-toggle="tab">Local Use</a></li>
+                                                    <li><a href="#luxuryAirportTransfer" data-toggle="tab">Airport Transfer</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="luxuryLocaluse">
+                                                        <table class="table table-striped table-bordered table-condensed" id="luxuryTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <th>Next Tariff Hrs</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="luxTariffHrs1" name="luxuryTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="5"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffKms1" name="luxuryTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="50"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffAmt1" name="luxuryTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryNextTariffHrs1" name="luxuryNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insLuxuryRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeLuxuryRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffHrs2" name="luxuryTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="10"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffKms2" name="luxuryTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="100"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffAmt2" name="luxuryTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryNextTariffHrs2" name="luxuryNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insLuxuryRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeLuxuryRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffHrs3" name="luxuryTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="15"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffKms3" name="luxuryTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="150"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffAmt3" name="luxuryTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryNextTariffHrs3" name="luxuryNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insLuxuryRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeLuxuryRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffHrs4" name="luxuryTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="20"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffKms4" name="luxuryTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="200"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryTariffAmt4" name="luxuryTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryNextTariffHrs4" name="luxuryNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insLuxuryRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeLuxuryRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="tab-pane" id="luxuryAirportTransfer" style="min-height: 210px;">
+                                                        <table class="table table-striped table-bordered table-condensed" id="luxuryAirportTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <!--<th>Next Tariff Hrs</th>-->
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="luxuryAirportTariffHrs" name="luxuryAirportTariffHrs" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="4"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryAirportTariffKms" name="luxuryAirportTariffKms" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="40"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="luxuryAirportTariffAmt" name="luxuryAirportTariffAmt" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <!--<td>
+                                                                    <input type="text" id="luxuryAirportNextTariffHrs" name="luxuryAirportNextTariffHrs" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>-->
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryPerHrsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryPerHrsPrice" name="luxuryPerHrsPrice" placeholder="Per Hours Price In Local Use" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryPerKmsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryPerKmsPrice" name="luxuryPerKmsPrice" placeholder="Local Use Per Kms Price" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryOutstationPerKmsPrice" class="col-lg-4 control-label">Outstation Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryOutstationPerKmsPrice" name="luxuryOutstationPerKmsPrice" placeholder="Outstation Per Kms Price" onblur="OutstationAmountPerDay('luxury')" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryOutstationKmsPerDay" name="luxuryOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" onblur="OutstationAmountPerDay('luxury')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryDriverAllowanceInDay" name="luxuryDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryDriverAllowanceInNight" name="luxuryDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryOutstationAmtPerDay" name="luxuryOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" readonly="readonly"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="tempoinfo">
+                                                <ul class="nav nav-tabs">
+                                                    <li class="active"><a  href="#tempoLocaluse" data-toggle="tab">Local Use</a></li>
+                                                    <li><a href="#tempoAirportTransfer" data-toggle="tab">Airport Transfer</a></li>
+                                                </ul>
+                                                <div class="tab-content">
+                                                    <div class="tab-pane active" id="tempoLocaluse">
+                                                        <table class="table table-striped table-bordered table-condensed" id="tempoTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <th>Next Tariff Hrs</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffHrs1" name="tempoTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="5"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffKms1" name="tempoTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="50"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffAmt1" name="tempoTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoNextTariffHrs1" name="tempoNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insTempoRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeTempoRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffHrs2" name="tempoTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="10"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffKms2" name="tempoTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="100"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffAmt2" name="tempoTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoNextTariffHrs2" name="tempoNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insTempoRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeTempoRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffHrs3" name="tempoTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="15"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffKms3" name="tempoTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="150"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffAmt3" name="tempoTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoNextTariffHrs3" name="tempoNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insTempoRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeTempoRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffHrs4" name="tempoTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="20"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffKms4" name="tempoTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="200"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoTariffAmt4" name="tempoTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoNextTariffHrs4" name="tempoNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the tariff hours"/>
+                                                                </td>
+                                                                <td align="center">
+                                                                <a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insTempoRow();"><i class="fa fa-plus"></i></a>
+                                                                <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeTempoRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    <div class="tab-pane" id="tempoAirportTransfer" style="min-height: 210px;">
+                                                        <table class="table table-striped table-bordered table-condensed" id="tempoAirportTable">
+                                                            <tr>
+                                                                <th>Tariff Hrs</th>
+                                                                <th>Tariff Kms</th>
+                                                                <th>Tariff Amount</th>
+                                                                <!--<th>Next Tariff Hrs</th>-->
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" id="tempoAirportTariffHrs" name="tempoAirportTariffHrs" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="4"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoAirportTariffKms" name="tempoAirportTariffKms" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="40"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" id="tempoAirportTariffAmt" name="tempoAirportTariffAmt" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>
+                                                                </td>
+                                                                <!--<td>
+                                                                    <input type="text" id="tempoAirportNextTariffHrs" name="tempoAirportNextTariffHrs" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>
+                                                                </td>-->
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoPerHrsPrice" class="col-lg-4 control-label">Loca Use Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoPerHrsPrice" name="tempoPerHrsPrice" placeholder="Per Hours Price In Local Use" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoPerKmsPrice" class="col-lg-4 control-label">Local Use Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoPerKmsPrice" name="tempoPerKmsPrice" placeholder="Local Use Per Kms Price" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoOutstationPerKmsPrice" class="col-lg-4 control-label">Outstation Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoOutstationPerKmsPrice" name="tempoOutstationPerKmsPrice" placeholder="Outstation Per Kms Price" onblur="OutstationAmountPerDay('tempo')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoOutstationKmsPerDay" name="tempoOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" onblur="OutstationAmountPerDay('tempo')"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoDriverAllowanceInDay" name="tempoDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoDriverAllowanceInNight" name="tempoDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoOutstationAmtPerDay" name="tempoOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" readonly="readonly"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <a href="<?php echo $this->url('rentals', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    duplicateName = true;
+    hatchbackRowCount=5;
+    sedanRowCount=5;
+    suvRowCount=5;
+    premiumRowCount=5;
+    luxuryRowCount=5;
+    tempoRowCount=5;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addRentalInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addRentalInformation').submit();
+            }
+        }
+    }
+    
+    function checkMultipleFieldValidations()
+	{
+		
+		client=$("#client").val();
+	    city=$("#city").val();
+	    businessUnit=$("#businessUnit").val();
+	    companyId=$("#company").val();
+        
+	    if(companyId!="" && businessUnit!="" && city!="" && client!=""){
+		
+		var json_data = { 
+		    "tableName" : "rental_details",
+		    "columns":[
+                {
+                    "column_name" : "company_id",
+                    "column_value": companyId
+                },
+                {
+                    "column_name" : "city",
+                    "column_value": city
+                },
+                {
+                    "column_name" : "bussiness_unit",
+                    "column_value" : businessUnit
+                },
+                {
+                    "column_name" : "client_id",
+                    "column_value": client
+                }
+		    ]
+		}
+		//console.log(json_data);
+		$.post("<?php echo $this->url('common', array('action' => 'check-multiple-column-value')); ?>", { json_data : json_data},
+		function(data){
+		    if(data>0)
+		    {
+			alert("This rental type already exist,Please choose another name");
+			document.getElementById("city").value="";
+			duplicateName=false;
+		    }
+		    else{
+			duplicateName=true;
+		    }
+		});
+	     
+	    }
+	}
+    
+    function insSedanRow() {
+		sedanRowCount++;
+		rl = document.getElementById("sedanTable").rows.length;
+		var a = document.getElementById("sedanTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("sedanTable").rows.length - 1;
+		b.innerHTML = '<input type="text" class="form-control checkNum" id="sedanTariffHrs' + sedanRowCount + '" name="sedanTariffHrs[]" placeholder="Tariff Hrs" title="Please enter the tariff hours" />';
+		c.innerHTML = '<input type="text" class="form-control checkNum" id="sedanTariffKms' + sedanRowCount + '" name="sedanTariffKms[]" placeholder="Tariff Kms" title="Please enter the the tariff Kms" />';
+		d.innerHTML = '<input type="text" id="sedanTariffAmt' + sedanRowCount + '" name="sedanTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>';
+		e.innerHTML = '<input type="text" id="sedanNextTariffHrs' + sedanRowCount + '" name="sedanNextTariffHrs[]" class="form-control checkNum" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSedanRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSedanRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+	
+	function removeSedanRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("sedanTable").rows.length;
+		    if (rl == 1) {
+			insSedanRow();
+		    }
+		});
+    }
+    
+    function insSuvRow() {
+		suvRowCount++;
+		rl = document.getElementById("suvTable").rows.length;
+		var a = document.getElementById("suvTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("suvTable").rows.length - 1;
+		b.innerHTML = '<input type="text" id="suvTariffHrs'+suvRowCount+'" name="suvTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" />';
+		c.innerHTML = '<input type="text" id="suvTariffKms'+suvRowCount+'" name="suvTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" />';
+		d.innerHTML = '<input type="text" id="suvTariffAmt'+suvRowCount+'" name="suvTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>';
+		e.innerHTML = '<input type="text" id="suvNextTariffHrs'+suvRowCount+'" name="suvNextTariffHrs[]" class="form-control checkNum" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insSuvRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeSuvRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+	
+	function removeSuvRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("sedanTable").rows.length;
+		    if (rl == 1) {
+			insSuvRow();
+		    }
+		});
+    }
+    
+    function insPremiumRow() {
+		premiumRowCount++;
+		rl = document.getElementById("premiumTable").rows.length;
+		var a = document.getElementById("premiumTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("premiumTable").rows.length - 1;
+		b.innerHTML = '<input type="text" id="premiumTariffHrs'+premiumRowCount+'" name="premiumTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" />';
+		c.innerHTML = '<input type="text" id="premiumTariffKms'+premiumRowCount+'" name="premiumTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms"/>';
+		d.innerHTML = '<input type="text" id="premiumTariffAmt'+premiumRowCount+'" name="premiumTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>';
+		e.innerHTML = '<input type="text" id="premiumNextTariffHrs'+premiumRowCount+'" name="premiumNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insPremiumRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removePremiumRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+	
+	function removePremiumRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("premiumTable").rows.length;
+		    if (rl == 1) {
+			insPremiumRow();
+		    }
+		});
+    }
+    
+    function insLuxuryRow() {
+		luxuryRowCount++;
+		rl = document.getElementById("luxuryTable").rows.length;
+		var a = document.getElementById("luxuryTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("luxuryTable").rows.length - 1;
+		b.innerHTML = '<input type="text" id="luxTariffHrs'+luxuryRowCount+'" name="luxuryTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" />';
+		c.innerHTML = '<input type="text" id="luxuryTariffKms'+luxuryRowCount+'" name="luxuryTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms"/>';
+		d.innerHTML = '<input type="text" id="luxuryTariffAmt'+luxuryRowCount+'" name="luxuryTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>';
+		e.innerHTML = '<input type="text" id="luxuryNextTariffHrs'+luxuryRowCount+'" name="luxuryNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insLuxuryRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeLuxuryRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+	
+	function removeLuxuryRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("luxuryTable").rows.length;
+		    if (rl == 1) {
+			insLuxuryRow();
+		    }
+		});
+    }
+    
+    function insTempoRow() {
+		tempoRowCount++;
+		rl = document.getElementById("tempoTable").rows.length;
+		var a = document.getElementById("tempoTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("tempoTable").rows.length - 1;
+		b.innerHTML = '<input type="text" id="tempoTariffHrs'+tempoRowCount+'" name="tempoTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" />';
+		c.innerHTML = '<input type="text" id="tempoTariffKms'+tempoRowCount+'" name="tempoTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms"/>';
+		d.innerHTML = '<input type="text" id="tempoTariffAmt'+tempoRowCount+'" name="tempoTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>';
+		e.innerHTML = '<input type="text" id="tempoNextTariffHrs'+tempoRowCount+'" name="tempoNextTariffHrs[]" class="form-control" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insTempoRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeTempoRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+	
+	function removeTempoRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("tempoTable").rows.length;
+		    if (rl == 1) {
+			insTempoRow();
+		    }
+		});
+    }
+    
+    function getClient(){
+        company=$("#company").val();
+        if(company!=""){
+            $.blockUI();
+            $.post("<?php echo $this->url('clients', array('action' => 'get-client-by-company')); ?>", {company:company},
+            function(data){
+                if (data!="") {
+                    document.getElementById("client").innerHTML=data;
+                }
+                $.unblockUI();
+            });
+        }
+    }
+    
+    function OutstationAmountPerDay(categoryType){
+        otPerKmPrice=$("#"+categoryType+"OutstationPerKmsPrice").val();
+        otKmPerDay=$("#"+categoryType+"OutstationKmsPerDay").val();
+        if(otPerKmPrice!="" && otKmPerDay!=""){
+            otPerDayAmt=parseFloat(otPerKmPrice)*parseFloat(otKmPerDay);
+            $("#"+categoryType+"OutstationAmtPerDay").val(otPerDayAmt);
+        }
+    }
+    
+    function insHatchbackRow() {
+		hatchbackRowCount++;
+		rl = document.getElementById("hatchbackTable").rows.length;
+		var a = document.getElementById("hatchbackTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("hatchbackTable").rows.length - 1;
+		b.innerHTML = '<input type="text" class="form-control checkNum" id="hatchbackTariffHrs' + hatchbackRowCount + '" name="hatchbackTariffHrs[]" placeholder="Tariff Hrs" title="Please enter the tariff hours" />';
+		c.innerHTML = '<input type="text" class="form-control checkNum" id="hatchbackTariffKms' + hatchbackRowCount + '" name="hatchbackTariffKms[]" placeholder="Tariff Kms" title="Please enter the the tariff Kms" />';
+		d.innerHTML = '<input type="text" id="hatchbackTariffAmt' + hatchbackRowCount + '" name="hatchbackTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount"/>';
+		e.innerHTML = '<input type="text" id="hatchbackNextTariffHrs' + hatchbackRowCount + '" name="hatchbackNextTariffHrs[]" class="form-control checkNum" placeholder="Next Tariff Hrs" title="Please enter the next tariff hours"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success actionCol" href="javascript:void(0);" onclick="insHatchbackRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning actionCol" href="javascript:void(0);" onclick="removeHatchbackRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+    
+    function removeHatchbackRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("hatchbackTable").rows.length;
+		    if (rl == 1) {
+			insHatchbackRow();
+		    }
+		});
+    }
+</script>
+

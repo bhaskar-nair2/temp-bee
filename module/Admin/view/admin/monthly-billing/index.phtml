@@ -1,0 +1,465 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'edit') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'view') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'generate-billing') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'delete')) {
+$pendingEditAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$pendingEditAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+if ($acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'edit') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'view') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'generate-billing') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'delete')) {
+	$editCompleteBillAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+	$editCompleteBillAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+$startDate=date('01-M-Y',strtotime('this month'));
+$endDate=date('t-M-Y',strtotime('this month'));
+?>
+	<section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12">Monthly Bill</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'add')) {
+					?>
+					<a href="<?php echo $this->url('monthly-billing',array('action' => 'add'));?>" class="btn btn-primary pull-right" style="margin-top:-5px;"><i class="fa fa-plus"></i>&nbsp;Add Monthly Bill</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<div class="nav-tabs-custom">
+						<ul class="nav nav-tabs">
+						  <li class="active"><a href="#pendingMonthlyBill" data-toggle="tab">Pending Bill</a></li>
+						  <li><a href="#completedMonthlyBill" data-toggle="tab">Completed Bill</a></li>
+						  <li><a href="#allMonthlyBill" data-toggle="tab">All Bills</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="pendingMonthlyBill">
+								<form class="form-inline searchBox" style="margin-top:5px;">
+									<div class="form-group input-append date" id="dpPendingFromMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+										<label>Search From &nbsp;</label>
+										<input type="text" class="form-control isRequired readonly" id="pendingBillFromMonth" name="paymentMonth" placeholder="Select from month & year" title="Please select from month and year" readonly="readonly"/>
+										<span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+									<div class="form-group input-append date" id="dpPendingToMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+									  <label>Search To &nbsp;</label>
+									  <input type="text" class="form-control readonly" id="pendingBillToMonth" name="pendingBillToMonth" placeholder="Select to month & year" title="Please select to month and year" readonly="readonly"/>
+										<span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+									<div class="form-group">
+										<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-success">
+										<a href="" class="btn btn-danger">Reset</a>
+										<a href="javascript:void(0)" onclick="pendingBillExportToExcel();" class="btn btn-primary" title="Download">Export to excel</a>
+									</div>
+								</form>
+								<br/>
+								<table id="pendingMonthlyBillDataTable" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>Invoice No</th>
+											<th>Invoice Month/Year</th>
+											<th>Company Name</th>
+											<th>Client</th>
+											<th>Total Amount</th>
+											<th>Payment Due Date</th>
+											<?php if ($acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'edit') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'view') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'generate-billing') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'delete')) { ?>
+											<th style="width:140px;">Action</th>
+											<?php } ?>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="11" class="dataTables_empty">Loading data from server</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- /.tab-pane -->
+							<div class="tab-pane" id="completedMonthlyBill">
+								<form class="form-inline searchBox" style="margin-top:5px;">
+									<div class="form-group input-append date" id="dpCompletedFromMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+									  <label>Search From </label>
+									  <input type="text" class="form-control isRequired readonly" id="completedBillFromMonth" name="completedBillFromMonth" placeholder="Select from month & year" title="Please select from month and year" readonly="readonly"/>
+									  <span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+									<div class="form-group input-append date" id="dpCompletedToMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+									  <label>Search To</label>
+									  <input type="text" class="form-control readonly" id="completedBillToMonth" name="completedBillToMonth" placeholder="Select to month & year" title="Please select to month and year" readonly="readonly"/>
+									  <span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+									<div class="form-group">
+										<input type="button" onclick="javascript:cTable.fnDraw();" value="Search" class="btn btn-success">
+										<a href="" class="btn btn-danger">Reset</a>
+										<a href="javascript:void(0)" onclick="completedBillExportToExcel();" class="btn btn-primary" title="Download"> Export to excel </a>
+									</div>
+								</form>
+								<br/>
+								
+								<table id="completedMonthlyBillDataTable" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>Invoice No</th>
+											<th>Invoice Month/Year</th>
+											<th>Client</th>
+											<th>Total Amount</th>
+											<th>Paid Date</th>
+											<th>Balance Amount</th>
+											<?php if ($acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'edit') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'view') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'generate-billing') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'delete')) { ?>
+											<th style="width:140px;">Action</th>
+											<?php } ?>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="8" class="dataTables_empty">Loading data from server</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- /.tab-pane -->
+							<div class="tab-pane" id="allMonthlyBill">
+								<form class="form-inline searchBox" style="margin-top:5px;">
+									<div class="form-group input-append date" id="dpAllFromMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+									  <label>Search From </label>
+										<input type="text" class="form-control isRequired readonly" id="allBillFromMonth" name="allBillFromMonth" placeholder="Select from month & year" title="Please select from month and year" readonly="readonly"/>
+										<span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+									<div class="form-group input-append date" id="dpAllToMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+									  <label>Search To</label>
+										<input type="text" class="form-control readonly" id="allBillToMonth" name="allBillToMonth" placeholder="Select to month & year" title="Please select to month and year" readonly="readonly"/>
+										<span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+									<div class="form-group">
+										<input type="button" onclick="javascript:aTable.fnDraw();" value="Search" class="btn btn-success">
+										<a href="" class="btn btn-danger">Reset</a>
+										<a href="javascript:void(0)" onclick="allBillExportToExcel();" class="btn btn-primary" title="Download"> Export to excel</a>
+									</div>
+								</form>
+								<br/>
+								
+								<table id="allMonthlyBillDataTable" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>Invoice No</th>
+											<th>Invoice Month/Year</th>
+											<th>Client</th>
+											<th>Total Amount</th>
+											<th>Paid Date</th>
+											<th>Balance Amount</th>
+											<?php if ($acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'edit') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'view') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'generate-billing') || $acl->isAllowed($role, 'Admin\Controller\MonthlyBilling', 'delete')) { ?>
+											<th style="width:140px;">Action</th>
+											<?php } ?>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="8" class="dataTables_empty">Loading data from server</td>
+										</tr>
+									</tbody>
+								</table>
+										
+							</div>
+							
+							
+					</div>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+    oTable = null;
+    cTable = null;
+    aTable = null;
+	startDate="<?php echo date('Y-m-01',strtotime('this month')); ?>";
+	endDate="<?php echo date('Y-m-t',strtotime('this month')); ?>";
+	completedBillStartDate="";
+	completedBillEndDate="";
+	searchPendingFromDate="";
+	searchPendingToDate="";
+	searchCompleteFromDate="";
+	searchCompleteToDate="";
+	searchAllFromDate="";
+	searchAllToDate="";
+	 
+    $(document).ready(function() {
+		oTable=$('#pendingMonthlyBillDataTable').dataTable({
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			"aoColumns": [
+			<?php echo $pendingEditAction;?>
+				],
+			"aaSorting": [[1, "desc"]],
+			"sAjaxSource": "<?php echo $this->url('monthly-billing',array('action' => 'pending-bill')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				aoData.push({ "name":"startDate","value": searchPendingFromDate});
+				aoData.push({ "name":"endDate","value": searchPendingToDate});
+				$.ajax({
+					"dataType": 'json',
+					"type": "POST",
+					"url": sSource,
+					"data": aoData,
+					"success": fnCallback
+				});
+			}
+		});
+		
+		cTable=$('#completedMonthlyBillDataTable').dataTable({
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			"aoColumns": [
+			<?php echo $editCompleteBillAction;?>
+            ],
+			"aaSorting": [[1, "desc"]],
+			"sAjaxSource": "<?php echo $this->url('monthly-billing',array('action' => 'index')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				aoData.push({ "name":"startDate","value": searchCompleteFromDate});
+				aoData.push({ "name":"endDate","value": searchCompleteToDate});
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+		});
+		
+		aTable=$('#allMonthlyBillDataTable').dataTable({
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			"aoColumns": [
+			<?php echo $editCompleteBillAction;?>
+            ],
+			"aaSorting": [[1, "desc"]],
+			"sAjaxSource": "<?php echo $this->url('monthly-billing',array('action' => 'all-bill')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				aoData.push({ "name":"startDate","value": searchAllFromDate});
+				aoData.push({ "name":"endDate","value": searchAllToDate});
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+		});
+		
+		$('#dpPendingFromMonth').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'M-yyyy',
+			viewMode: "months",
+			minViewMode: "months"
+		}).on('changeDate', function(e) {
+		  var date = new Date($('#pendingBillFromMonth').val());
+		  var day = date.getDate();
+		  var monthIndex = date.getMonth()+parseInt(1);
+		  var year = date.getFullYear();
+		  searchPendingFromDate=year+"-"+monthIndex;
+		  if(isNaN(year)) {
+			searchPendingFromDate="";
+		  }
+		  oTable.fnDraw();
+		});
+		
+		$('#dpPendingToMonth').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'M-yyyy',
+			viewMode: "months",
+			minViewMode: "months",
+		}).on('changeDate', function(e) {
+		  var date = new Date($('#pendingBillToMonth').val());
+		  var day = date.getDate();
+		  var monthIndex = date.getMonth()+parseInt(1);
+		  var year = date.getFullYear();
+		  searchPendingToDate=year+"-"+monthIndex;
+		  if(isNaN(year)) {
+			searchPendingToDate="";
+		  }
+		  oTable.fnDraw();
+		});
+		
+		
+		$('#dpCompletedFromMonth').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'M-yyyy',
+			viewMode: "months",
+			minViewMode: "months"
+		}).on('changeDate', function(e) {
+		  var date = new Date($('#completedBillFromMonth').val());
+		  var day = date.getDate();
+		  var monthIndex = date.getMonth()+parseInt(1);
+		  var year = date.getFullYear();
+		  searchCompleteFromDate=year+"-"+monthIndex;
+		  if(isNaN(year)) {
+			searchCompleteFromDate="";
+		  }
+		  cTable.fnDraw();
+		});
+		
+		
+		$('#dpCompletedToMonth').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'M-yyyy',
+			viewMode: "months",
+			minViewMode: "months",
+		}).on('changeDate', function(e) {
+		  var date = new Date($('#completedBillToMonth').val());
+		  var day = date.getDate();
+		  var monthIndex = date.getMonth()+parseInt(1);
+		  var year = date.getFullYear();
+		  searchCompleteToDate=year+"-"+monthIndex;
+		  if(isNaN(year)) {
+			searchCompleteToDate="";
+		  }
+		  cTable.fnDraw();
+		});
+		
+		$('#dpAllFromMonth').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'M-yyyy',
+			viewMode: "months",
+			minViewMode: "months"
+		}).on('changeDate', function(e) {
+		  var date = new Date($('#allBillFromMonth').val());
+		  var day = date.getDate();
+		  var monthIndex = date.getMonth()+parseInt(1);
+		  var year = date.getFullYear();
+		  searchAllFromDate=year+"-"+monthIndex;
+		  if(isNaN(year)) {
+			searchAllFromDate="";
+		  }
+		  aTable.fnDraw();
+		});
+		
+		$('#dpAllToMonth').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'M-yyyy',
+			viewMode: "months",
+			minViewMode: "months",
+		}).on('changeDate', function(e) {
+		  var date = new Date($('#allBillToMonth').val());
+		  var day = date.getDate();
+		  var monthIndex = date.getMonth()+parseInt(1);
+		  var year = date.getFullYear();
+		  searchAllToDate=year+"-"+monthIndex;
+		  if(isNaN(year)) {
+			searchAllToDate="";
+		  }
+		  aTable.fnDraw();
+		});
+		
+	});
+    
+	function generateMonthlyBilling(billId){
+		window.open('<?php echo $this->url('monthly-billing',array('action'=>'generate-billing'))?>'+billId);
+		return false;
+	}
+	
+	function deleteMonthlyBilling(billId) {
+        conf=confirm("Are you sure you want to delete this bill");
+		if (conf) {
+			$.blockUI();
+			$.post("<?php echo $this->url('monthly-billing',array('action' => 'delete')); ?>", {billId:billId},
+			function(data){
+				if (data>0) {
+					alert("Monthly bill deleted successfully");
+					location="";
+				}
+				$.unblockUI();
+			});
+		}
+    }
+	
+	function pendingBillExportToExcel(){
+		if($('#pendingBillFromMonth').val()!="" && $('#pendingBillToMonth').val()!=''){
+		$.blockUI();
+		$.post("<?php echo $this->url('monthly-billing',array('action'=>'pending-bill-export-to-excel')); ?>",{startDate:$('#pendingBillFromMonth').val(),endDate:$('#pendingBillToMonth').val()},
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+		}else{
+			alert("Please select the date range");
+		}
+	}
+	
+	function completedBillExportToExcel(){
+		if($('#completedBillFromMonth').val()!="" && $('#completedBillToMonth').val()!=''){
+			$.blockUI();
+			$.post("<?php echo $this->url('monthly-billing',array('action'=>'completed-bill-export-to-excel')); ?>",{startDate:$('#completedBillFromMonth').val(),endDate:$('#completedBillToMonth').val()},
+				function(data){
+				if(data == "" || data == null || data == undefined){
+				$.unblockUI();
+				alert('Unable to generate');
+				}else{
+				$.unblockUI();
+				document.location.href = '/temporary/'+data;
+				}
+			});
+		}else{
+			alert("Please select the date range");
+		}
+	}
+	
+	function clearPendingDate(){
+		$.blockUI();
+		$('#pendingBillSearchDate').val('');
+		startDate=null;
+		endDate=null;
+		$.unblockUI();
+		oTable.fnDraw();
+	}
+	
+	function allBillExportToExcel(){
+		if($('#allBillFromMonth').val()!="" && $('#allBillToMonth').val()!=''){
+			$.blockUI();
+			$.post("<?php echo $this->url('monthly-billing',array('action'=>'all-bill-export-to-excel')); ?>",{startDate:$('#completedBillFromMonth').val(),endDate:$('#completedBillToMonth').val()},
+				function(data){
+				if(data == "" || data == null || data == undefined){
+				$.unblockUI();
+				alert('Unable to generate');
+				}else{
+				$.unblockUI();
+				document.location.href = '/temporary/'+data;
+				}
+			});
+		}else{
+			alert("Please select the date range");
+		}
+	}
+</script>

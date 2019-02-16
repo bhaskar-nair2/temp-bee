@@ -1,0 +1,112 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Edit </span>
+				<span class="pageHeadingLabe12"> Config</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('config', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('config', array('action' => 'index')); ?>"> Config</a></li>
+                <li class="active">Edit Config</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+  
+
+<section class="content">
+    <!-- left column -->
+    <div class="row" >
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="editGlobalInformation" id="editGlobalInformation"  method="post" action="<?php echo $this->url('config', array('action' => 'edit')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="monthly_invoice_code" class="col-lg-4 control-label">Monthly Invoice Code <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired " id="monthly_invoice_code" name="monthly_invoice_code" placeholder="Enter pan number" title="Please enter monthly invoice code" value="<?php echo $config["monthly_invoice_code"]; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="monthly_invoice_code" class="col-lg-4 control-label">Work Order Receive Mail </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control " id="work_order_receive_mail" name="work_order_receive_mail" placeholder="Enter work order receive mail" value="<?php echo $config["work_order_receive_mail"]; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="new_booking_receive_mail" class="col-lg-4 control-label">New Booking Receive Mail </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control " id="new_booking_receive_mail" name="new_booking_receive_mail" placeholder="Enter new booking receive mail" value="<?php echo $config["new_booking_receive_mail"]; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendor_tax" class="col-lg-4 control-label">New Booking Receive Guest SMS</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="new_booking_receive_guest_sms" name="new_booking_receive_guest_sms" placeholder="Enter new booking receive guest SMS" value="<?php echo $config["new_booking_receive_guest_sms"]; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+			  
+			  <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendor_tax" class="col-lg-4 control-label">Vendor Tax % <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="vendor_tax" name="vendor_tax" placeholder="Enter vendor tax" value="<?php echo $config["vendor_tax"]; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('config', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+    
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'editGlobalInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+              document.getElementById('editGlobalInformation').submit();
+            }
+        }
+    }
+    
+    
+</script>

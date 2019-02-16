@@ -1,0 +1,137 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Vehicles', 'edit')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';	
+}
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Vehicles</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Vehicles', 'add')) {
+					?>
+					<a href="<?php echo $this->url('vehicles',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Vehicle</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group">
+			  <label>Search Renewal Date &nbsp;</label>
+			  <input type="text" class="form-control" id="searchDate" name="searchDate" placeholder="Search Renewal Date" readonly="readonly"/>
+			</div>
+			<div class="form-group">
+			<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-default ">
+			&nbsp;<a href="" class="btn btn-danger">Reset</a>
+			&nbsp;<a href="javascript:void(0)" onclick="exportToExcel();" class="btn btn-primary" title="Download"><i class="fa fa-download"> Export to excel </i></a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<table id="vehicleDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Vehicle Type</th>
+								<th>Vehicle No.</th>
+								<th>Vehicle Mode</th>
+								<th>Ins. Renewal Date</th>
+								<th>FC Renewal Date</th>
+								<th>Permit Renewal Date</th>
+								<th>Tax Renewal Date</th>
+								<th>Pollution Renewal Date</th>
+								<th>Status</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Vehicles','edit')) { ?>
+								<th style="width: 60px;">Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="10" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+	startDate="";
+	endDate="";
+     oTable = null;
+        $(document).ready(function() {
+		oTable=$('#vehicleDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+        "sAjaxSource": "<?php echo $this->url('vehicles',array('action' => 'index')); ?>",
+         "fnServerData": function ( sSource, aoData, fnCallback ) {
+			aoData.push({ "name":"startDate","value": startDate});
+			aoData.push({ "name":"endDate","value": endDate});
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+    } );
+	
+	$('#searchDate').daterangepicker({
+		  format: 'DD-MMM-YYYY',
+		  separator: ' to ',
+		  startDate: moment().subtract('days', 29),
+		  endDate: moment(),
+		  ranges: {
+			  'Next Week': [moment(),moment().add('days', 6)],
+			  'Next 2 Week': [moment(),moment().add('days', 13)],
+			  'This Month': [moment().startOf('month'), moment().endOf('month')],
+			  'Next Month': [moment().add('month', 1).startOf('month'), moment().add('month', 1).endOf('month')]
+			  //'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+		  }
+	  },
+	  function(start, end) {
+		startDate = start.format('YYYY-MM-DD');
+		endDate = end.format('YYYY-MM-DD');
+		oTable.fnDraw();
+	});
+} );
+   
+   function exportToExcel(){
+	$.blockUI();
+    $.post("<?php echo $this->url('vehicles',array('action'=>'export-to-excel')); ?>",{startDate:startDate,endDate:endDate},
+	    function(data){
+	    if(data == "" || data == null || data == undefined){
+		$.unblockUI();
+		alert('Unable to generate');
+	    }else{
+		$.unblockUI();
+		document.location.href = '/temporary/'+data;
+	    }
+	});
+   }
+</script>

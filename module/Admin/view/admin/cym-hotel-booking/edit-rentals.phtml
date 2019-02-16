@@ -1,0 +1,251 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+?>
+<style>
+	body {
+        color:#000000 !important;
+    }
+    label{
+        font-weight :500 !important;
+    }
+	.form-horizontal .control-label{
+		text-align:left;
+	}
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8,.col-md-4{
+		padding-right:11px !important;
+		padding-left:11px !important;
+	}
+	.pageHeadingLabe12,.pageHeadingLabel1{
+		font-size:17px;
+	}
+	.form-control {
+		border:1px solid #aaa;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        -webkit-transition: none;
+        transition: none;
+    }
+</style>
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-left" style="font-size:15px;">
+					<span class="pageHeadingLabel1">Edit </span>
+					<span class="pageHeadingLabe12">Rentals</span>
+				</div>
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addBookingInformation" id="addBookingInformation"  method="post" action="<?php echo $this->url('cym-hotel-booking', array('action' => 'edit-rentals')); ?>" autocomplete="off">
+                <div class="box-body box-footer">
+					<div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Rental Type</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="bookingRef" name="bookingRef" placeholder="Enter Rental Type" tabindex="1" value="<?php echo $result['tariff'][0]['type_name']; ?>" readonly="readonly"/>
+                                    <input type="hidden" class="form-control" id="rentalId" name="rentalId" value="<?php echo $result['tariff'][0]['rental_type']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Package</label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control" id="package" name="package" readonly="readonly" value="<?php echo strtoupper($result['tariff'][0]['package']); ?>" tabindex="2" />
+                                    <input type="hidden" class="form-control" id="extraId" name="extraId" value="<?php echo $result['extra-tariff']['extra_id']; ?>" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<?php
+					if($result['tariff'][0]['rental_type']!='2'){
+					?>
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Price Per Hours </label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control" id="perHrsPrice" name="perHrsPrice" title="Please enter extra price per hrs" placeholder="Enter Extra Price Per Hours" value="<?php echo $result['extra-tariff']['extra_per_hrs_price']; ?>" tabindex="3"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Price Per Kms<span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="perKmsPrice" name="perKmsPrice" title="Please enter extra price per kms" placeholder="Enter Extra Price Per Kms" value="<?php echo $result['extra-tariff']['extra_per_kms_price']; ?>" tabindex="4"/>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<?php } ?>
+					
+					<?php
+					if($result['tariff'][0]['rental_type']=='2'){
+					?>
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Driver Allowance In Day <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="driverAllowanceInDay" name="driverAllowanceInDay" title="Please enter driver allowance in day" placeholder="Enter Driver Allowance" value="<?php echo $result['extra-tariff']['driver_allowance_day']; ?>" tabindex="3"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Driver Allowance In Night<span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="driverAllowanceInNight" name="driverAllowanceInNight" title="Please enter driver allowance in night" placeholder="Enter Driver Allowance" value="<?php echo $result['extra-tariff']['driver_allowance_night']; ?>" tabindex="4"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Price Per Kms<span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="perKmsPrice" name="perKmsPrice" title="Please enter extra price per kms" placeholder="Enter Extra Price Per Kms" value="<?php echo $result['extra-tariff']['extra_per_kms_price']; ?>" tabindex="5"/>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<?php } ?>
+                    <h4>Tariff Details</h4>
+                    <?php if($result['tariff'][0]['rental_type']!='2'){ ?>
+                    <table id="tariffTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Tariff Hrs</th>
+                            <th>Tariff Kms</th>
+                            <th>Tariff Amount</th>
+                            <th>Next Tariff Hrs</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $i=1;
+                        if(sizeof($result['tariff'])>0){
+                            foreach($result['tariff'] as $tariff){
+                        ?>
+                                <tr>
+                                    <td>
+                                    <input type="text" id="tariffHrs<?php echo $i;?>" name="tariffHrs[]" class="form-control isRequired" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $tariff['tariff_hrs']; ?>"/>
+                                    </td>
+                                    <td>
+                                    <input type="text" class="form-control isRequired" id="tariffKms<?php echo $i;?>" name="tariffKms[]" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $tariff['tariff_kms']; ?>"/>
+                                    </td>
+                                    <td><input type="text" class="form-control isRequired" id="tariffAmt<?php echo $i;?>" name="tariffAmt[]" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $tariff['tariff_amt']; ?>"/></td>
+                                    <td><input type="text" class="form-control" id="nextTariffHrs<?php echo $i;?>" name="nextTariffHrs[]" placeholder="Next Tariff Hrs" value="<?php echo $tariff['next_tariff_hrs']; ?>"/></td>
+                                    <td align="center">
+                                    <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                    </td>
+                                </tr>
+                        <?php
+                            $i++;
+                            }
+                        }
+                        ?>
+                        
+                        </tbody>
+                    </table>
+                    <?php } ?>
+
+                    <?php if($result['tariff'][0]['rental_type']=='2'){ ?>
+                    <table id="tariffTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Tariff Day</th>
+                            <th>Tariff Kms</th>
+                            <th>Tariff Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $i=1;
+                        if(sizeof($result['tariff'])>0){
+                            foreach($result['tariff'] as $tariff){
+                        ?>
+                                <tr>
+                                    <td>
+                                    <input type="text" id="tariffHrs<?php echo $i;?>" name="tariffHrs[]" class="form-control isRequired checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $tariff['tariff_hrs']; ?>"/>
+                                    </td>
+                                    <td>
+                                    <input type="text" class="form-control isRequired checkNum" id="tariffKms<?php echo $i;?>" name="tariffKms[]" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $tariff['tariff_kms']; ?>"/>
+                                    </td>
+                                    <td><input type="text" class="form-control isRequired checkNum" id="tariffAmt<?php echo $i;?>" name="tariffAmt[]" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $tariff['tariff_amt']; ?>"/></td>
+                                </tr>
+                        <?php
+                            $i++;
+                            }
+                        }
+                        ?>
+                        
+                        </tbody>
+                    </table>
+                    <?php } ?>
+					
+            </div>
+                <div class="box-footer">
+                    <a href="<?php echo $this->url('cym-hotel-booking', array('action' => 'rentals')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;" tabindex="33">					
+                </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    rowCount='<?php echo $i; ?>';
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('addBookingInformation').submit();
+            }
+        }
+    }
+    
+    function insRow() {
+		rowCount++;
+		rl = document.getElementById("tariffTable").rows.length;
+		var a = document.getElementById("tariffTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f= a.insertCell(4);
+		
+		f.setAttribute("align", "center");
+		
+		rl = document.getElementById("tariffTable").rows.length - 1;
+		b.innerHTML = '<input type="text" class="form-control isRequired" id="tariffHrs' + rowCount + '" name="tariffHrs[]" placeholder="Tariff Hrs" />';
+		c.innerHTML = '<input type="text" class="form-control isRequired" id="tariffKms' + rowCount + '" name="tariffKms[]" placeholder="Tariff Kms" />';
+		d.innerHTML = '<input type="text" class="form-control isRequired" id="tariffAmt' + rowCount + '" name="tariffAmt[]" placeholder="Tariff Amount"/>';
+		e.innerHTML = '<input type="text" class="form-control" id="nextTariffHrs' + rowCount + '" name="nextTariffHrs[]" placeholder="Next Tariff Hrs"/>';
+		f.innerHTML = '<a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+    }
+    
+    function removeRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("bookedByTable").rows.length;
+		    if (rl == 1) {
+			insRow();
+		    }
+		});
+    }
+</script>

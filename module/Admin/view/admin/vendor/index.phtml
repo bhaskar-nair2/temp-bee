@@ -1,0 +1,89 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'edit') || $acl->isAllowed($role, 'Admin\Controller\Vendor', 'view')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';	
+}
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Vendor</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'add')) {
+					?>
+					<a href="<?php echo $this->url('vendor',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Vendor</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="vendorDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Vendor Name</th>
+								<th>Vendor Code</th>
+								<th>Vendor Type</th>
+								<th>City</th>
+								<th>Contact No</th>
+								<th>Status</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'edit') || $acl->isAllowed($role, 'Admin\Controller\Vendor', 'view')) { ?>
+								<th>Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="7" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					  </table>
+				
+				
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+        $(document).ready(function() {
+    $('#vendorDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+        "sAjaxSource": "<?php echo $this->url('vendor',array('action' => 'index')); ?>",
+         "fnServerData": function ( sSource, aoData, fnCallback ) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+    } );
+
+} );
+       
+</script>

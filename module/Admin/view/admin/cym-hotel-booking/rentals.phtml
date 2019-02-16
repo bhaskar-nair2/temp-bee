@@ -1,0 +1,149 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+if ($acl->isAllowed($role, 'Admin\Controller\HotelBooking', 'edit')) {
+	$editAction.= ',{"sClass":"center icon-btn","bSortable":false}';
+}
+?>
+<style type="text/css">
+.table>tbody>tr>td {
+    padding : 6px !important;
+}
+.icon-btn{
+    text-align:center !important;
+}
+</style>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >CYM Hotel Booking </span>
+				<span class="pageHeadingLabe12"> Rental</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="rentalDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Package</th>
+								<th>Rental Type</th>
+								<th>Tariff</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\HotelBooking', 'edit')) { ?>
+								<th>E</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="7" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+    oTable = null;
+	
+    $(document).ready(function() {
+    oTable=$('#rentalDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+		"bLengthChange": false,
+		"scrollX": true,
+		//"lengthMenu": [[10,20,30,50,-1], [10,20,30,50,"All"]],
+		"pageLength": 30,
+        "aoColumns": [
+		<?php echo $editAction;?>
+        ],
+		
+		"aaSorting": [[ 0, "desc" ]],
+        "sAjaxSource": "<?php echo $this->url('cym-hotel-booking',array('action' => 'rentals')); ?>",
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+			$.ajax({
+				"dataType": 'json',
+				"type": "POST",
+				"url": sSource,
+				"data": aoData,
+				"success": fnCallback
+			});
+        }
+    });
+	
+	$('#fromDate').datepicker({
+		//todayBtn: "linked",
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'dd-M-yyyy'
+	}).on('changeDate', function (selected) {
+		var minDate = new Date(selected.date.valueOf());
+		$('#toDate').val('');
+		$('#toDate').datepicker('setStartDate', minDate);
+		oTable.fnDraw();
+	});
+	
+	$('#toDate').datepicker({
+		//todayBtn: "linked",
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'dd-M-yyyy'
+	}).on('changeDate', function (selected) {
+		oTable.fnDraw();
+	});
+		
+} );
+	function searchHotelBooking(){
+		if($('#fromDate').val()==""){
+			alert("Please select the from date");
+			return;
+		}
+		if($('#toDate').val()==""){
+			alert("Please select the to date");
+			return;
+		}
+		
+		oTable.fnDraw();
+	}
+	function clearDateRange(){
+		$('#fromDate').datepicker('update', '');
+		$('#toDate').datepicker('update', '');
+		oTable.fnDraw();
+	}
+	
+	function exportToExcel(){
+		if($('#fromDate').val()==""){
+			alert("Please select the from date");
+			return;
+		}
+		if($('#toDate').val()==""){
+			alert("Please select the to date");
+			return;
+		}
+		$.blockUI();
+		$.post("<?php echo $this->url('hotel-booking',array('action'=>'export-in-excel')); ?>",{ fromDate: $("#fromDate").val(),toDate: $("#toDate").val()},
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+	}
+</script>

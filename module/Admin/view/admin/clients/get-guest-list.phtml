@@ -1,0 +1,9 @@
+<?php
+$guestList='<option value="">--Select--</option>';
+if(sizeof($result)>0){
+    foreach($result as $res){
+        $guestList.='<option value="'.$res['guest_name'].'" data-id="'.$res['guest_id'].'" data-mobile="'.$res['mobile_no'].'">'.$res['guest_name'].'</option>';
+        //$guestList[]=array('value'=>$res['guest_name'],'mobile'=>$res['mobile_no'],'email'=>$res['email'],'id'=>$res['guest_id']);
+    }
+}
+echo $guestList;

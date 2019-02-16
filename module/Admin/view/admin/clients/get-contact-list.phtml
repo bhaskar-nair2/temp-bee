@@ -1,0 +1,9 @@
+<?php
+$contactList='<option value="">--Select--</option>';
+if(sizeof($result)>0){
+    foreach($result as $res){
+        $contactList.='<option value="'.$res['contact_name'].'" data-id="'.$res['contact_id'].'" data-mobile="'.$res['mobile_no'].'" data-email="'.$res['email'].'">'.$res['contact_name'].'</option>';
+        //$contactList[]=array('value'=>$res['contact_name'],'mobile'=>$res['mobile_no'],'id'=>$res['contact_id']);
+    }
+}
+echo $contactList;

@@ -1,0 +1,444 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+if(isset($result['fuel_date']) && trim($result['fuel_date'])!=""){
+	$result['fuel_date']=$commonService->humanDateFormat($result['fuel_date']);
+}
+if(isset($result['last_fuel_date']) && trim($result['last_fuel_date'])!=""){
+	$result['last_fuel_date']=$commonService->humanDateFormat($result['last_fuel_date']);
+}
+//\Zend\Debug\Debug::dump($result);die;
+?>
+<style>
+	body {
+        color:#000000 !important;
+    }
+    label{
+        font-weight :500 !important;
+    }
+	.form-horizontal .control-label{
+		text-align:left;
+	}
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8,.col-md-4{
+		padding-right:11px !important;
+		padding-left:11px !important;
+	}
+	.datepicker.dropdown-menu {
+		background-color: #1972bffc !important ;
+		color: #fff !important ;
+	}
+	
+	.datepicker table tr td.old, .datepicker table tr td.new{
+		color:#ccc9c9 !important;
+	}
+	
+	.datepicker table tr td.day:hover,.datepicker table tr td.active.day{
+		background: #f59e00 !important;
+	}
+	.pageHeadingLabe12,.pageHeadingLabel1{
+		font-size:17px;
+	}
+	.select2-container--default .select2-selection--single{
+		border:1px solid #aaa;
+		border-radius:4px;
+	}
+	.form-control {
+		border:1px solid #aaa;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        -webkit-transition: none;
+        transition: none;
+    }
+</style>
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-left" style="font-size:15px;">
+					<span class="pageHeadingLabel1">Edit </span>
+					<span class="pageHeadingLabe12">Fuel</span>
+				</div>
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addFuelInformation" id="addFuelInformation"  method="post" action="<?php echo $this->url('fuel', array('action' => 'edit')); ?>" autocomplete="off">
+                <div class="box-body box-footer">
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Fuel Fill Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" placeholder="Fuel Fill Date" id="fuelFillDate" name="fuelFillDate" title="Please select the fuel fill date" readonly="readonly" tabindex="1" value="<?php echo $result['fuel_date']; ?>"/>
+									<input type="hidden" class="form-control" id="vehicleMode" name="vehicleMode">
+									<input type="hidden" class="form-control" id="vehicleId" name="vehicleId" value="<?php echo $result['vehicle_id']; ?>">
+									<input type="hidden" class="form-control" id="driverId" name="driverId" value="<?php echo $result['driver_id']; ?>">
+									<input type="hidden" class="form-control" id="petrolPumpId" name="petrolPumpId" value="<?php echo $result['pump_id']; ?>">
+									<input type="hidden" class="form-control" id="fuelId" name="fuelId" value="<?php echo base64_encode($result['fuel_id']); ?>">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle No <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <select  class="form-control isRequired " id="vehicle" name="vehicle" title="Please select vehicle" tabindex="2">
+									<option value=""></option>
+									<?php
+									foreach($vehicleResult as $vehicle){
+									?>
+									<option value="<?php echo $vehicle['vehicle_no']; ?>" data-vehicle-id="<?php echo $vehicle['vehicle_id']; ?>" data-vehicle-type="<?php echo $vehicle['type_name']; ?>" data-vehicle-mode="own" <?php echo(($vehicle['vehicle_no']==$result['vehicle_no']) ? "selected='selected'" : "") ?>><?php echo ucwords($vehicle['vehicle_no']);  ?></option>
+									<?php
+									}
+									?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle Make </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="vehicleType" name="vehicleType" placeholder="Vehicle Type"  title="Please enter the vehicle type" tabindex="3" value="<?php echo $result['vehicle_make']; ?>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Petrol Pump <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<select class="form-control isRequired" name="petrolPump" id="petrolPump" title="Please enter the petrol pump" tabindex="4">
+										<option value=""></option>
+										<?php
+										foreach($petrolPumpResult as $pump){
+										?>
+										<option value="<?php echo $pump['pump_name']; ?>" data-pump-id="<?php echo $pump['pump_id']; ?>" <?php echo(($pump['pump_id']==$result['pump_id']) ? "selected='selected'" : "") ?>><?php echo ucwords($pump['pump_name']);  ?></option>
+										<?php
+										}
+										?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						
+						
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Driver Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <select  class="form-control isRequired " id="driverName" name="driverName" title="Please select driver" tabindex=5">
+										<option value=""></option>
+										<?php
+										foreach($driverResult as $driver){
+										?>
+										<option value="<?php echo ucwords($driver['employee_name']); ?>" data-driver-id="<?php echo $driver['employee_id']; ?>" <?php echo(($driver['employee_id']==$result['driver_id']) ? "selected='selected'" : "") ?>><?php echo ucwords($driver['employee_name']);  ?></option>
+										<?php
+										}
+										?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Last Fuel Kms </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum" id="lastFuelKms" name="lastFuelKms" placeholder="Last Fuel Kms" tabindex="6" title="Please enter last fuel kms" value="<?php echo $result['last_fuel_kms']; ?>" onblur="calMileage();">
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Last Fuel Date </label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control datepicker" placeholder="Last Fuel Date" id="lastFuelDate" name="lastFuelDate" title="Please select the last fuel date" readonly="readonly" tabindex="7" value="<?php echo $result['last_fuel_date']; ?>" />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Current Kms <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired checkNum" id="currentKms" name="currentKms" placeholder="Current Kms" tabindex="8" title="Please enter current kms" value="<?php echo $result['current_kms']; ?>" onblur="calMileage();" />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Fuel Quantity <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired checkNum" id="quantity" name="quantity" placeholder="Fuel Quantity" tabindex="9" title="Please enter fuel quantity" value="<?php echo $result['quantity']; ?>" onblur="calMileage();"/>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Total Kms</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum" id="totalKms" name="totalKms" placeholder="Total Kms" tabindex="100" title="Please enter total kms" value="<?php echo $result['total_kms']; ?>" readonly/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Mileage </label>
+                                <div class="col-lg-8">
+								<input type="text" class="form-control" id="mileage" name="mileage" placeholder="Mileage" value="<?php echo $result['mileage_per_litre']; ?>" readonly/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Amount Per Litre <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired checkNum" id="amtPerLtr" name="amtPerLtr" placeholder="Amount Per Litre" tabindex="10" title="Please enter amount per litre" value="<?php echo $result['amount_per_ltr']; ?>" />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Total Amount <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired checkNum" id="totalAmount" name="totalAmount" placeholder="Total Amount" tabindex="11" title="Please enter total amount" value="<?php echo $result['total_amount']; ?>" />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Payment Mode <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<select class="form-control" id="paymentMode" name="paymentMode" title="Please select payment mode" tabindex="12">
+										<option value="">-- Select --</option>
+										<?php
+										foreach($paymentMode as $mode){
+										?>
+										<option value="<?php echo base64_encode($mode['type_id']); ?>" <?php echo(($mode['type_id']==$result['payment_mode']) ? "selected='selected'" : "") ?>><?php echo $mode['payment_type']; ?></option>
+										<?php
+										}
+										?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Staff Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<select class="form-control isRequired" name="employee" id="employee" title="Please select the staff name" tabindex="13">
+										<option value="">--Select--</option>
+										<?php
+										foreach($employee as $emp){
+										?>
+										<option value="<?php echo base64_encode($emp['employee_id']); ?>" <?php echo(($emp['employee_id']==$result['staff_name']) ? "selected='selected'" : "") ?>><?php echo ucwords($emp['employee_name'])." - ".$emp['employee_no']; ?></option>
+										<?php
+										}
+										?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					
+            </div>
+                <div class="box-footer">
+                    <a href="<?php echo $this->url('fuel', array('action' => 'reports')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;" tabindex="20">
+					
+                </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/bootstrap-typeahead.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/input-mask/jquery.inputmask.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/input-mask/jquery.inputmask.date.extensions.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/input-mask/jquery.inputmask.extensions.js'; ?>"></script>
+
+
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addFuelInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('addFuelInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+      
+		$('.datepicker').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+		
+		$('#fuelFillDate').datepicker({
+			clearBtn: true,
+			autoclose: true,
+			todayHighlight: true,
+			format: 'dd-M-yyyy'
+		}).on('changeDate', function (selected) {
+			$("#vehicle").select2('open');
+		});
+		
+		$("#petrolPump").select2({
+			placeholder: "--Select--",
+			tags: true,
+		}).on("change", function(e) {
+			selected=this.options[this.selectedIndex];
+			pumpId=selected.getAttribute('data-pummp-id');
+			if(pumpId=='' || pumpId=='null' || pumpId==null){
+				$("#petrolPumpId").val('');
+			}else{
+				$("#petrolPumpId").val(pumpId);
+			}
+		});
+		
+		$("#driverName").select2({
+			placeholder: "--Select Driver--",
+			tags: true,
+		}).on("change", function(e) {
+			selected=this.options[this.selectedIndex];
+			checkEmpId=selected.getAttribute('data-driver-id');
+			if(checkEmpId=='' || checkEmpId=='null' || checkEmpId==null){
+				$("#driverId").val('');
+			}else{
+				$("#driverId").val(checkEmpId);
+			}
+		});
+		
+		$("#vehicle").select2({
+			placeholder: "--Select Vehicle--",
+			tags: true
+		}).on("change", function(e) {
+			selected=this.options[this.selectedIndex];
+			checkMode=selected.getAttribute('data-vehicle-mode');
+			vehicleId=selected.getAttribute('data-vehicle-id');
+			vehicleType=selected.getAttribute('data-vehicle-type');
+			if(checkMode=='' || checkMode=='null' || checkMode==null){
+				$("#vehicleType").val('');
+				$("#vehicleMode").val('Vendor');
+				$("#vehicleId").val('');
+			}else{
+				$("#vehicleType").val(vehicleType);
+				$("#vehicleMode").val(checkMode);
+				$("#vehicleId").val(vehicleId);
+				getLastFuelDetails();
+			}
+		});
+		
+	   $("#paymentMode").select2({
+			placeholder: "--Select--",
+			width:"100%",
+		});
+	   
+		$("#employee").select2({
+			placeholder: "--Select--"
+		});
+		
+		<?php
+		if(trim($result['vehicle_id'])==""){
+		?>
+		var newVehicleVal="<?php echo $result['vehicle_no'] ?>";
+		var newVehicleNo = new Option(newVehicleVal, newVehicleVal, true, true);
+		$("#vehicle").append(newVehicleNo).trigger('change');
+		<?php } ?>
+		
+		<?php
+		if(trim($result['driver_id'])==""){
+		?>
+		var newDriverVal="<?php echo $result['driver_name'] ?>";
+		var newDriverName = new Option(newDriverVal, newDriverVal, true, true);
+		$("#driverName").append(newDriverName).trigger('change');
+		<?php } ?>
+		
+	});
+    
+	
+	$("#driverName").on("select2:close", function (e) {
+		$("#lastFuelKms").focus();
+	});
+	
+	$("#vehicle").on("select2:close", function (e) {
+		$('#vehicleType').focus();
+	});
+	$("#vehicleType").blur(function(){
+		$("#petrolPump").select2('open');
+	});
+	$("#petrolPump").on("select2:close", function (e) {
+		$("#driverName").select2('open');
+	});
+	$("#totalAmount").blur(function(){
+		$("#paymentMode").select2('open');
+	});
+	$("#paymentMode").on("select2:close", function (e) {
+		$("#employee").select2('open');
+	});
+	
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+	}
+	
+	function getLastFuelDetails(){
+		vehicle_id=$("#vehicleId").val();
+		$.post("<?php echo $this->url('fuel', array('action' => 'get-last-fuel-info')); ?>", {vehicle_id: vehicle_id},
+        function(data) {
+			data=JSON.parse(data);
+            if(data.lastFuelKms!=""){
+				$("#lastFuelKms").val(data.lastFuelKms);
+				$("#lastFuelDate").val(data.lastFuelDate);
+			}
+        });
+	}
+	
+	function calMileage(){
+		lastKms=parseFloat($("#lastFuelKms").val());
+		curKms=parseFloat($("#currentKms").val());
+		qty=parseFloat($("#quantity").val());
+		if(curKms>0 && lastKms>0 && qty>0){
+			if(curKms>lastKms){
+				totKms=curKms-lastKms;
+				$("#totalKms").val(totKms);
+				mil=totKms/qty;
+				$("#mileage").val(mil.toFixed(2));
+			}else{
+				$("#currentKms").val('');
+				$("#mileage").val('');
+				alert("Please check current kms and last fuel kms");
+			}
+		}else{
+			$("#mileage").val('');
+		}
+	}
+</script>

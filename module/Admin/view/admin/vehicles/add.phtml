@@ -1,0 +1,271 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12"> Vehicle</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vehicles', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                 <li><a href="<?php echo $this->url('vehicles', array('action' => 'index')); ?>"> Vehicles</a></li>
+                <li class="active">Add Vehicle</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addVehicleInformation" id="addVehicleInformation"  method="post" action="<?php echo $this->url('vehicles', array('action' => 'add')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicleType" class="col-lg-4 control-label">Vehicle Type <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vehicleType" name="vehicleType" title="Please select vehicle type" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($vehicleType as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['type_id']);  ?>"><?php echo $val['type_name'];  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicleNo" class="col-lg-4 control-label">Vehicle Number <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="vehicleNo" name="vehicleNo" placeholder="Vehicle Number" title="Please enter vehicle number" onblur="checkNameValidation('vehicle_details','vehicle_no', this, null, 'Already exist this vehicle number . Please enter another number.');"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicleMode" class="col-lg-4 control-label">Vehicle Owner <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vehicleMode" name="vehicleMode" title="Please select vehicle mode" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($vehicleMode as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['mode_id']);  ?>"><?php echo $val['mode_name'];  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehRegistrationYear" class="col-lg-4 control-label">Vehicle Registration Year</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="vehRegistrationYear" name="vehRegistrationYear" placeholder="Vehicle Registration Year"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicleCategory" class="col-lg-4 control-label">Vehicle Category <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vehicleCategory" name="vehicleCategory" title="Please select vehicle category" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($vehicleCategoryResult as $vehicleMakeType){
+                                        ?>
+                                        <option value="<?php echo $vehicleMakeType['make_id'];  ?>"><?php echo ucwords($vehicleMakeType['make_type']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="noOfSeating" class="col-lg-4 control-label">No.of.seating </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="noOfSeating" name="noOfSeating" placeholder="No Of Seating" title=""/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Insurance Renewal Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="insuranceRenewalDate" name="insuranceRenewalDate" placeholder="Insurance Renewal Date" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Tax Renewal Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="taxRenewalDate" name="taxRenewalDate" placeholder="Tax Renewal Date" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">FC Renewal Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="fcRenewalDate" name="fcRenewalDate" placeholder="FC Renewal Date" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Permit Renewal Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="permitRenewalDate" name="permitRenewalDate" placeholder="Permit Renewal Date" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Pollution Renewal Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="pollutionRenewalDate" name="pollutionRenewalDate" placeholder="Pollution Renewal Date" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+				<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="hypothecation" class="col-lg-4 control-label">Hypothecation </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="hypothecation" name="hypothecation" placeholder="Hypothecation"/>
+                                </div>
+                            </div>
+				</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="loanAmount" class="col-lg-4 control-label">Loan Amount</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="loanAmount" name="loanAmount" placeholder="Loan Amount"/>
+                                </div>
+                            </div>
+                        </div>
+				<div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Loan Closing Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="loanClosingDate" name="loanClosingDate" placeholder="Loan Closing Date" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+			  
+			  <div class="row">
+				<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clientId" class="col-lg-4 control-label">Allocated By </label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control" id="clientId" name="clientId" title="Please select allocated by" >
+                                        <option value="">--Select--</option>
+                                        <?php
+						    foreach($clientResult as $client){
+							?>
+							<option value="<?php echo $client['client_id']; ?>"><?php echo $client['client_name']; ?></option>
+							<?php
+						    }
+						    ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+			  </div>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vehicles', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addVehicleInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addVehicleInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+	$(function() {
+		$('.datepicker').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+		$("#clientId").select2({
+			placeholder: "--Select--",
+			allowClear: true
+		});
+	});
+	
+</script>

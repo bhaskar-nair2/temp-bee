@@ -1,0 +1,333 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Edit </span>
+				<span class="pageHeadingLabe12"> Vehicle Usage</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vehicle-usage', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('vehicle-usage', array('action' => 'index')); ?>"> Vehicle Usage</a></li>
+                <li class="active">Edit Vehicle Usage</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+    
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addVehicleUsage" id="addVehicleUsage"  method="post" action="<?php echo $this->url('vehicle-usage', array('action' => 'edit')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vehicle" name="vehicle" title="Please select vehicle" onchange="checkMultipleFieldValidations()">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($vehicleResult as $vehicle){
+                                        ?>
+                                        <option value="<?php echo $vehicle['vehicle_id']; ?>" <?php echo(($vehicle['vehicle_id']==$result['vehicle_id']) ? "selected='selected'" : "") ?>><?php echo $vehicle['vehicle_no']." - ".$vehicle['type_name']; ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle Usage Month<span class="mandatory">*</span></label>
+                                <div class="col-lg-6 input-append date" id="dpMonths" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+                                    <input type="text" class="form-control isRequired readonly" id="usageMonth" name="usageMonth" placeholder="Select vehicle usage month & year" title="Please select vehicle usage month and year" readonly="readonly" value="<?php echo $result['month']."-".$result['year']; ?>"/>
+                                    <span class="add-on"><i class="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="odometerOpenKms" class="col-lg-4 control-label">Odometer Opening Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="odometerOpenKms" name="odometerOpenKms" placeholder="Enter odometer open kms" title="Please enter odometer open kms" value="<?php echo $result['odometer_open_km']; ?>" onkeyup="calUsedKm()"/>
+                                    <input type="hidden" class="form-control" id="usageId" name="usageId"  value="<?php echo base64_encode($result['usage_id']); ?>" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="odometerCloseKms" class="col-lg-4 control-label">Odometer Closing Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="odometerCloseKms" name="odometerCloseKms" placeholder="Enter odometer close kms" title="Please enter odometer close kms" value="<?php echo $result['odometer_close_km']; ?>" onkeyup="calUsedKm()"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                   <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalUsedKms" class="col-lg-4 control-label">Total Used  Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="totalUsedKms" name="totalUsedKms" placeholder="Enter total used kms" title="Please enter total used kms" value="<?php echo $result['total_used_km']; ?>" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gpsUsedKms" class="col-lg-4 control-label">Gps Used Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="gpsUsedKms" name="gpsUsedKms" placeholder="Enter gps used kms" title="Please enter gps used kms" value="<?php echo $result['gps_used_km']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalHotelRevenueKms" class="col-lg-4 control-label">Total Hotel Revenue  Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="totalHotelRevenueKms" name="totalHotelRevenueKms" placeholder="Enter total hotel revenue kms" title="Please enter total hotel revenue kms" value="<?php echo $result['total_hotel_revenue_kms']; ?>" onkeyup="getNonRevenueKms();calHotelRevPerKm()"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalCorpRevenueKms" class="col-lg-4 control-label">Total Corp Revenue Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="totalCorpRevenueKms" name="totalCorpRevenueKms" placeholder="Enter total corp revenue kms" title="Please enter total corp kms" value="<?php echo $result['total_corp_revenue_kms']; ?>" onkeyup="getNonRevenueKms();calCorpRevPerKm();" onblur="getNonRevenueKms();calCorpRevPerKm();"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nonRevenueKms" class="col-lg-4 control-label">Non Revenue Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="nonRevenueKms" name="nonRevenueKms" placeholder="Enter non revenue kms" title="Please enter non revenue kms" value="<?php echo $result['non_revenue_kms']; ?>" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalHotelRevenue" class="col-lg-4 control-label">Total Hotel Revenue </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="totalHotelRevenue" name="totalHotelRevenue" placeholder="Enter total hotel revenue" title="Please enter total hotel revenue" value="<?php echo $result['total_hotel_revenue']; ?>" onkeyup="calHotelRevPerKm()" onblur="calHotelRevPerKm()"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalCorpRevenue" class="col-lg-4 control-label">Total Corp Revenue</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="totalCorpRevenue" name="totalCorpRevenue" placeholder="Enter total corp revenue" title="Please enter total corp revenue" value="<?php echo $result['total_corp_revenue']; ?>" onkeyup="calCorpRevPerKm()" onblur="calCorpRevPerKm()"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="hotelRevenuePerKm" class="col-lg-4 control-label">Hotel Revenue Per Km </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="hotelRevenuePerKm" name="hotelRevenuePerKm" placeholder="Enter hotel revenue per km" title="Please enter hotel revenue per km" value="<?php echo $result['hotel_revenue_per_km']; ?>" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="corpRevenuePerKm" class="col-lg-4 control-label">Corp Revenue Per Km</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="corpRevenuePerKm" name="corpRevenuePerKm" placeholder="Enter corp revenue per km" title="Please enter corp revenue per km" value="<?php echo $result['corp_revenue_per_km']; ?>" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalFuel" class="col-lg-4 control-label">Total Fuel <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="totalFuel" name="totalFuel" placeholder="Enter total fuel" title="Please enter total fuel" value="<?php echo $result['total_fuel']; ?>" onkeyup="calMileagePerLitre()" onblur="calMileagePerLitre()"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fuelAmount" class="col-lg-4 control-label">Fuel Amount <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="fuelAmount" name="fuelAmount" placeholder="Enter fuel amount" title="Please enter fuel amount" value="<?php echo $result['fuel_amount']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mileagePerLit" class="col-lg-4 control-label">Mileage Per Litre <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="mileagePerLit" name="mileagePerLit" placeholder="Enter mileage per litre" title="Please enter mileage per litre" value="<?php echo $result['mileage_per_litre']; ?>" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vehicle-usage', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'addVehicleUsage'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addVehicleUsage').submit();
+            }
+        }
+    }
+    
+    function checkMultipleFieldValidations()
+	{
+		
+		vehicle=$("#vehicle").val();
+	    usageMonth=$("#usageMonth").val();
+	    
+	    if(vehicle!="" && usageMonth!=""){
+            $.unblockUI();
+            var date = new Date($('#usageMonth').val());
+            var day = date.getDate();
+            var monthIndex = date.getMonth()+parseInt(1);
+            var year = date.getFullYear();
+            selectedDate=year+"-"+monthIndex+"-01";
+            var json_data = { 
+                "tableName" : "vehicle_usage_details",
+                "tablePrimaryKeyId" : "usage_id",
+				"tablePrimaryKeyValue" : "<?php echo $result['usage_id']; ?>",
+                "columns":[
+                    {
+                        "column_name" : "vehicle_id",
+                        "column_value": vehicle
+                    },
+                    {
+                        "column_name" : "usage_date",
+                        "column_value": selectedDate
+                    }
+                ]
+            }
+		//console.log(json_data);
+		$.post("<?php echo $this->url('common', array('action' => 'check-multiple-column-value')); ?>", { json_data : json_data},
+		function(data){
+		    if(data>0)
+		    {
+            $.unblockUI();
+			alert("This vehicle and motnth already exist,Please choose another");
+			document.getElementById("vehicle").value="";
+			duplicateName=false;
+		    }
+		    else{
+			duplicateName=true;
+            $.unblockUI();
+		    }
+		});
+	     
+	    }
+	}
+    
+    $(function() {
+        $('#dpMonths').datepicker({
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'M-yyyy',
+            viewMode: "months",
+            minViewMode: "months",
+		}).on('changeDate', function(e) {
+          // `e` here contains the extra attributes
+          checkMultipleFieldValidations();
+        });
+	});
+    
+    function calUsedKm(){
+        openKms=$("#odometerOpenKms").val();
+        closeKms=$("#odometerCloseKms").val();
+        if(openKms!="" && closeKms!=""){
+            usedKms=parseFloat(closeKms)-parseFloat(openKms);
+            $("#totalUsedKms").val(usedKms);
+        }
+    }
+    
+    function getNonRevenueKms(){
+        totalUsedKms=$("#totalUsedKms").val();   
+        totalHotelRevenueKms=$("#totalHotelRevenueKms").val();
+        totalCorpRevenueKms=$("#totalCorpRevenueKms").val();
+        if(totalHotelRevenueKms!="" && totalCorpRevenueKms!="" && totalUsedKms!=""){
+            nonRevenueKms=parseFloat(totalUsedKms)-(parseFloat(totalHotelRevenueKms)+parseFloat(totalCorpRevenueKms));
+            $("#nonRevenueKms").val(nonRevenueKms);
+        }
+    }
+    
+    function calHotelRevPerKm(){
+        totalHotelRevenue=$("#totalHotelRevenue").val();
+        totalHotelRevenueKms=$("#totalHotelRevenueKms").val();
+        if(totalHotelRevenue!="" && totalHotelRevenueKms!=""){
+            hotelRevPerKm=totalHotelRevenue/totalHotelRevenueKms;
+            hotelRevPerKm=hotelRevPerKm.toFixed(2);
+            $("#hotelRevenuePerKm").val(hotelRevPerKm);
+        }
+    }
+    
+    function calCorpRevPerKm(){
+        totalCorpRevenue=$("#totalCorpRevenue").val();
+        totalCorpRevenueKms=$("#totalCorpRevenueKms").val();
+        if(totalCorpRevenue!="" && totalCorpRevenueKms!="" && totalCorpRevenueKms!=0){
+            corpRevPerKm=totalCorpRevenue/totalCorpRevenueKms;
+            corpRevPerKm=corpRevPerKm.toFixed(2);
+            $("#corpRevenuePerKm").val(corpRevPerKm);
+        }else{
+          $("#corpRevenuePerKm").val(0);
+        }
+    }
+    
+    function calMileagePerLitre(){
+        totUsedKms=$("#totalUsedKms").val();
+        totFuel=$("#totalFuel").val();
+        if(totUsedKms!="" && totFuel!=""){
+            milPerLt=totUsedKms/totFuel;
+            milPerLt=milPerLt.toFixed(2);
+            $("#mileagePerLit").val(milPerLt);
+        }
+    }
+</script>

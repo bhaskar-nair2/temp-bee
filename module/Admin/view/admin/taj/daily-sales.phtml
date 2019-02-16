@@ -1,0 +1,132 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Taj', 'edit-daily-sales')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}
+$startDate=date('01-M-Y',strtotime('this month'));
+$endDate=date('t-M-Y',strtotime('this month'));
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Taj Daily Sales</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Taj', 'add-daily-sales')) {
+					?>
+					<a href="<?php echo $this->url('taj',array('action' => 'add-daily-sales'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Daily Sales</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group">
+			  <label>Search Sale Date &nbsp;</label>
+			  <input type="text" class="form-control" id="searchDate" name="searchDate" placeholder="Search Date" readonly="readonly" value="<?php echo $startDate.' to '.$endDate; ?>"/>
+			</div>
+			<div class="form-group">
+			<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-default">
+			&nbsp;<a href="" class="btn btn-danger">Reset</a>
+			&nbsp;<a href="javascript:void(0)" onclick="exportToExcel();" class="btn btn-primary" title="Download"><i class="fa fa-download"> Export to excel </i></a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<table id="tajDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Sales Date</th>
+								<th>Suv</th>
+								<th>Sedan</th>
+								<th>Daily Target</th>
+								<th>Monthly Target</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Taj', 'edit-daily-sales')) { ?>
+								<th>Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="6" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+    oTable = null;
+	startDate="<?php echo date('Y-m-01',strtotime('this month')); ?>";
+	endDate="<?php echo date('Y-m-t',strtotime('this month')); ?>";
+    $(document).ready(function() {
+    oTable=$('#tajDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+		"lengthMenu": [[10,20,30,50,-1], [10,20,30,50,"All"]],
+		"pageLength": 30,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+		"aaSorting": [[ 0, "desc" ]],
+        "sAjaxSource": "<?php echo $this->url('taj',array('action' => 'daily-sales')); ?>",
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+			aoData.push({ "name":"startDate","value": startDate});
+			aoData.push({ "name":"endDate","value": endDate});
+			$.ajax({
+				"dataType": 'json',
+				"type": "POST",
+				"url": sSource,
+				"data": aoData,
+				"success": fnCallback
+			});
+        }
+    } );
+	$('#searchDate').daterangepicker({
+		  format: 'DD-MMM-YYYY',
+		  separator: ' to ',
+		  startDate: moment().subtract('days', 29),
+		  endDate: moment(),
+		  ranges: {
+			  'This Month': [moment().startOf('month'), moment().endOf('month')],
+			  'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+		  }
+	  },
+	  function(start, end) {
+		startDate = start.format('YYYY-MM-DD');
+		endDate = end.format('YYYY-MM-DD');
+		oTable.fnDraw();
+	});
+} );
+    
+	function exportToExcel(){
+		$.blockUI();
+		$.post("<?php echo $this->url('taj',array('action'=>'export-to-excel-daily-sales')); ?>",{startDate:startDate,endDate:endDate},
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+	}
+	
+</script>

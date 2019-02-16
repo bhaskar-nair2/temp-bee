@@ -1,0 +1,181 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'edit-payment') || $acl->isAllowed($role, 'Admin\Controller\Vendor', 'view-payment')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';	
+}
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Vendor Payment</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'add-payment')) {
+					?>
+					<a href="<?php echo $this->url('vendor',array('action' => 'add-payment'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Vendor Payment</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group input-append date" id="dpMonths" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+			  <label>Search From </label>
+				<input type="text" class="form-control isRequired readonly" id="paymentFromMonth" name="paymentMonth" placeholder="Select from month & year" title="Please select from month and year" readonly="readonly"/>
+				<span class="add-on"><i class="icon-calendar"></i></span>
+			</div>
+			<div class="form-group input-append date" id="dpToMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+			  <label> Search To </label>
+				<input type="text" class="form-control readonly" id="paymentToMonth" name="paymentToMonth" placeholder="Select to month & year" title="Please select to month and year" readonly="readonly"/>
+				<span class="add-on"><i class="icon-calendar"></i></span>
+			</div>
+			<div class="form-group">
+				<label>Vendor Name</label>
+				<select class="form-control" name="vendor" id="vendor" title="Please select the vendor" onchange="oTable.fnDraw();">
+				<option value="">--Select--</option>
+				<?php
+				foreach($vendorList as $vendor){
+				?>
+				<option value="<?php echo base64_encode($vendor['vendor_id']); ?>"><?php echo $vendor['vendor_name']."-".$vendor['vendor_no']; ?></option>
+				<?php
+				}
+				?>
+				</select>
+			</div>
+			<div class="form-group">
+			  <label>Status</label>
+			  <select class="form-control" name="paymentStatus" id="paymentStatus" onchange="oTable.fnDraw();">
+					<option value="">--Payment Status--</option>
+					<option value="pending">Pending</option>
+					<option value="completed">Completed</option>
+				</select>
+			</div>
+			<br/>
+			<br/>
+			<div class="form-group">
+			<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-default ">
+			<a href="" class="btn btn-danger">Reset</a>
+			<a href="javascript:void(0)" onclick="exportToExcel();" class="btn btn-primary" title="Download">Export to excel</a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="vendorDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Vendor Name</th>
+								<th>Vendor Code</th>
+								<th>Vendor Type</th>											
+								<th>Balance Amount</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="10" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					  </table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+    $(document).ready(function() {
+		oTable=$('#vendorDataTable').dataTable( {
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			"lengthMenu": [[20,30,50,100,-1], [20,30,50,100,"All"]],
+			"pageLength": 30,
+			"aoColumns": [
+			<?php echo $editAction;?>
+            ],
+			"sAjaxSource": "<?php echo $this->url('vendor',array('action' => 'ledger')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+			aoData.push({ "name":"startDate","value": $("#paymentFromMonth").val()});
+			aoData.push({ "name":"endDate","value": $("#paymentToMonth").val()});
+			aoData.push({ "name":"vendorName","value": $("#vendor").val()});
+			aoData.push({ "name":"paymentStatus","value": $("#paymentStatus").val()});
+			$.ajax({
+				"dataType": 'json',
+				"type": "POST",
+				"url": sSource,
+				"data": aoData,
+				"success": fnCallback
+			});
+			}
+		});
+		
+		$('#dpMonths').datepicker({
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'M-yyyy',
+		viewMode: "months",
+		minViewMode: "months",
+	}).on('changeDate', function(e) {
+	  // `e` here contains the extra attributes
+	  oTable.fnDraw();
+	});
+	
+	$('#dpToMonth').datepicker({
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'M-yyyy',
+		viewMode: "months",
+		minViewMode: "months",
+	}).on('changeDate', function(e) {
+	  // `e` here contains the extra attributes
+	  oTable.fnDraw();
+	});
+		
+} );
+	
+	function exportToExcel(){
+        paymentFromMonth=$("#paymentFromMonth").val();
+        paymentToMonth=$("#paymentToMonth").val();
+        if(paymentFromMonth==""){
+            alert("Please select search from date");
+            return false;
+        }
+        else if(paymentToMonth==""){
+            alert("Please select search to date");
+            return false;
+        }
+        else{
+		$.blockUI();
+		$.post("<?php echo $this->url('vendor',array('action'=>'export-to-excel-vendor-payment')); ?>",{startDate:paymentFromMonth,endDate:paymentToMonth},
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+        }
+	}
+    
+
+	
+</script>

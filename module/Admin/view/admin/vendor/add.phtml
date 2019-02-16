@@ -1,0 +1,353 @@
+<?php
+$vehicleType='<option value="">--Select--</option>';
+foreach($vehicleTypeResult as $val){
+	$vehicleType.='<option value="'.$val['type_id'].'">'.$val['type_name'].'</option>';
+}
+
+$vehicleCategory='<option value="">--Select--</option>';
+foreach($vehicleCategoryResult as $category){
+	$vehicleCategory.='<option value="'.$category['make_id'].'">'.ucwords($category['make_type']).'</option>';
+}
+
+?>
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12"> Vendor</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vendor', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+					<input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('vendor', array('action' => 'index')); ?>"> Vendor</a></li>
+				<li class="active">Add Vendor</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addVendorInformation" id="addVendorInformation"  method="post" action="<?php echo $this->url('vendor', array('action' => 'add')); ?>" enctype="multipart/form-data" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendorName" class="col-lg-4 control-label">Vendor Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="vendorName" name="vendorName" placeholder="Vendor Name" title="Please enter vendor name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendorCode" class="col-lg-4 control-label">Vendor Code <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="vendorCode" name="vendorCode" placeholder="Client Code" title="Please enter vendor code" value="<?php echo "VC".$vendorNo; ?>" onblur="checkNameValidation('vendors','vendor_no', this, null, 'Already exist this vendor code . Please enter another code.');"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendorType" class="col-lg-4 control-label">Vendor Type <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" id="vendorType" name="vendorType" title="Please select vendor type" onchange="checkVendorType()">
+                                        <option value="">--Select--</option>
+                                        <option value="attached">Attached</option>
+                                        <option value="oncall">Oncall</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address" class="col-lg-4 control-label">Address <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control isRequired" name="address" id="address" placeholder="Address" title="Please enter the address"></textarea>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendorCity" class="col-lg-4 control-label">City <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+									<select  class="form-control isRequired select2" id="vendorCity" name="vendorCity[]" title="Please select city" multiple="multiple">
+										<?php
+										foreach($cityResult as $city){
+										?>
+										<option value="<?php echo $city['city_id']; ?>"><?php echo ucwords($city['city_name']);  ?></option>
+										<?php
+										}
+										?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+							<div class="form-group">
+                              <label for="contactNo" class="col-lg-4 control-label">Contact Number <span class="mandatory">*</span></label>
+                              <div class="col-lg-6">
+                                  <input type="text" class="form-control isRequired" id="contactNo" name="contactNo" placeholder="Contact Number" title="Please enter contact number"/>
+                              </div>
+							</div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+                              <label for="contactNo" class="col-lg-4 control-label">Alternate Contact Number</label>
+                              <div class="col-lg-6">
+                                  <input type="text" class="form-control" id="altContactNo" name="altContactNo" placeholder="Alternate Contact Number" title="Please enter alternate contact number"/>
+                              </div>
+							</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="panNumber" class="col-lg-4 control-label">Pan Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="panNumber" name="panNumber" placeholder="Pan Number" title="Please enter the pan number"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gstNo" class="col-lg-4 control-label">GST Number</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="gstNo" name="gstNo" placeholder="GST Number" title="Please enter the gst number"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="accountNo" class="col-lg-4 control-label">Bank Account Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="accountNo" name="accountNo" placeholder="Enter Account Number" title="Please enter the bank account number"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vendor Agreement </label>
+                                <div class="col-lg-6">
+                                    <input type="file" class="form-control" title="please choose agreement file" name="vendorAgreement" id="vendorAgreement">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" id="status" name="status" title="Please select status">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>Vehicle Details</h4>
+                    <table id="vehicleTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Vehicle Cat.</th>
+                            <th>Vehicle Type</th>
+                            <th>Vehicle No</th>
+                            <th>Tax Expiry Date</th>
+                            <th>Ins. Expiry Date</th>
+							<th>RC Attachment</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+							<td>
+								<select class="form-control attachedManField" name="vehicleCategory[]" id="vehicleCategory1" title="Please select the vehicle category">
+									<?php
+									echo $vehicleCategory
+									?>
+								</select>
+                            </td>
+							<td>
+								<select class="form-control attachedManField" name="vehicleType[]" id="vehicleType1" title="Please select the vehicle type">
+									<?php
+									echo $vehicleType
+									?>
+								</select>
+                            </td>
+                            <td>
+								<input type="text" class="form-control attachedManField" id="vehicleNo1" name="vehicleNo[]" placeholder="Vehicle Number" title="Please enter the vehicle number"  onblur="checkVehicleNo(this);checkNameValidation('vehicle_details','vehicle_no', this, null, 'Already exist this vehicle number . Please enter another number.');"/>
+                            </td>
+                            <td>
+                            <input type="text" class="form-control attachedManField datepicker" id="taxExpiry1" name="taxExpiry[]" placeholder="Tax Expiry" readonly="readonly"/>
+                            </td>
+                            <td>
+								<input type="text" class="form-control attachedManField datepicker" id="insuranceExpiry1" name="insuranceExpiry[]" placeholder="Insurance Expiry" readonly="readonly" title="Please select the insurance expiry date"/>
+							</td>
+							<td>
+								<input type="file" class="form-control attachedManField" title="please choose rc attachment" name="rcAttachment[]" id="rcAttachment1">
+							</td>
+                            <td align="center">
+                            <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                            </td>
+                            
+                        </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vendor', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+						<input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    rowCount=1;
+	traRowCount=1;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addVendorInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addVendorInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+    
+    function insRow() {
+		rowCount++;
+		rl = document.getElementById("vehicleTable").rows.length;
+		var a = document.getElementById("vehicleTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		var e = a.insertCell(3);
+		var f = a.insertCell(4);
+		var g = a.insertCell(5);
+		var h = a.insertCell(6);
+		
+		h.setAttribute("align", "center");
+		
+		rl = document.getElementById("vehicleTable").rows.length - 1;
+		b.innerHTML = '<select class="form-control attachedManField" name="vehicleCategory[]" id="vehicleCategory'+rowCount+'" title="Please select the vehicle category"><?php echo $vehicleCategory; ?></select>';
+		c.innerHTML = '<select class="form-control attachedManField" name="vehicleType[]" id="vehicleType'+rowCount+'" title="Please select the vehicle type"><?php echo $vehicleType; ?></select>';
+		d.innerHTML = '<input type="text" class="form-control attachedManField" id="vehicleNo'+rowCount+'" name="vehicleNo[]" placeholder="Vehicle Number" title="Please enter vehicle number" onblur="checkVehicleNo(this);checkNameValidation(\'vehicle_details\',\'vehicle_no\', this, null, \'Already exist this vehicle number . Please enter another number.\');"/>';
+		e.innerHTML = '<input type="text" class="form-control attachedManField datepicker" id="taxExpiry'+rowCount+'" name="taxExpiry[]" placeholder="Tax Expiry" readonly="readonly"/>';
+		f.innerHTML = '<input type="text" class="form-control attachedManField datepicker" id="insuranceExpiry'+rowCount+'" name="insuranceExpiry[]" placeholder="Insurance Expiry" readonly="readonly"/>';
+		g.innerHTML = '<input type="file" class="form-control attachedManField" title="please choose rc attachment" name="rcAttachment[]" id="rcAttachment'+rowCount+'">';
+		h.innerHTML = '<a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		
+		$('.datepicker').datepicker({
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy',
+			startDate:'Today',
+		});
+		checkVendorType();
+    }
+	
+	function removeRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("vehicleTable").rows.length;
+		    if (rl == 1) {
+			insRow();
+		    }
+		});
+    }
+	
+   
+    $(function() {
+		$('.datepicker').datepicker({
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy',
+			startDate:'Today',
+		});
+		$(".select2").select2({
+        placeholder: "--Select--"
+		});
+	});
+	
+	function checkVendorType() {
+		objVal=$("#vendorType").val();
+        if(objVal=="attached"){
+			$(".attachedManField").addClass("isRequired");
+			$("#vehicleTable").css("display","table");
+		}else if(objVal=="oncall"){
+			$(".attachedManField").removeClass("isRequired");
+			$("#vehicleTable").css("display","none");
+		}
+    }
+	
+	function checkVehicleNo(obj) {
+        var subCategory=document.getElementsByName("vehicleNo[]");
+		cur_bulid_value=obj.value;
+		j=0;
+        for(i=0;i<subCategory.length;i++)
+        {
+            if(cur_bulid_value==subCategory[i].value)
+            {
+                j++;
+                if(j==2){                    
+                    //  obj.value="";                
+                }
+            }
+        }
+        if(j>1)
+        {
+            alert("This vehicle number already entered.");					
+            obj.value='';
+        }
+    }
+</script>

@@ -1,0 +1,138 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12"> Vehicle Service</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vehicle-service', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('vehicle-service', array('action' => 'index')); ?>"> Vehicle Service</a></li>
+                <li class="active">Add Vehicle Service</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addServiceInformation" id="addServiceInformation"  method="post" action="<?php echo $this->url('vehicle-service', array('action' => 'add')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="workOrderNo" class="col-lg-4 control-label">Work Order Number </label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo "BCW".$workOrderNo; ?></p>
+                                    <input type="hidden" class="form-control" id="workOrderSortNo" name="workOrderSortNo" value="<?php echo $workOrderNo; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicle" class="col-lg-4 control-label">Vehicle <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vehicle" name="vehicle" title="Please select vehicle" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($ownVehicle as $vehicle){
+                                        ?>
+                                        <option value="<?php echo base64_encode($vehicle['vehicle_id']);  ?>"><?php echo $vehicle['vehicle_no']; ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="garageName" class="col-lg-4 control-label">Garage Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="garageName" name="garageName" placeholder="Enter garage name" title="Please enter garage name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Garage In Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired datepicker readonly" id="serviceDate" name="serviceDate" placeholder="Enter service date" title="Please select service date" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceKm" class="col-lg-4 control-label">Garage In Km <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="serviceKm" name="serviceKm" placeholder="Enter garage in km" title="Please enter garage in km"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="workDescription" class="col-lg-4 control-label">Work Description <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control isRequired" name="workDescription" id="workDescription" placeholder="Work Description" title="Please enter the work description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                   
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vehicle-service', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    
+    $(function() {
+		$('.datepicker').datepicker({
+            todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+	});
+    
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addServiceInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addServiceInformation').submit();
+            }
+        }
+    }
+    
+</script>

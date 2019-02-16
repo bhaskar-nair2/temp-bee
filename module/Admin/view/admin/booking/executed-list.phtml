@@ -1,0 +1,165 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'edit')) {
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+$startDate=date('d-M-Y');
+$endDate=date('d-M-Y');
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Executed Booking</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'add')) {
+					?>
+					<a href="<?php echo $this->url('booking',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Booking</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group">
+				<label>Search From Trip Date </label>
+				<input type="text" class="form-control readonly" id="fromTripDate" name="fromTripDate" placeholder="From Trip Date" readonly="readonly" value="<?php echo $startDate; ?>"/>
+			</div>
+			<div class="form-group">
+				<label>Search Close Trip Date </label>
+				<input type="text" class="form-control readonly" id="closeTripDate" name="closeTripDate" placeholder="Close Trip Date" readonly="readonly" value="<?php echo $endDate; ?>"/>
+			</div>
+			
+			<div class="form-group">
+			<input type="button" onclick="searchTripDate();" value="Search" class="btn btn-default ">
+			<a href="javascript:void(0)" onclick="clearDateRange();" class="btn btn-default" title="Clear"> Clear </i></a>
+			<a href="" class="btn btn-danger">Reset</a>
+			</div>
+		</form>
+		<br/>
+		
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<table id="bookingDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Booking Ref No.</th>
+								<th>Trip Date</th>
+								<th>Trip Time</th>
+								<th>Trip Type</th>
+								<th>City</th>
+								<th>Client</th>
+								<th>Vehicle Category</th>
+								<th>Guest Name</th>
+								<th>Pickup Address</th>
+								<th>Driver Name</th>
+								<th>Driver Mobile</th>
+								<th>Vehicle No.</th>
+								<th>Vendor Name</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'edit')) { ?>
+								<th>Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="13" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+				
+				
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+    $(document).ready(function() {
+		oTable=$('#bookingDataTable').dataTable( {
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			 "aoColumns": [
+			<?php echo $editAction;?>
+				],
+			"aaSorting": [[ 1, "asc" ]],
+			"sAjaxSource": "<?php echo $this->url('booking',array('action' => 'executed-list')); ?>",
+			 "fnServerData": function ( sSource, aoData, fnCallback ) {
+				aoData.push({ "name":"fromTripDate","value": $('#fromTripDate').val()});
+				aoData.push({ "name":"closeTripDate","value": $('#closeTripDate').val()});
+				$.ajax({
+					"dataType": 'json',
+					"type": "POST",
+					"url": sSource,
+					"data": aoData,
+					"success": fnCallback
+				});
+			}
+		});
+		
+		$('#fromTripDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		}).on('changeDate', function (selected) {
+			var minDate = new Date(selected.date.valueOf());
+			//$('#closeTripDate').val("").datepicker("update");
+			$('#closeTripDate').datepicker('setStartDate', minDate);
+		});
+		
+		$('#closeTripDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+		
+	});
+    
+	function clearDateRange(){
+		$('#fromTripDate').datepicker('update', '');
+		$('#closeTripDate').datepicker('update', '');
+		//$('#fromTripDate').val("").datepicker("update");
+		//$('#closeTripDate').val("").datepicker("update");
+		oTable.fnDraw();
+	}
+	
+	function searchTripDate(){
+		if($('#fromTripDate').val()==""){
+			alert("Please select the from trip date");
+			return;
+		}
+		if($('#closeTripDate').val()==""){
+			alert("Please select the close trip date");
+			return;
+		}
+		oTable.fnDraw();
+	}
+	
+	function generateTripSheet(billId){
+		window.open('<?php echo $this->url('booking',array('action' => 'generate-trip-sheet')); ?>'+billId);
+		
+		return false;
+	}
+	
+</script>

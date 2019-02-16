@@ -1,0 +1,126 @@
+
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Edit </span>
+				<span class="pageHeadingLabe12"> Hotel</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('hotel', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+          <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+    <div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+        <li><a href="<?php echo $this->url('hotel', array('action' => 'index')); ?>"> Hotel</a></li>
+        <li class="active">Edit Hotel</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+  
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addHotelInformation" id="addHotelInformation"  method="post" action="<?php echo $this->url('hotel', array('action' => 'edit')); ?>" autocomplete="off">
+                
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="roleName" class="col-lg-4 control-label">Hotel Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="hotelName" name="hotelName" placeholder="Enter hotel name" title="Please enter hotel name" onblur="checkNameValidation('hotel_details', 'hotel_name', this, '<?php echo "hotel_id##" .$result->hotel_id; ?>', 'Already exist this hotel name . Please enter another name.');" value="<?php echo $result->hotel_name; ?>"/>
+						<input type="hidden" class="form-control isRequired" id="hotelId" name="hotelId"  value="<?php echo base64_encode($result->hotel_id); ?>" />
+                                </div>
+                            </div>
+                        </div>
+				<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="roleName" class="col-lg-4 control-label">Hotel Code <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="hotelCode" name="hotelCode" placeholder="Enter hotel code" title="Please enter hotel code" onblur="checkNameValidation('hotel_details', 'hotel_code', this, null, 'Already exist this hotel code . Please enter another name.');" value="<?php echo $result->hotel_code; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+				<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="roleCode" class="col-lg-4 control-label">City <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" id="city" name="city" title="Please select the city">
+                                        <option value="">--Select--</option>
+							<?php
+							foreach($cityResult as $cityRes){
+							?>
+							<option value="<?php echo $cityRes['city_id']; ?>" <?php echo(($result->city==$cityRes['city_id']) ? "selected='selected'" : "") ?>><?php echo $cityRes['city_name']; ?></option>
+							<?php
+							}
+							?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control" id="status" name="status" title="Please select source status">
+                                        <option value="active" <?php echo(($result->status=='active') ? "selected='selected'" : "") ?>>Active</option>
+                                        <option value="inactive" <?php echo(($result->status=='inactive') ? "selected='selected'" : "") ?>>Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('hotel', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'addHotelInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addHotelInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+  
+</script>

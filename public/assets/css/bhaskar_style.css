@@ -1,0 +1,66 @@
+.table {
+  scroll-behavior: smooth;
+  overflow: scroll;
+  cursor: pointer;
+}
+
+.modal-body {
+  overflow-y: scroll;
+  max-height: 600px;
+}
+
+.navbar-btn,
+.btn-primary {
+  margin-right: 4px;
+  background-color: #5BC0EB;
+  border-color: #B6C8A9;
+}
+
+.navbar-btn:hover,
+.btn-primary:hover {
+  background-color: #0496FF;
+  border-color: #B6C8A9;
+}
+
+.toolbar {
+  margin: 0 0 4px 0;
+}
+
+.nav-tabs li a {
+  color: #F6F4D2 !important;
+  background-color: #A4AC96;
+}
+
+.nav-tabs li a:hover {
+  text-decoration: underline;
+  background-color: #A4AC96;
+}
+
+.nav-tabs li.active a {
+  color: #FFBC42 !important;
+}
+
+table th {
+  font-weight: bold;
+  color: #006BA6;
+}
+
+table tbody td a {
+  color: #9BC53D;
+}
+
+table tbody td a:nth-child(odd) {
+  padding-right: 8px;
+}
+
+table tbody td a:hover {
+  color: #63A46C;
+}
+
+.input-group-addon {
+  color: #020202;
+  background-color: #F5F5F5;
+  border: unset;
+  border-radius: unset;
+}
+/*# sourceMappingURL=styles.css.map */

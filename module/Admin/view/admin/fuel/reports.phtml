@@ -1,0 +1,205 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+if ($acl->isAllowed($role, 'Admin\Controller\Fuel', 'edit')) {
+	$editAction.= ',{"sClass":"center","bSortable":false}';
+}
+$startDate=date('d-M-Y');
+$endDate=date('d-M-Y');
+?>
+<style type="text/css">
+
+.table>tbody>tr>td {
+    padding : 6px !important;
+}
+
+</style>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Fuel </span>
+				<span class="pageHeadingLabe12"> Reports</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group">
+				<label>Petrol Pump </label>
+				<select class="form-control isRequired" name="petrolPump" id="petrolPump" title="Please enter the petrol pump" tabindex="4">
+					<option value=""></option>
+					<?php
+					foreach($petrolPumpResult as $pump){
+					?>
+					<option value="<?php echo $pump['pump_id']; ?>"><?php echo ucwords($pump['pump_name']); ?></option>
+					<?php
+					}
+					?>
+				</select>
+			</div>
+			<div class="form-group">
+				<label> From Date </label>
+				<input type="text" class="form-control readonly" id="fromDate" name="fromDate" placeholder="From Date" readonly="readonly" title="Please select the from date"/>
+			</div>
+			<div class="form-group">
+				<label>To Date </label>
+				<input type="text" class="form-control readonly" id="toDate" name="toDate" placeholder="To Date" readonly="readonly" title="Please select the to date"/>
+			</div>
+			<div class="form-group">
+				<label>Vehicle Type </label>
+				<select class="form-control" name="vehicleType" id="vehicleType">
+					<option value="">--All--</option>
+					<option value="own">Own</option>
+					<option value="vendor">Vendor</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+			<input type="button" onclick="searchFuel();" value="Search" class="btn btn-primary ">
+			<a href="" class="btn btn-success">Reset</a>
+			<a href="javascript:void(0)" class="btn btn-primary " onclick="exportToExcel()"><i class="fa fa-download"></i>&nbsp;Export Excel</a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="fuelDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Vehicle No.</th>
+								<th>Vehicle Type</th>
+								<th>Petrol Pump</th>
+								<th>Fuel Qty</th>
+								<th>Total Amount</th>
+								<th>Mileage</th>
+								<th>Driver Name</th>
+								<th>Payment Mode</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Fuel', 'edit')) { ?>
+								<th>E</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="10" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+    oTable = null;
+	
+    $(document).ready(function() {
+		$("#petrolPump").select2({
+			placeholder: "--Select--",
+			width:"150px",
+			tags: true,
+		}).on("change", function(e) {
+			oTable.fnDraw();
+		});
+		
+    oTable=$('#fuelDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+		"bLengthChange": false,
+		"scrollX": true,
+		//"lengthMenu": [[10,20,30,50,-1], [10,20,30,50,"All"]],
+		"pageLength": 30,
+        "aoColumns": [
+		<?php echo $editAction;?>
+        ],
+		"aaSorting": [[ 0, "desc" ]],
+        "sAjaxSource": "<?php echo $this->url('fuel',array('action' => 'reports')); ?>",
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+			aoData.push({ "name":"fromDate","value": $('#fromDate').val()});
+			aoData.push({ "name":"toDate","value": $('#toDate').val()});
+			aoData.push({ "name":"vehicleType","value": $('#vehicleType').val()});
+			aoData.push({ "name":"petrolPump","value": $('#petrolPump').val()});
+			$.ajax({
+				"dataType": 'json',
+				"type": "POST",
+				"url": sSource,
+				"data": aoData,
+				"success": fnCallback
+			});
+        }
+    });
+	
+	$('#fromDate').datepicker({
+		//todayBtn: "linked",
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'dd-M-yyyy'
+	}).on('changeDate', function (selected) {
+		var minDate = new Date(selected.date.valueOf());
+		$('#toDate').val('');
+		$('#toDate').datepicker('setStartDate', minDate);
+		oTable.fnDraw();
+	});
+	
+	$('#toDate').datepicker({
+		//todayBtn: "linked",
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'dd-M-yyyy'
+	}).on('changeDate', function (selected) {
+		oTable.fnDraw();
+	});
+		
+} );
+	function searchFuel(){
+		if($('#fromDate').val()==""){
+			alert("Please select the from date");
+			return;
+		}
+		if($('#toDate').val()==""){
+			alert("Please select the to date");
+			return;
+		}
+		
+		oTable.fnDraw();
+	}
+	function clearDateRange(){
+		$('#fromDate').datepicker('update', '');
+		$('#toDate').datepicker('update', '');
+		oTable.fnDraw();
+	}
+	
+	function exportToExcel(){
+		if($('#fromDate').val()==""){
+			alert("Please select the from date");
+			return;
+		}
+		if($('#toDate').val()==""){
+			alert("Please select the to date");
+			return;
+		}
+		$.blockUI();
+		$.post("<?php echo $this->url('fuel',array('action'=>'export-in-excel')); ?>",{ fromDate: $("#fromDate").val(),toDate: $("#toDate").val()},
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+	}
+</script>

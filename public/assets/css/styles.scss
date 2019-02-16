@@ -1,0 +1,103 @@
+$color:(white1: #FFFFFF,
+white2: #F5F5F5,
+white3: #F6F4D2,
+
+blue1: #5BC0EB,
+blue_1: #48A9A6,
+blue2: #0496FF,
+blue3: #006BA6,
+
+green1: #63A46C,
+green2: #9BC53D,
+
+orange1: #FFBC42,
+orange2: #FE9920,
+orange3: #FA7921,
+
+grey1: #B6C8A9,
+grey2: #A4AC96,
+grey3: #627264,
+
+black1: #253031,
+black2: #020202
+);
+
+@function col($col_name) {
+    @return map-get($map: $color, $key:$col_name)
+}
+
+.table {
+    scroll-behavior: smooth;
+    overflow: scroll;
+    cursor: pointer;
+}
+
+.modal-body {
+    overflow-y: scroll;
+    max-height: 600px;
+}
+
+.navbar-btn,
+.btn-primary {
+    margin-right: 4px;
+    background-color: col(blue1);
+    border-color: col(grey1);
+
+    &:hover {
+        background-color: col(blue2);
+        border-color: col(grey1);
+
+    }
+}
+
+.toolbar{
+    margin: 0 0 4px 0;
+}
+
+.nav-tabs {
+    li {
+        a {
+            color: col(white3) !important;
+            background-color: col(grey2);
+            &:hover {
+                text-decoration: underline;
+                background-color: col(grey2);
+
+            }
+        }
+    }
+
+    li.active {
+        a {
+            color: col(orange1) !important;
+        }
+    }
+}
+
+table{
+    th{
+        font-weight: bold;
+        color: col(blue3);
+    }
+    tbody{
+        td{
+            a{
+                color: col(green2);
+                &:nth-child(odd){
+                    padding-right: 8px;
+                }
+                &:hover{
+                    color: col(green1);
+                }
+            }
+        }
+    }
+
+}
+
+.input-group-addon {
+    color: col(black2);
+    background-color: col(white2);
+    border: unset;
+    border-radius: unset;
+}

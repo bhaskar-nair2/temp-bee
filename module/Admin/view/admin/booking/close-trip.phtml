@@ -1,0 +1,743 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+use Application\Service\CommonService;
+$commonService=new CommonService();
+
+if(isset($result['booking']['trip_to_date']) && trim($result['booking']['trip_to_date'])!=""){
+    $result['booking']['trip_to_date']=$commonService->humanDateFormat($result['booking']['trip_to_date']);
+}
+
+if(isset($result['booking']['paid_date']) && trim($result['booking']['paid_date'])!=""){
+    $result['booking']['paid_date']=$commonService->humanDateFormat($result['booking']['paid_date']);
+}
+if(isset($result['booking']['service_tax_type']) && $result['booking']['service_tax_type']=='sgst'){
+	$totalTax=$result['booking']['sgst_tax']+$result['booking']['cgst_tax'];
+}else{
+	$totalTax=$result['booking']['igst_tax'];
+}
+$pathname = UPLOAD_PATH . DIRECTORY_SEPARATOR . "booking" . DIRECTORY_SEPARATOR .$result['booking']['booking_id'];
+?>
+
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Close </span>
+				<span class="pageHeadingLabe12"> Booking</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+                    if(isset($comingFrom) && $comingFrom=='cl0s3'){
+                    ?>
+                    <a href="<?php echo $this->url('booking', array('action' => 'closed-list')); ?>" class="btn btn-default">Cancel</a>
+                    <?php
+                    }else{
+                    ?>
+                    <a href="<?php echo $this->url('booking', array('action' => 'executed-list')); ?>" class="btn btn-default">Cancel</a>
+                    <?php } ?>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('booking', array('action' => 'executed-list')); ?>">Execute Booking</a></li>
+                <li class="active">Close Booking</li>
+				</ol>
+			</div>
+		</div>
+    </section>
+    
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-left" style="font-size:20px;">Booking Details</div> 
+                <div class="pull-right" style="font-size:12px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="executeBookingInformation" id="executeBookingInformation"  method="post" action="<?php echo $this->url('booking', array('action' => 'close-trip')); ?>" enctype="multipart/form-data" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-4 div-group -animated">
+                            <label>Booking Ref.</label>
+                            <p class="form-control"><?php echo $result['booking']['booking_no']; ?></p>
+                            <input type="hidden" class="form-control isRequired" id="bookingId" name="bookingId" value="<?php echo base64_encode($result['booking']['booking_id']); ?>"/>
+                            <input type="hidden" class="form-control isRequired" id="companyId" name="companyId" value="<?php echo $result['booking']['company_id']; ?>"/>
+                            <input type="hidden" class="form-control isRequired" id="clientId" name="clientId" value="<?php echo $result['booking']['client_id']; ?>"/>
+                            <input type="hidden" class="form-control isRequired" id="cityId" name="cityId" value="<?php echo $result['booking']['city']; ?>"/>
+                            <input type="hidden" class="form-control isRequired" id="bookingType" name="bookingType" value="<?php echo $result['booking']['booking_type']; ?>"/>
+                            <input type="hidden" id="deletedTripSheetFile" name="deletedTripSheetFile" />
+                            <input type="hidden" class="form-control" id="comingFrom" name="comingFrom" value="<?php echo $comingFrom; ?>"/>
+                            <input type="hidden" class="form-control" id="extAmtPerHrs" name="extAmtPerHrs" value="<?php echo $result['booking']['ext_amt_per_hrs']; ?>"/>
+                            <input type="hidden" class="form-control" id="extAmtPerKms" name="extAmtPerKms" value="<?php echo $result['booking']['ext_amt_per_km']; ?>"/>
+                            <input type="hidden" class="form-control" id="driverAllowancePerDay" name="driverAllowancePerDay" value="<?php echo $result['booking']['ext_amt_per_km']; ?>"/>
+                            <input type="hidden" class="form-control" id="driverAllowancePerNight" name="driverAllowancePerNight" value="<?php echo $result['booking']['ext_amt_per_km']; ?>"/>
+                        </div>
+                        <div class="col-md-4 div-group -animated">
+                            <label>Client</label>
+                            <p class="form-control"><?php echo ucwords($result['booking']['client_name']); ?></p>
+                        </div>
+                        <div class="col-md-4 div-group -animated">
+                            <label>Guest Name</label>
+                            <p class="form-control"><?php echo ucwords($result['booking']['guest_name']); ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 div-group -animated">
+                            <label>Booking Type</label>
+                            <p class="form-control"><?php echo ucwords($result['booking']['unit_name']); ?></p>
+                        </div>
+                        <div class="col-md-4 div-group -animated">
+                            <label>Booking City </label>
+                            <p class="form-control"><?php echo ucwords($result['booking']['city_name']); ?></p>
+                        </div>
+                        <div class="col-md-4 div-group -animated">
+                            <label>Vehicle No </label>
+                            <p class="form-control"><?php echo $result['booking']['vehicle_no']; ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>Vehicle Category</label>
+                            <select class="form-control isRequired" id="vehicleCategory" name="vehicleCategory" title="Please select vehicle category" >
+                                <option value="">-- Select Vehicle Category --</option>
+                                <?php
+                                foreach($vehicleCategory as $vehCategory){
+                                ?>
+                                <option value="<?php echo $vehCategory['make_id']; ?>" <?php echo(($vehCategory['make_id']==$result['booking']['make_type']) ? "selected='selected'" : "") ?>><?php echo ucwords($vehCategory['make_type']);  ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>Duty Type</label>
+                            <select  class="form-control isRequired" id="dutyType" name="dutyType" title="Please select duty type" onchange="checkRentalType();">
+                                <option value="">-- Select Duty Type --</option>
+                                <?php
+                                foreach($rentalTypeResult as $rentalType){
+                                ?>
+                                <option value="<?php echo $rentalType['type_id']; ?>" <?php echo(($rentalType['type_id']==$result['booking']['duty_type']) ? "selected='selected'" : "") ?>><?php echo ucwords($rentalType['type_name']);  ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>Tariff</label>
+                            <input type="hidden" id="tariff" name="tariff" class="form-control" value="<?php echo $result['booking']['tariff']; ?>"/>
+                            
+                            <input type="text" id="tariffText" name="tariffText" class="form-control" value="<?php echo $result['booking']['tariff_text']; ?>" readonly/>
+                        </div>
+                    </div>
+                    <br/>
+                    <hr/>
+                    
+                    <h3>Trip Details</h3>
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Trip Start Date <span class="mandatory">*</span></label>
+                            <input type="text" class="form-control isRequired" id="startDate" name="startDate" title="Please select the trip start date" readonly="readonly" value="<?php echo $commonService->humanDateFormat($result['booking']['trip_from_date']); ?>"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Trip End Date <span class="mandatory">*</span></label>
+                            <input type="text" class="form-control isRequired" id="endDate" name="endDate" title="Please select the trip end date" readonly="readonly" value="<?php echo $result['booking']['trip_to_date']; ?>"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Total Day(s) <span class="mandatory">*</span></label>
+                            <input type="text" class="form-control" id="totalDays" name="totalDays" title="Please enter the total days"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>Start Time <span class="mandatory">*</span></label>
+                            <select class="form-control isRequired select2" id="startTime" name="startTime" title="Please selelct start time">
+                            <option value="">--Select Start Time--</option>
+                            <?php
+                            for($t=0;$t<=23;$t++){
+                                if(strlen($t)==1){
+                                    $t="0".$t;
+                                }
+                            ?>
+                            <option value="<?php echo $t.":00"; ?>" <?php echo(($result['booking']['trip_start_time']== $t.":00") ? "selected='selected'" : "") ?>><?php echo $t.":00"; ?></option>
+                            <option value="<?php echo $t.":15"; ?>" <?php echo(($result['booking']['trip_start_time']== $t.":15") ? "selected='selected'" : "") ?>><?php echo $t.":15"; ?></option>
+                            <option value="<?php echo $t.":30"; ?>" <?php echo(($result['booking']['trip_start_time']== $t.":30") ? "selected='selected'" : "") ?>><?php echo $t.":30"; ?></option>
+                            <option value="<?php echo $t.":45"; ?>" <?php echo(($result['booking']['trip_start_time']== $t.":45") ? "selected='selected'" : "") ?>><?php echo $t.":45"; ?></option>
+                            <?php
+                              }
+                            ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>End Time <span class="mandatory">*</span></label>
+                            <select class="form-control isRequired select2" id="endTime" name="endTime" title="Please selelct end time">
+                            <option value="">--Select End Time--</option>
+                            <?php
+                            for($t=0;$t<=23;$t++){
+                                if(strlen($t)==1){
+                                    $t="0".$t;
+                                }
+                            ?>
+                            <option value="<?php echo $t.":00"; ?>" <?php echo(($result['booking']['trip_close_time']== $t.":00") ? "selected='selected'" : "") ?>><?php echo $t.":00"; ?></option>
+                            <option value="<?php echo $t.":15"; ?>" <?php echo(($result['booking']['trip_close_time']== $t.":15") ? "selected='selected'" : "") ?>><?php echo $t.":15"; ?></option>
+                            <option value="<?php echo $t.":30"; ?>" <?php echo(($result['booking']['trip_close_time']== $t.":30") ? "selected='selected'" : "") ?>><?php echo $t.":30"; ?></option>
+                            <option value="<?php echo $t.":45"; ?>" <?php echo(($result['booking']['trip_close_time']== $t.":45") ? "selected='selected'" : "") ?>><?php echo $t.":45"; ?></option>
+                            <?php
+                              }
+                            ?>
+                            </select>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label id="totalHrsLabel">Total Hrs <span class="mandatory">*</span></label>
+                            <input type="text" id="totalHrs" name="totalHrs" class="form-control isRequired" value="<?php echo $result['booking']['total_hrs']; ?>"/>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Start Kms <span class="mandatory">*</span></label>
+                            <input type="text" id="startKms" name="startKms" class="form-control isRequired" value="<?php echo $result['booking']['start_kms']; ?>" onblur="getDateTime();calTotalKms();"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>End Kms <span class="mandatory">*</span></label>
+                            <input type="text" id="closeKms" name="closeKms" class="form-control isRequired" value="<?php echo $result['booking']['close_kms']; ?>" onblur="getDateTime();calTotalKms();"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Total Kms <span class="mandatory">*</span></label>
+                            <input type="text" id="totalKms" name="totalKms" class="form-control isRequired" value="<?php echo $result['booking']['total_kms']; ?>"/>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Extra Hrs</label>
+                            <input type="text" class="form-control" id="extraHrs" name="extraHrs" title="Please enter the extra hrs" value="<?php echo $result['booking']['extra_hrs']; ?>"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Extra Hrs Amount</label>
+                            <input type="text" id="extraHrsAmt" name="extraHrsAmt" class="form-control checkNum" value="<?php echo $result['booking']['ext_hrs_amount']; ?>" onblur="calTotalAmt();"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Extra Kms</label>
+                            <input type="text" class="form-control" id="extraKms" name="extraKms" title="Please enter the extra kms" value="<?php echo $result['booking']['extra_kms']; ?>"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Extra Kms Amount</label>
+                            <input type="text" id="extraKmsAmt" name="extraKmsAmt" class="form-control checkNum"  value="<?php echo $result['booking']['ext_kms_amount']; ?>" onblur="calTotalAmt();"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Tariff Amount <span class="mandatory">*</span> </label>
+                            <input type="text" id="tariffAmount" name="tariffAmount" class="form-control isRequired checkNum" value="<?php echo $result['booking']['tariff_amount']; ?>" onblur="calTotalAmt();" onkeypress="calTotalAmt();"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Parking / Toll Fee</label>
+                            <input type="text" id="parkingToll" name="parkingToll" class="form-control checkNum" value="<?php echo $result['booking']['parking_toll']; ?>" onblur="calTotalAmt();" onkeypress="calTotalAmt();">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Permit</label>
+                            <input type="text" id="permitAmt" name="permitAmt" class="form-control checkNum" value="<?php echo $result['booking']['parking_toll']; ?>" onblur="calTotalAmt();" onkeypress="calTotalAmt();">
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Day Time Driver Allowances</label>
+                            <input type="text" id="dayTimeDriverAllowance" name="dayTimeDriverAllowance" class="form-control checkNum" value="<?php echo $result['booking']['driver_allowance']; ?>" readonly="readonly"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Night Time Driver Allowances</label>
+                            <input type="text" id="nightTimeDriverAllowance" name="nightTimeDriverAllowance" class="form-control checkNum" value="<?php echo $result['booking']['driver_allowance']; ?>" readonly="readonly"/>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Driver Allowances</label>
+                            <input type="text" id="driverAllowance" name="driverAllowance" class="form-control checkNum" value="<?php echo $result['booking']['driver_allowance']; ?>" onblur="calTotalAmt();" onkeypress="calTotalAmt();"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Service Tax (<?php echo $totalTax; ?>%)</label>
+                            <input type="text" id="serviceTaxAmt" name="serviceTaxAmt" class="form-control" value="<?php if(isset($result['booking']['service_tax_amt'])){ echo $result['booking']['service_tax_amt']; } ?>" readonly="readonly"/>
+                            <input type="hidden" id="serviceTax" name="serviceTax" class="form-control" value="<?php echo $totalTax; ?>"/>
+							<input type="hidden" class="form-control" id="serviceTaxPaidByClient" name="serviceTaxPaidByClient" value="<?php echo $result['booking']['service_tax_paid_by_client']; ?>"/>
+							<input type="hidden" class="form-control" id="serviceTaxType" name="serviceTaxType" value="<?php echo $result['booking']['service_tax_type']; ?>"/>
+							<input type="hidden" class="form-control" id="sgstTax" name="sgstTax" value="<?php echo $result['booking']['sgst_tax']; ?>"/>
+							<input type="hidden" class="form-control" id="cgstTax" name="cgstTax" value="<?php echo $result['booking']['cgst_tax']; ?>"/>
+							<input type="hidden" class="form-control" id="igstTax" name="igstTax" value="<?php echo $result['booking']['igst_tax']; ?>"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Total Amount <span class="mandatory">*</span></label>
+                            <input type="text" id="totalAmount" name="totalAmount" class="form-control isRequired checkNum" title="Please enter total amount" value="<?php echo $result['booking']['total_amount']; ?>">
+                            <input type="hidden" id="subTotalAmount" name="subTotalAmount" class="form-control isRequired" title="Please enter total amount" value="<?php echo $result['booking']['sub_total_amount']; ?>">
+                        </div> 
+                    </div>
+                    <div class="row">
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Advance</label>
+                            <input type="text" id="advance" name="advance" class="form-control checkNum" value="<?php echo $result['booking']['advance']; ?>" onblur="calTotalAmt();">
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Balance</label>
+                            <input type="text" id="balance" name="balance" class="form-control checkNum" value="<?php echo $result['booking']['balance']; ?>" readonly="readonly">
+                        </div>
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>Payment Type </label>
+                            <select  class="form-control isRequired" id="paymentMode" name="paymentMode" title="Please select payment mode" >
+                                <option value="">--Select Payment Mode--</option>
+                                <?php
+                                foreach($paymentMode as $mode){
+                                ?>
+                                <option value="<?php echo base64_encode($mode['type_id']); ?>" <?php echo(($mode['type_id']==$result['booking']['mop']) ? "selected='selected'" : "") ?>><?php echo $mode['payment_type']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 div-group -animated select-wrapper">
+                            <label>Payment Status</label>
+                            <select class="form-control isRequired" id="paymentStatus" name="paymentStatus" title="Please select payment status">
+                                <option value="pending" <?php echo(($result['booking']['payment_status']=='pending') ? "selected='selected'" : "") ?>>Pending</option>
+                                <option value="paid" <?php echo(($result['booking']['payment_status']=='paid') ? "selected='selected'" : "") ?>>Paid</option>
+                            </select>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Paid Date</label>
+                            <input type="text" class="form-control datepicker readonly" id="paidDate" name="paidDate" title="Please select the paid date" readonly="readonly" value="<?php echo $result['booking']['paid_date']; ?>"/>
+                        </div>
+                        <div class=" col-md-4 div-group -animated">
+                            <label>Attach Trip Sheet</label>
+                            <?php
+                            if(isset($result['booking']['trip_sheet']) && trim($result['booking']['trip_sheet'])!="" && file_exists($pathname. DIRECTORY_SEPARATOR.$result['booking']['trip_sheet'])){
+                            ?>
+                            <div id="fileDiv" style="margin-top:5px;">
+                            <a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."booking". DIRECTORY_SEPARATOR .$result['booking']['booking_id']. DIRECTORY_SEPARATOR.$result['booking']['trip_sheet'] ?>" ><?php echo $result['booking']['trip_sheet']; ?></a>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="javascript:void(0)" class="btn-sm btn-danger" onclick="deleteAttachment('<?php echo $result['booking']['trip_sheet']; ?>')"> <i class="fa fa-close"></i> Delete</a>
+                            </div>
+                            <?php
+                            }
+                            ?>
+                            <input type="file" class="form-control" title="please choose agreement file" name="tripSheet" id="tripSheet" style="<?php if(trim($result['booking']['trip_sheet'])!=""){ echo "display:none"; } ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <?php
+                    if(isset($comingFrom) && $comingFrom=='cl0s3'){
+                    ?>
+                    <a href="<?php echo $this->url('booking', array('action' => 'closed-list')); ?>" class="btn btn-default">Cancel</a>
+                    <?php
+                    }else{
+                    ?>
+                    <a href="<?php echo $this->url('booking', array('action' => 'executed-list')); ?>" class="btn btn-default">Cancel</a>
+                    <?php } ?>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/bootstrap-typeahead.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/js/animate-label.js'; ?>"></script>
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'executeBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('executeBookingInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+        $('#startDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		}).on('changeDate', function(selected) {
+            if($('#startDate').val()!=""){
+            startDate = new Date(selected.date.valueOf());
+            startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+            $('#endDate').datepicker('setStartDate', startDate);
+            getDateTime();
+            }
+        });
+        
+        $('#endDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		}).on('changeDate', function(e) {
+            getDateTime();
+        });
+        
+        if($('#startDate').val()!=""){
+            startDate = new Date($('#startDate').val());
+            startDate.setDate(startDate.getDate());
+            $('#endDate').datepicker('setStartDate', startDate);
+        }
+        
+        
+        $('.datepicker').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+        
+        $(".select2").select2({
+        placeholder: "--Time--"
+        }).on("change", function(e) {
+            getDateTime();
+        });
+        
+        
+        if ($('.div-group .-animated .form-control').val() != '') {
+        //$('.div-group input').parent('.div-group').addClass('-active');
+        $('.div-group .form-control').parent('.div-group').addClass('-active');
+        
+      } else {
+        $(this).parent('.div-group').removeClass('-active');
+      }
+      
+	});
+    /*
+    function getTariff(){
+        companyId=$("#companyId").val();
+        client=$("#clientId").val();
+        businessUnit=$("#bookingType").val();
+        bookingCity=$("#cityId").val();
+        vehicleCategory=$("#vehicleCategory").val();
+        dutyType=$("#dutyType").val();
+        if(companyId!="" && client!="" && businessUnit!="" && bookingCity!="" && vehicleCategory!="" && dutyType!=""){
+          $.blockUI();
+          $.post("< ?php echo $this->url('rentals', array('action' => 'get-tariff')); ?>",{companyId:companyId,client:client,businessUnit:businessUnit,bookingCity:bookingCity,vehicleCategory:vehicleCategory,dutyType:dutyType},
+          function(data){
+              if (data!="") {
+                  document.getElementById("tariff").innerHTML=data;
+              }
+              $.unblockUI();
+          });
+        }
+    }
+    */
+    
+    function calTotalKms(){
+		stat_kms=$("#startKms").val();
+		close_kms=$("#closeKms").val();
+        //alert(close_kms);
+		if (stat_kms!="" && close_kms!="") {
+			if (stat_kms>close_kms) {
+				alert("Please check the close kms");
+				$("#closeKms").val('');
+				return;
+			}
+			tot_kms=close_kms-stat_kms;
+			$("#totalKms").val(tot_kms);
+		}
+	}
+    
+    function calTotalAmt() {
+		//$.blockUI();
+		ext_hrs_amt=0;
+		ext_kms_amt=0;
+		park_amt=0;
+		permit_amt=0;
+		driver_allowance=0;
+		hills_station_charges=0;
+		driver_accommodation=0;
+		
+		if ($("#extraHrsAmt").val()!="") {
+			ext_hrs_amt=$("#extraHrsAmt").val();
+		}
+		if ($("#extraKmsAmt").val()!="") {
+			ext_kms_amt=$("#extraKmsAmt").val();
+		}
+		if ($("#parkingToll").val()!="") {
+			park_amt=$("#parkingToll").val();
+		}
+        if ($("#permitAmt").val()!="") {
+			permit_amt=$("#permitAmt").val();
+		}
+		if ($("#driverAllowance").val()!="") {
+			driver_allowance=$("#driverAllowance").val();
+		}
+		
+		tariff_amt=$("#tariffAmount").val();
+		
+		if (tariff_amt!="") {
+			tot_amt=parseFloat(ext_hrs_amt)+parseFloat(ext_kms_amt)+parseFloat(tariff_amt)+parseFloat(driver_allowance)+parseFloat(park_amt)+parseFloat(permit_amt);
+			
+			$("#subTotalAmount").val(tot_amt);
+			
+            if($("#serviceTaxPaidByClient").val()=="yes"){
+            if($("#serviceTax").val()!=""){
+                service_tax=(parseFloat($("#serviceTax").val())/100);
+                serviceTaxAmt=parseFloat(tot_amt*service_tax).toFixed(2);
+                tot_amt=Math.round(parseFloat(tot_amt)+parseFloat(serviceTaxAmt));
+                $("#serviceTaxAmt").val(serviceTaxAmt);
+            }
+            }
+			
+            $("#totalAmount").val(tot_amt);
+            
+			
+			if ($("#advance").val()!="") {
+				tot_amt=Math.round(parseFloat(tot_amt)-parseFloat($("#advance").val()));
+			}
+			
+			$("#balance").val(tot_amt);
+		}
+		//$.unblockUI();
+	}
+    
+    function getDateTime(){
+        start_date=$("#startDate").val();
+		close_date=$("#endDate").val();
+		start_time=$("#startTime").val();
+		close_time=$("#endTime").val();
+		start_kms=$("#startKms").val();
+		close_kms=$("#closeKms").val();
+		totHours=0;
+		
+		//tariff=$("#tariff").val();
+		totalKms=close_kms-start_kms;
+        
+        
+        startDateTime=start_date+" "+start_time;
+		endDateTime=close_date+" "+close_time;
+		objDiff=diffDateTime(startDateTime,endDateTime);
+        
+        //console.log(objDiff);
+        
+        companyId=$("#companyId").val();
+        client=$("#clientId").val();
+        businessUnit=$("#bookingType").val();
+        bookingCity=$("#cityId").val();
+        vehicleCategory=$("#vehicleCategory").val();
+        dutyType=$("#dutyType").val();
+        
+        if (start_date!="" && close_date!="" && start_time!="" && close_time!="") {
+            
+            date1 = new Date(start_date);
+            date2 = new Date(close_date);
+            diffDays = date2.getDate() - date1.getDate();
+            $("#totalDays").val(diffDays+1);
+                
+            if (dutyType==1 || dutyType==3) {
+				$("#totalHrs").addClass("isRequired");
+				$("#totalHrsLabel").html('Total Hrs <span class="mandatory">*</span>');
+				//$("#totalDays").css("display","none");
+				//$("#totalHrs").css("display","block");
+				$("#totalDays").removeClass("isRequired");
+                
+                if (objDiff.minutes>29) {
+					totHours=parseFloat(objDiff.hours)+1;
+					totMins=0;
+				}else{
+					totHours=objDiff.hours;
+					totMins=objDiff.minutes;
+				}
+                
+				if(totHours.toString().length==1){
+					totHours="0"+totHours;
+				}
+				if(totMins.toString().length==1){
+					totMins="0"+totMins;
+				}
+				$("#totalHrs").val(totHours+":"+totMins);
+			}else if (dutyType==2){
+                
+                totHours=objDiff.totalhours;
+                totMins=objDiff.minutes;
+                
+				
+				if(totHours.toString().length==1){
+					totHours="0"+totHours;
+				}
+				if(totMins.toString().length==1){
+					totMins="0"+totMins;
+				}
+				$("#totalHrs").val(totHours+":"+totMins);
+				
+				
+				$("#totalHrs").removeClass("isRequired");
+				$("#totalDays").addClass("isRequired");
+				
+			}
+            
+            if(companyId!="" && client!="" && businessUnit!="" && bookingCity!="" && vehicleCategory!="" && dutyType!="" && start_kms!="" && close_kms!=""){
+                //$.blockUI();
+                $.post("<?php echo $this->url('rentals', array('action' => 'get-tariff-amt')); ?>",{companyId:companyId,client:client,businessUnit:businessUnit,bookingCity:bookingCity,vehicleCategory:vehicleCategory,dutyType:dutyType,travDays: objDiff.days,travHrs:totHours,travMins:objDiff.minutes,travKms:totalKms,startDate:start_date,closeDate:close_date,startTime:start_time,closeTime:close_time},
+                function(data){
+                    if(data!=""){
+                    data=JSON.parse(data);
+                    //console.log(data);
+                    $("#extraHrs").val(data.extraHrs);
+                    $("#extraKms").val(data.extraKms);
+                    $("#extraHrsAmt").val(data.extraAmtInHrs);
+                    $("#extraKmsAmt").val(data.extraAmtInKms);
+                    $("#tariffAmount").val(data.tariffAmt);
+                    $("#tariff").val(data.tariff);
+                    $("#extAmtPerKms").val(data.extAmtPerKms);
+                    $("#extAmtPerHrs").val(data.extAmtPerHrs);
+                    objValue=$("#dutyType").val();
+                    if (objValue==1) {
+                        $("#dayTimeDriverAllowance").val(0);
+                        $("#nightTimeDriverAllowance").val(0);
+                        $("#driverAllowancePerDay").val(0);
+                        $("#driverAllowancePerNight").val(0);
+                        $("#driverAllowance").val(0);
+                    }else if (objValue==2) {
+                        //tariffVal=$("#tariff").val();
+                        //$("#tariff option[0]").text("Hi");
+                        //$("#tariff option[value='"+tariffVal+"']").text(changeText);
+                        $("#dayTimeDriverAllowance").val(data.dayTimeDriverAllowance);
+                        $("#nightTimeDriverAllowance").val(data.nightTimeDriverAllowance);
+                        $("#driverAllowancePerDay").val(data.driverAllowancePerDay);
+                        $("#driverAllowancePerNight").val(data.driverAllowancePerNight);
+                        $("#driverAllowance").val(data.driverAllowance);
+                    }else if (objValue==3) {
+                        $("#dayTimeDriverAllowance").val(0);
+                        $("#nightTimeDriverAllowance").val(0);
+						$("#driverAllowancePerDay").val(0);
+                        $("#driverAllowancePerNight").val(0);
+                        $("#driverAllowance").val(0);
+                    }
+                    //console.log();
+                    $("#tariffText").val(data.tariffName);
+                    calTotalAmt();
+                    }
+                    //$.unblockUI();
+                });
+            }
+        }
+	}
+    
+    function checkRentalType() {
+        objValue=$("#dutyType").val();
+        if (objValue=="1") {
+            $("#driverAllowance").val("");
+			$("#driverAllowance").attr("readonly","readonly");
+			$("#driverAllowance").removeClass("isRequired");
+            $("#extraHrsAmt").removeAttr("readonly");
+			$("#extraHrs").removeAttr("readonly");
+			$("#totalHrs").addClass("isRequired");
+            getDateTime();
+			
+        }else if (objValue=="2") {
+            $("#driverAllowance").removeAttr("readonly");
+			$("#driverAllowance").addClass("isRequired");
+            $("#extraHrsAmt").val("0");
+			$("#extraHrs").val("0");
+			$("#extraHrsAmt").attr("readonly","readonly");
+			$("#extraHrs").attr("readonly","readonly");
+			$("#totalHrs").removeClass("isRequired");
+            getDateTime();
+        }
+    }
+    
+    function deleteAttachment(fileName) {
+	  conf=confirm("Are you sure you want to delete this file");
+	  if (conf) {
+        $("#deletedTripSheetFile").val(fileName);
+		$('#tripSheet').show();
+		$('#fileDiv').hide();
+      }
+    }
+    
+    /* Function to calculate time difference between 2 datetimes (in Timestamp-milliseconds, or string English Date-Time)
+	It can also be used the words: NOW for current date-time, and TOMORROW for the next day (the 0:0:1 time)
+	Returns an object with this items {days, hours, minutes, seconds, totalhours, totalmin, totalsec}
+	*/
+	function diffDateTime(startDT, endDT){
+	// JavaScript & jQuery Course - http://coursesweb.net/javascript/
+	 // if paramerer is string, only the time hh:mm:ss (with, or without AM/PM), create Date object for current date-time,
+	 // and adds hour, minutes, seconds from paramerer
+	 //else, if the paramerer is "now", sets Date object with current date-time
+	 //else, if the paramerer is "tomorrow", sets Date object with current date, and the hour 24 + 1 second
+	 // else create Date object with date time from startDT and endDT
+	 if(typeof startDT == 'string' && startDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}[amp ]{0,3}$/i)){
+	   startDT = startDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}/);
+	   startDT = startDT.toString().split(':');
+	   var obstartDT = new Date();
+	   obstartDT.setHours(startDT[0]);
+	   obstartDT.setMinutes(startDT[1]);
+	   obstartDT.setSeconds(startDT[2]);
+	 }
+	 else if(typeof startDT == 'string' && startDT.match(/^now$/i)) var obstartDT = new Date();
+	 else if(typeof startDT == 'string' && startDT.match(/^tomorrow$/i)){
+	   var obstartDT = new Date();
+	   obstartDT.setHours(24);
+	   obstartDT.setMinutes(0);
+	   obstartDT.setSeconds(1);
+	 }
+	 else var obstartDT = new Date(startDT);
+       
+	 if(typeof endDT == 'string' && endDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}[amp ]{0,3}$/i)){
+	   endDT = endDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}/);
+	   endDT = endDT.toString().split(':');
+	   var obendDT = new Date();
+	   obendDT.setHours(endDT[0]);
+	   obendDT.setMinutes(endDT[1]);
+	   obendDT.setSeconds(endDT[2]);  
+	 }
+	 else if(typeof endDT == 'string' && endDT.match(/^now$/i)) var obendDT = new Date();
+	 else if(typeof endDT == 'string' && endDT.match(/^tomorrow$/i)){
+	   var obendDT = new Date();
+	   obendDT.setHours(24);
+	   obendDT.setMinutes(0);
+	   obendDT.setSeconds(1);
+	 }
+	 else var obendDT = new Date(endDT);
+       
+	 // gets the difference in number of seconds
+	 // if the difference is negative, the hours are from different days, and adds 1 day (in sec.)
+	 var secondsDiff = (obendDT.getTime() - obstartDT.getTime()) > 0 ? (obendDT.getTime() - obstartDT.getTime()) / 1000 :  (86400000 + obendDT.getTime() - obstartDT.getTime()) / 1000;
+	 secondsDiff = Math.abs(Math.floor(secondsDiff));
+       
+	 var oDiff = {};     // object that will store data returned by this function
+       
+	 oDiff.days = Math.floor(secondsDiff/86400);
+	 oDiff.totalhours = Math.floor(secondsDiff/3600);      // total number of hours in difference
+	 oDiff.totalmin = Math.floor(secondsDiff/60);      // total number of minutes in difference
+	 oDiff.totalsec = secondsDiff;      // total number of seconds in difference
+       
+	 secondsDiff -= oDiff.days*86400;
+	 oDiff.hours = Math.floor(secondsDiff/3600);     // number of hours after days
+       
+	 secondsDiff -= oDiff.hours*3600;
+	 oDiff.minutes = Math.floor(secondsDiff/60);     // number of minutes after hours
+       
+	 secondsDiff -= oDiff.minutes*60;
+	 oDiff.seconds = Math.floor(secondsDiff);     // number of seconds after minutes
+       
+	 return oDiff;
+	}
+</script>

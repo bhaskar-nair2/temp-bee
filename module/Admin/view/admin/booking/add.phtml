@@ -1,0 +1,481 @@
+    <link rel="stylesheet" href="<?php echo $this->basePath() . '/assets/css/bhaskar_style.css' ?>">
+    <style>
+    .help{
+        font-size:11px;
+    }
+    .select2-container .select2-selection--single {
+        min-height: 35px;
+    }
+    </style>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">New Booking</h4>
+    </div>
+    <div class="modal-body">
+        <form class="container-fluid" name="addBookingInformation" id="addBookingInformation" method="post" role="form"  action="<?php echo $this->url('booking', array('action' => 'add')); ?>" autocomplete="off">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Company</span>
+                        <select  class="form-control isRequired" id="company" name="company" title="Please select company" onchange="getClient();">
+                            <option value="">-- Select Company --</option>
+                            <?php
+                            foreach($company as $val){
+                            ?>
+                            <option value="<?php echo $val['company_id']; ?>"><?php echo ucwords($val['company_name']);  ?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+              <div class="col-md-6 form-group">
+                <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1">Booking Type</span>
+                    <select  class="form-control isRequired" id="businessUnit" name="businessUnit" title="Please select booking type" onchange="getBookingRef();checkBookingType();checkPaymentStatus();">
+                            <option value="">-- Select Booking Type --</option>
+                            <?php
+                            foreach($businessUnitResult as $businessUnit){
+                                if($businessUnit['unit_id']==2 || $businessUnit['unit_id']==4){
+                            ?>
+                            <option value="<?php echo $businessUnit['unit_id'];  ?>"><?php echo ucwords($businessUnit['unit_name']);  ?></option>
+                            <?php
+                                }
+                            }
+                            ?>
+                        </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <h4>Client</h4>
+              <div class="col-md-12 form-group">
+                <div class="input-group">
+                  <span class="input-group-addon" id="client-com">Client Name</span>
+                  <select  class="form-control isRequired" id="client" name="client" title="Please select client" onchange="getGuestDetails();getBookerDetails();">
+                            <option value="">--Select Client--</option>
+                        </select>
+                </div>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <div class="input-group">
+                  <span class="input-group-addon">Booking Ref.</span>
+                    <input type="text" class="form-control isRequired" id="bookingRef" name="bookingRef" title="Please enter booking reference" />
+                    <input type="hidden" class="form-control" id="bookingCode" name="bookingCode" />
+                    <input type="hidden" class="form-control" id="bookingSortNo" name="bookingSortNo" />
+                </div>
+              </div>
+
+              <div class="col-md-6 form-group">
+                <div class="input-group">
+                    <span class="input-group-addon">City</span>
+                    <select  class="form-control isRequired" id="city" name="city" title="Please select city" >
+                          <option value="">-- Select Booking City --</option>
+                          <?php
+                          foreach($cityResult as $city){
+                          ?>
+                          <option value="<?php echo $city['city_id'];  ?>"><?php echo ucwords($city['city_name']);  ?></option>
+                          <?php
+                          }
+                          ?>
+                    </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+                <h4>Vehile Details</h4>
+                <div class="col-md-6 form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Veh Category</span>
+                        <select  class="form-control isRequired" id="vehicleCategory" name="vehicleCategory" title="Please select vehicle category">
+                            <option value="">-- Select Vehicle Category --</option>
+                            <?php
+                            foreach($vehicleMakeTypeResult as $vehicleMakeType){
+                            ?>
+                            <option value="<?php echo $vehicleMakeType['make_id'];  ?>"><?php echo ucwords($vehicleMakeType['make_type']);  ?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Make Type</span>
+                        <select  class="form-control isRequired" id="vehicleType" name="vehicleType" title="Please select vehicle type" >
+                                <option value="">--Select Vehicle Make Type--</option>
+                                <?php
+                                foreach($vehicleType as $val){
+                                ?>
+                                <option value="<?php echo base64_encode($val['type_id']);  ?>"><?php echo $val['type_name'];  ?></option>
+                                <?php
+                                }
+                                ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">Duty Type</span>
+                        <select  class="form-control isRequired" id="dutyType" name="dutyType" title="Please select duty type">
+                          <option value="">-- Select Duty Type --</option>
+                          <?php
+                          foreach($rentalTypeResult as $rentalType){
+                          ?>
+                          <option value="<?php echo $rentalType['type_id'];  ?>"><?php echo ucwords($rentalType['type_name']);  ?></option>
+                          <?php
+                          }
+                          ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h4>Trip</h4>
+                <div class="col-md-12 form-group">
+                    <div class="input-group">
+                    <span class="input-group-addon" id="client-com">Guest Name</span>
+                    
+                    <select class="form-control" id="guestTitle" name="guestTitle" style="width:15%;">
+                        <option value="Mr">Mr</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Dr">Dr</option>
+                        <option value="Capt">Capt</option>
+                    </select>
+                        <select  class="form-control isRequired" id="customerName" name="customerName" title="Please select customer" style="width:80%;">
+                          <option value="">--Select Customer--</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12 form-group">
+                    <div class="input-group">
+                    <span class="input-group-addon">Guest Mobile</span>
+                    <input type="text" class="form-control isRequired" id="customerMobileNo" name="customerMobileNo" title="Please enter the customer mobile number"/>
+                    </div>
+                    <div class="help">(Enter comma separated mutiple mobile number eg. 9025048816,819089422)</div>
+                </div>
+                
+                <div class=" col-md-6 form-group">
+                    <div class='input-group date'>
+                    <span class="input-group-addon">
+                        <i class="fa fa-calendar-o" aria-hidden="true"></i> Date
+                    </span>
+                    <input type="text" class="form-control isRequired datepicker readonly" id="tripDate" name="tripDate" title="Please select the trip date" readonly="readonly" />
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <div class='input-group time'>
+                    <span class="input-group-addon">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>Time
+                    </span>
+                    <select class="form-control isRequired select2" id="tripTime" name="tripTime" title="Please select trip time" style="width:100%;">
+                        <option value=""></option>
+                        <?php
+                          for($t=0;$t<=23;$t++){
+                            if(strlen($t)==1){
+                                $t="0".$t;
+                            }
+                        ?>
+                        <option value="<?php echo $t.":00"; ?>"><?php echo $t.":00"; ?></option>
+                        <option value="<?php echo $t.":15"; ?>"><?php echo $t.":15"; ?></option>
+                        <option value="<?php echo $t.":30"; ?>"><?php echo $t.":30"; ?></option>
+                        <option value="<?php echo $t.":45"; ?>"><?php echo $t.":45"; ?></option>
+                        <?php
+                          }
+                        ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+              <h4>Booker</h4>
+                <div class="col-md-12 form-group">
+                    <div class="input-group">
+                    <span class="input-group-addon">Booker Name</span>
+                        <select  class="form-control" id="bookerName" name="bookerName" title="Please select booker name" style="width:100%;">
+                            <option value="">--Select Booker--</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-12 form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="client-mob">Booker Mobile</span>
+                        <input type="text" class="form-control isRequired" id="bookerMobileNo" name="bookerMobileNo" title="Please enter the booker mobile number"/>
+                    </div>
+                    <div class="help">(Enter comma separated mutiple mobile number eg. 9025048816,819089422)</div>
+                </div>
+                <div class="col-md-12 form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="client-name">Booker Mail</span>
+                        <input type="text" id="bookerMailId" name="bookerMailId" class="form-control"/>
+                        <input type="hidden" id="bookerId" name="bookerId" class="form-control"/>
+                    </div>
+                    <div class="help">(Enter comma separated mutiple email eg. ilahir@gmail.com,booking@beecabs.in)</div>
+                </div>
+              
+            </div>
+
+            <div class="row">
+                <h4>Details</h4>
+                <div class="form-group col-md-12 ">
+                    <div class="input-group">
+                    <span class="input-group-addon">Pickup Area</span>
+                    <input type="text" class="form-control isRequired" id="pickupArea" name="pickupArea" title="Please enter pickup area" />
+                    </div>
+                </div>
+                <div class="form-group col-md-12 ">
+                    <div class="input-group">
+                    <span class="input-group-addon">Pickup Address</span>
+                    <textarea id="pickupAddress" name="pickupAddress" class="form-control isRequired" title="Please enter the pickup address"></textarea>
+                    </div>
+                </div>
+                <div class="form-group col-md-12 ">
+                    <div class="input-group">
+                    <span class="input-group-addon">Special Instruction</span>
+                    <textarea id="specialIns" name="specialIns" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="form-group col-md-6 ">
+                    <div class="input-group">
+                    <span class="input-group-addon">Payment Mode</span>
+                        <select  class="form-control isRequired" id="paymentMode" name="paymentMode" title="Please select payment mode" >
+                          <option value="">--Select Payment Mode--</option>
+                          <?php
+                          foreach($paymentMode as $mode){
+                          ?>
+                          <option value="<?php echo base64_encode($mode['type_id']); ?>"><?php echo $mode['payment_type']; ?></option>
+                          <?php
+                          }
+                          ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6 " id="paymentStatusDiv">
+                    <div class="input-group">
+                    <span class="input-group-addon">Payment Status</span>
+                        <select class="form-control" id="paymentStatus" name="paymentStatus" title="Please select payment status" onchange="checkPaymentStatus();">
+                            <option value="">--Select Payment Status--</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6" id="paidDateDiv" style="display: none;">
+                    <div class="input-group">
+                        <span class="input-group-addon">Paid Date</span>
+                        <input type="text" class="form-control datepicker readonly" id="paidDate" name="paidDate" title="Please select the paid date" readonly="readonly" />
+                    </div>
+                </div>
+                
+                <div class="form-group col-md-6">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="sendEmail" id="sendEmail" checked="checked">
+                            Send booking Email
+                          </label>
+                        </div>
+                </div>
+
+            </div>
+        </div>
+            <div class="modal-footer">
+            <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+    </div>
+    <script src="<?php echo $this->basePath() . '/assets/js/bootstrap-typeahead.js'; ?>"></script>
+    <script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('addBookingInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+      
+		$('.datepicker').datepicker({
+        //todayBtn: "linked",
+        clearBtn: true,
+        autoclose: true,
+        todayHighlight: true,
+        format: 'dd-M-yyyy'
+		}).on('changeDate', function(e) {
+       $(this).parent('.div-group').addClass('-active');
+    });
+        
+    $(".select2").select2({
+        placeholder: "--Trip Time--"
+    });
+    //getGuestDetails();
+    $("#customerName").select2({
+        placeholder: "--Select Customer--",
+        tags: true
+    });
+    $("#bookerName").select2({
+        placeholder: "--Select Booker--",
+        tags: true
+    });
+	});
+    
+    function getClient(){
+        company=$("#company").val();
+        if(company!=""){
+            $.blockUI();
+            $.post("<?php echo $this->url('clients', array('action' => 'get-client-by-company')); ?>", {company:company},
+            function(data){
+                if (data!="") {
+                    document.getElementById("client").innerHTML=data;
+                }
+                $.unblockUI();
+            });
+        }
+    }
+    
+    function getBookingRef(){
+        businessUnit=$("#businessUnit").val();
+        if(businessUnit==2){
+            $.blockUI();
+            $.post("<?php echo $this->url('booking', array('action' => 'get-corporate-booking-no')); ?>",
+            function(data){
+                if (data!="") {
+                    splStr=data.split("#");
+                    $("#bookingRef").val(splStr[0]+splStr[1]);
+                    $("#bookingCode").val(splStr[0]);
+                    $("#bookingSortNo").val(splStr[1]);
+                    //addActiveClass("bookingRef");
+                }
+                $.unblockUI();
+            });
+        }else if(businessUnit==4){
+            $("#bookingRef").val('');
+            $("#bookingCode").val('');
+            $("#bookingSortNo").val('');
+            //addActiveClass("bookingRef");
+        }
+    }
+    
+    function checkBookingType(){
+        businessUnit=$("#businessUnit").val();
+        if(businessUnit==2){
+            //$("#clientDiv").css('display','block');
+            $("#paymentStatusDiv").css('display','none');
+            $("#paymentStatus").val('pending');
+            //$("#client").addClass('isRequired');
+        }else if(businessUnit==4){
+            //$("#client").removeClass('isRequired');
+            //$("#clientDiv").css('display','none');
+            $("#paymentStatusDiv").css('display','block');
+            //$("#client").val('');
+        }
+    }
+    /*
+    function getTariff(){
+      companyId=$("#company").val();
+      client=$("#client").val();
+      businessUnit=$("#businessUnit").val();
+      bookingCity=$("#city").val();
+      vehicleCategory=$("#vehicleCategory").val();
+      dutyType=$("#dutyType").val();
+      if(companyId!="" && client!="" && businessUnit!="" && bookingCity!="" && vehicleCategory!="" && dutyType!=""){
+        $.blockUI();
+        $.post("< ?php echo $this->url('rentals', array('action' => 'get-tariff')); ?>",{companyId:companyId,client:client,businessUnit:businessUnit,bookingCity:bookingCity,vehicleCategory:vehicleCategory,dutyType:dutyType},
+        function(data){
+            if (data!="") {
+                document.getElementById("tariff").innerHTML=data;
+            }
+            $.unblockUI();
+        });
+      }
+    }
+    */
+
+    
+    function getGuestDetails(){
+        clientId=$('#client').val();
+        $.post("<?php echo $this->url('clients', array('action' => 'get-guest-list')); ?>", {clientId:clientId},
+		function(data){
+		    if(data!="")
+		    {
+                document.getElementById("customerName").innerHTML=data;
+                $("#customerName").select2({
+                    placeholder: "--Select Customer--",
+                    tags: true
+                }).on("change", function(e) {
+                    //console.log($(this).val());
+                    customer=$('#customerName').select2('data');
+                    selected=this.options[this.selectedIndex];
+                    guestMobile=selected.getAttribute('data-mobile');
+                    guestId=selected.getAttribute('data-id');
+                    $("#customerMobileNo").val(guestMobile);
+                    $("#customerId").val(guestId);
+                    if($("#customerMobileNo").val()!=""){
+                        $("#customerMobileNo").parent('.div-group').addClass('-active');    
+                    }
+                });
+		    }
+		   
+		});
+    }
+    
+    function getBookerDetails() {
+        $.blockUI();
+        clientId=$('#client').val();
+        $.post("<?php echo $this->url('clients', array('action' => 'get-contact-list')); ?>", { clientId : clientId},
+		function(data){
+		    if(data!="")
+		    {
+                document.getElementById("bookerName").innerHTML=data;
+                $("#bookerName").select2({
+                    placeholder: "--Select Booker--",
+                    tags: true
+                }).on("change", function(e) {
+                    //console.log($(this).val());
+                    selected=this.options[this.selectedIndex];
+                    bookerMobile=selected.getAttribute('data-mobile');
+                    bookerEmail=selected.getAttribute('data-email');
+                    bookerId=selected.getAttribute('data-id');
+                    $("#bookerMobileNo").val(bookerMobile);
+                    $("#bookerMailId").val(bookerEmail);
+                    $("#bookerId").val(bookerId);
+                    if($("#bookerMobileNo").val()!=""){
+                        $("#bookerMobileNo").parent('.div-group').addClass('-active');    
+                    }
+                    if($("#bookerMailId").val()!=""){
+                        $("#bookerMailId").parent('.div-group').addClass('-active');    
+                    }
+                });
+		    }
+            $.unblockUI();
+		});
+    }
+    
+    function checkPaymentStatus(){
+        payment_status=$("#paymentStatus").val();
+        businessUnit=$("#businessUnit").val();
+        if(payment_status=='paid' && businessUnit==4){
+            $("#paidDateDiv").css('display','block');
+            $("#paidDate").addClass('isRequired');
+        }else{
+            $("#paidDateDiv").css('display','none');
+            $("#paidDate").val('');
+            $("#paidDate").removeClass('isRequired');
+        }
+    }
+    </script>

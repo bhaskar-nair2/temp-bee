@@ -1,0 +1,507 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12">Vendor Payment</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vendor', array('action' => 'ledger')); ?>" class="btn btn-default">Cancel</a>
+					<input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+          <li><a href="<?php echo $this->url('vendor', array('action' => 'pending-payment')); ?>"> Vendor Payment</a></li>
+					<li class="active">Add Vendor Payment</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+	
+	<section class="content">
+		<!-- left column -->
+		<div class="row">
+			<!-- general form elements -->
+			<div class="col-xs-12">
+				<div class="box-header">
+					<div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+				</div><!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal" name="addVendorPaymentInformation" id="addVendorPaymentInformation"  method="post" action="<?php echo $this->url('vendor', array('action' => 'add-payment')); ?>" enctype="multipart/form-data" autocomplete="off">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="vendor" class="col-lg-4 control-label">Vendor Name <span class="mandatory">*</span></label>
+									<div class="col-lg-6">
+										<select class="form-control isRequired" name="vendor" id="vendor" title="Please select the vendor" onchange="checkVendorType(this);">
+											<option value="">--Select--</option>
+											<?php
+											foreach($vendorList as $vendor){
+											?>
+											<option value="<?php echo base64_encode($vendor['vendor_id']); ?>" data-attach-type="<?php echo $vendor['vendor_type']; ?>"><?php echo $vendor['vendor_name']."-".$vendor['vendor_no']; ?></option>
+											<?php
+											}
+											?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="col-lg-4 control-label">Payment Month <span class="mandatory">*</span></label>
+									<div class="col-lg-6 input-append date" id="dpMonths" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+										<input type="text" class="form-control isRequired readonly" id="paymentMonth" name="paymentMonth" placeholder="Select target month & year" title="Please select payment month and year"/>
+										<span class="add-on"><i class="icon-calendar"></i></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="hotelRevenue" class="col-lg-4 control-label">Hotel Revenue </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control" id="hotelRevenue" name="hotelRevenue" placeholder="Hotel Revenue" title="Please enter hotel revenue" onkeyup="calculateTotalRevenue()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="coporateRevenue" class="col-lg-4 control-label">Corporate Revenue </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum" id="coporateRevenue" name="coporateRevenue" placeholder="Corporate Revenue" title="Please enter corporate revenue" onkeyup="calculateTotalRevenue()"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="retailRevenue" class="col-lg-4 control-label">Retail Revenue </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum" id="retailRevenue" name="retailRevenue" placeholder="Retail Revenue" title="Please enter retail revenue " onkeyup="calculateTotalRevenue()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+								  <label for="totalRevenue" class="col-lg-4 control-label">Total Revenue <span class="mandatory">*</span></label>
+								  <div class="col-lg-6">
+									  <input type="text" class="form-control isRequired checkNum" id="totalRevenue" name="totalRevenue" placeholder="Total Revenue" title="Please enter total revenue"/>
+								  </div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+								  <label for="fuelAmount" class="col-lg-4 control-label">Fuel Amount </label>
+								  <div class="col-lg-6">
+									  <input type="text" class="form-control calTotalDeduction checkNum" id="fuelAmount" name="fuelAmount" placeholder="Fuel Amount" title="Please enter fuel amount" onkeyup="calculateFuelSurcharge(this.value);calculateTotalDeduction();"/>
+								  </div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="fuelSurcharge" class="col-lg-4 control-label">Fuel Surcharge </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control calTotalDeduction checkNum" id="fuelSurcharge" name="fuelSurcharge" placeholder="Fuel Surcharge" title="Please enter the fuel surcharge" />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="advance" class="col-lg-4 control-label">Advance</label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum calTotalDeduction" id="advance" name="advance" placeholder="Advance" title="Please enter the advance" onkeyup="calculateTotalDeduction();"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="otherDeduction" class="col-lg-4 control-label">Oter Deduction </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum calTotalDeduction" id="otherDeduction" name="otherDeduction" placeholder="Other Deduction" title="Please enter the other deduction" onkeyup="calculateTotalDeduction();"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="totalDeduction" class="col-lg-4 control-label">Total Deduction </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum" id="totalDeduction" name="totalDeduction" placeholder="Total Deduction" title="Please enter the total deduction"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="hotelPayment" class="col-lg-4 control-label">Hotel Payment </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control calStAmount" id="hotelPayment" name="hotelPayment" placeholder="Hotel Payment" title="Please enter the hotel payment" onblur="calServiceTaxAmount()"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="corpPayment" class="col-lg-4 control-label">Corporate Payment </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control calStAmount" id="corpPayment" name="corpPayment" placeholder="Corporate Payment" title="Please enter the corporate payment" onblur="calServiceTaxAmount()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="retailPayment" class="col-lg-4 control-label">Retail Payment </label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control calStAmount" id="retailPayment" name="retailPayment" placeholder="Retail Payment" title="Please enter the retail payment" onblur="calServiceTaxAmount()"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="parkingAmount" class="col-lg-4 control-label">Parking/Toll/Permit</label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum calStAmount" id="parkingAmount" name="parkingAmount" placeholder="Parking/Toll/Permit Amount" title="Please enter the parking amount" onblur="calServiceTaxAmount()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="serviceTaxApp" class="col-lg-4 control-label">GST <span class="mandatory">*</span></label>
+									<div class="col-lg-6">
+										<select class="form-control isRequired" name="serviceTaxApp" id="serviceTaxApp" title="Please select the service tax" onchange="calServiceTaxAmount()">
+											<option value="">--Select--</option>
+											<option value="yes">Yes</option>
+											<option value="no">No</option>
+										</select>
+										<input type="hidden" name="serviceTax" id="serviceTax" value="<?php echo $vendorTax; ?>">
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="stAmount" class="col-lg-4 control-label">GST Amount (<?php echo $vendorTax; ?>%)</label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control" id="stAmount" name="stAmount" placeholder="ST Amount" title="Please enter the gst amount" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="totalAmount" class="col-lg-4 control-label">Total Amount <span class="mandatory">*</span></label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum isRequired" id="totalAmount" name="totalAmount" placeholder="Total Amount" title="Please enter the total amount" onkeyup="calTdsAmount();"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="tdsApplicable" class="col-lg-4 control-label">TDS Applicable <span class="mandatory">*</span></label>
+									<div class="col-lg-6">
+										<select class="form-control isRequired" name="tdsApplicable" id="tdsApplicable" title="Please select the tds" onchange="calTdsAmount()">
+											<option value="">--Select--</option>
+											<option value="yes">Yes</option>
+											<option value="no">No</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="tds" class="col-lg-4 control-label">TDS (%)</label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum" id="tds" name="tds" placeholder="TDS" title="Please enter the tds" onkeyup="calTdsAmount()"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="tdsAmount" class="col-lg-4 control-label">TDS Amount</label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum" id="tdsAmount" name="tdsAmount" placeholder="TDS Amount" title="Please enter the tds amount"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="netAmount" class="col-lg-4 control-label">Net Amount <span class="mandatory">*</span></label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum isRequired" id="netAmount" name="netAmount" placeholder="Net Amount" title="Please enter the net amount"/>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="companyRevenue" class="col-lg-4 control-label">Net Company Revenue <span class="mandatory">*</span></label>
+									<div class="col-lg-6">
+										<input type="text" class="form-control checkNum isRequired" id="companyRevenue" name="companyRevenue" placeholder="Net Company Revenue" title="Please enter the net company revenue" />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="col-lg-4 control-label">Upload Statement </label>
+									<div class="col-lg-6">
+										<input type="file" class="form-control" title="please choose file" name="file" id="file">
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						<div class="box-footer">
+							<a href="<?php echo $this->url('vendor', array('action' => 'ledger')); ?>" class="btn btn-default">Cancel</a>
+							<input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+						</div>
+				</form>
+			</div><!-- /.box -->
+		</div><!--/.col (left) -->
+	</section><!-- /.content -->
+	
+	<script type="text/javascript">
+		duplicateName = true;
+		selectedDate="";
+		vendorType="";
+		function validateNow() {
+			flag = deforayValidator.init({
+				formId: 'addVendorPaymentInformation'
+			});
+			if (flag) {
+				if (duplicateName) {
+					document.getElementById('addVendorPaymentInformation').submit();
+				}
+			}
+		}
+		
+		function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+			checkValue = document.getElementById(obj.id).value;
+			$.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue},
+			function(data) {
+				if (data > 0)
+				{
+					alert(msg);
+					duplicateName = false;
+					document.getElementById(obj.id).value = "";
+				}
+				else {
+					duplicateName = true;
+				}
+			});
+		}
+		
+		$(function() {
+			$('#dpMonths').datepicker({
+				clearBtn: true,
+				autoclose: true,
+				todayHighlight: true,
+				format: 'M-yyyy',
+				viewMode: "months",
+				minViewMode: "months",
+			}).on('changeDate', function(e) {
+			  // `e` here contains the extra attributes
+			  var date = new Date($('#paymentMonth').val());
+			  var day = date.getDate();
+			  var monthIndex = date.getMonth()+parseInt(1);
+			  var year = date.getFullYear();
+			  selectedDate=year+"-"+monthIndex+"-01";
+			  //checkNameValidation('corporate', 'target_date',this, null, 'Already exist this date and month . Please select another date.');
+			});
+		});
+		
+		
+		function calServiceTaxAmount(){
+			calStAmount=0;
+			if($("#serviceTaxApp").val()=='yes'){
+				$(".calStAmount").each(function() {
+				if(this.value>0){
+					calStAmount=parseFloat(this.value)+parseFloat(calStAmount);
+					//service tax coming from global config
+					service_tax=parseFloat($("#serviceTax").val()/100);
+				}
+				});
+				if(calStAmount>0){
+					calStAmount=(parseFloat(calStAmount))*service_tax;
+					$("#stAmount").val(Math.round(calStAmount));
+				}
+			}else{
+				$("#stAmount").val(0);
+			}
+			calTotAmount();
+		}
+		
+		function calTotAmount() {
+			totalAmount=0;
+			hotPayment=$("#hotelPayment").val();
+			corpPayment=$("#corpPayment").val();
+			retailPayment=$("#retailPayment").val();
+			parkAmount=$("#parkingAmount").val();
+			servTaxAmount=$("#stAmount").val();
+			totDeductionAmt=$("#totalDeduction").val();
+			if (hotPayment!="") {
+			  totalAmount=parseFloat(hotPayment)+parseFloat(totalAmount);
+			}
+			if (corpPayment!="") {
+			  totalAmount=parseFloat(corpPayment)+parseFloat(totalAmount);
+			}
+			if (retailPayment!="") {
+			  totalAmount=parseFloat(retailPayment)+parseFloat(totalAmount);
+			}
+			if (parkAmount!="") {
+			  totalAmount=parseFloat(parkAmount)+parseFloat(totalAmount);
+			}
+			if(servTaxAmount>0){
+				totalAmount=parseFloat(totalAmount)+parseFloat(servTaxAmount);
+			}
+			if (totDeductionAmt!="") {
+			  totalAmount=parseFloat(totalAmount)-parseFloat(totDeductionAmt);
+			}
+			$("#totalAmount").val(Math.round(totalAmount));
+			calTdsAmount();
+			calCompanyRevenue();
+		}
+		
+		function calTdsAmount(){
+			totAmt=$("#totalAmount").val();
+			if($("#tdsApplicable").val()=='yes'){
+				if(totAmt>0){
+					tdsPer=$("#tds").val();
+					tds=(parseFloat(tdsPer)/100);
+					tdsAmount=parseFloat(totAmt*tds).toFixed(2);
+					//tdsAmount=parseFloat(totAmt)*0.02;
+					tdsAmount=Math.round(tdsAmount);
+					$("#tdsAmount").val(tdsAmount);
+					if (totAmt!="") {
+						totAmt=parseFloat(totAmt)-parseFloat(tdsAmount);
+						$("#netAmount").val(totAmt);
+					}
+				}else{
+					$("#tdsAmount").val(0);
+					$("#netAmount").val(totAmt);
+				}
+			}else{
+				$("#tdsAmount").val(0);
+				$("#tds").val(0);
+				$("#netAmount").val(totAmt);
+			}
+		}
+		
+	function calculateFuelSurcharge(objVal) {
+        if (objVal!="") {
+            fuelSurcharge=parseFloat(objVal)*0.02;
+			$("#fuelSurcharge").val(Math.round(fuelSurcharge));
+        }else{
+			$("#fuelSurcharge").val(0);
+		}
+    }
+	
+	function calculateTotalRevenue() {
+		hotelRevenue=$("#hotelRevenue").val();
+		coporateRevenue=$("#coporateRevenue").val();
+		retailRevenue=$("#retailRevenue").val();
+		totalRevenue=0;
+		if (hotelRevenue!="") {
+            totalRevenue=parseFloat(hotelRevenue)+parseFloat(totalRevenue);
+			if(vendorType=='attached'){
+				//70% of hotel revenue
+				hotelPay=parseFloat(hotelRevenue)*0.7;
+				$("#hotelPayment").val(Math.round(hotelPay));
+			}
+        }
+		if (coporateRevenue!="") {
+            totalRevenue=parseFloat(coporateRevenue)+parseFloat(totalRevenue);
+			if(vendorType=='attached'){
+				//80% of corporate revenue
+				corpPay=parseFloat(coporateRevenue)*0.8;
+				$("#corpPayment").val(Math.round(corpPay));
+			}
+        }
+		if (retailRevenue!="") {
+            totalRevenue=parseFloat(retailRevenue)+parseFloat(totalRevenue);
+			if(vendorType=='attached'){
+				//80% of retail revenue
+				retailPay=parseFloat(retailRevenue)*0.8;
+				$("#retailPayment").val(Math.round(retailPay));
+			}
+        }
+		$("#totalRevenue").val(totalRevenue);
+		calCompanyRevenue();
+    }
+	
+	function calCompanyRevenue(){
+		totAmount=0;
+		hotPayment=$("#hotelPayment").val();
+		corpPayment=$("#corpPayment").val();
+		retailPayment=$("#retailPayment").val();
+		parkAmount=$("#parkingAmount").val();
+		totRevenue=$("#totalRevenue").val();
+		if (hotPayment!="") {
+			totAmount=parseFloat(hotPayment)+parseFloat(totAmount);
+		}
+		if (corpPayment!="") {
+		  totAmount=parseFloat(corpPayment)+parseFloat(totAmount);
+		}
+		if (retailPayment!="") {
+		  totAmount=parseFloat(retailPayment)+parseFloat(totAmount);
+		}
+		if (parkAmount!="") {
+		  totAmount=parseFloat(parkAmount)+parseFloat(totAmount);
+		}
+		if (totRevenue!="") {
+			totAmount=parseFloat(totRevenue)-parseFloat(totAmount);
+			$("#companyRevenue").val(totAmount);
+		}
+	}
+	
+	function checkVendorType(obj){
+		selected=obj.options[obj.selectedIndex];
+		//console.log(selected);
+        objValue=selected.getAttribute('data-attach-type');
+		vendorType=objValue;
+        if(objValue=='attached'){
+			$("#hotelPayment").attr("readonly","readonly");
+			$("#corpPayment").attr("readonly","readonly");
+			$("#retailPayment").attr("readonly","readonly");
+		}else{
+			$("#hotelPayment").removeAttr("readonly");
+			$("#corpPayment").removeAttr("readonly");
+			$("#retailPayment").removeAttr("readonly");
+		}
+	}
+	
+	function calculateTotalDeduction() {
+        calTotDeduction=0;
+        $(".calTotalDeduction").each(function() {
+          if(this.value>0){
+            calTotDeduction=parseFloat(this.value)+parseFloat(calTotDeduction);
+          }
+        });
+		$("#totalDeduction").val(calTotDeduction);
+		calTotAmount();
+    }
+	</script>

@@ -1,0 +1,87 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12"> Vehicle Type</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vehicle-type', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+					<input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                 <li><a href="<?php echo $this->url('vehicle-type', array('action' => 'index')); ?>"> Vehicle Type</a></li>
+                 <li class="active">Add Vehicle Type</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+  
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addVehicleTypeInformation" id="addVehicleTypeInformation"  method="post" action="<?php echo $this->url('vehicle-type', array('action' => 'add')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicleType" class="col-lg-4 control-label">Vehicle Type <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="vehicleType" name="vehicleType" placeholder="Enter Vehicle Type" title="Please enter vehicle type" onblur="checkNameValidation('vehicle_type','type_name', this, null, 'Already exist this vehicle type name . Please enter another name.');"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vehicle-type', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">                        
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'addVehicleTypeInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addVehicleTypeInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+    
+</script>

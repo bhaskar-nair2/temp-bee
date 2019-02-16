@@ -1,0 +1,141 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+if(isset($result->sales_date) && trim($result->sales_date)!=""){
+  $result->sales_date=$commonService->humanDateFormat($result->sales_date);
+}
+?>
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Edit </span>
+				<span class="pageHeadingLabe12"> Cyff Daily Sale</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('cyff', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+          <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+            <li><a href="<?php echo $this->url('cyff', array('action' => 'index')); ?>"> CYFF</a></li>
+            <li class="active">Edit Cyff Daily Sale</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="editCyffDailySales" id="editCyffDailySales"  method="post" action="<?php echo $this->url('cyff', array('action' => 'edit')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Sales Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired readonly" id="salesDate" name="salesDate" placeholder="Select sales date" title="Please select sales date" readonly="readonly" value="<?php echo $result->sales_date; ?>"/>
+                                    <input type="hidden" class="form-control isRequired" id="cyffId" name="cyffId" value="<?php echo base64_encode($result->sales_id); ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalTrip" class="col-lg-4 control-label">Total Trip </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="totalTrip" name="totalTrip" placeholder="Enter total trip" title="Please enter total trip" value="<?php echo $result->total_trip; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalKms" class="col-lg-4 control-label">Total Kms </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="totalKms" name="totalKms" placeholder="Enter total kms" title="Please enter total kms" value="<?php echo $result->total_km_driven; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="driverDeployed" class="col-lg-4 control-label">Driver Deployed </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="driverDeployed" name="driverDeployed" placeholder="Enter driver deployed" title="Please enter driver deployed" value="<?php echo $result->driver_deployed; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                   
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('cyff', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'editCyffDailySales'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('editCyffDailySales').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        $.blockUI();
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: selectedDate, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                $.unblockUI();
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+                $.unblockUI();
+            }
+        });
+    }
+    $(function() {
+		$('#salesDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		}).on('changeDate', function(e) {
+          var date = new Date($('#salesDate').val());
+          var day = date.getDate();
+          var monthIndex = date.getMonth()+parseInt(1);
+          var year = date.getFullYear();
+          selectedDate=year+"-"+monthIndex+"-"+day;
+          //console.log($('#salesDate').val());
+          checkNameValidation('cyff_daily_sales','sales_date',this,'<?php echo "sales_id##".$result->sales_id; ?>','Already exist this sale date . Please select another date.');
+        });
+	});
+</script>

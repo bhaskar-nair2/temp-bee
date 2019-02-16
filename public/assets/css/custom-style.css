@@ -1,0 +1,52 @@
+body{
+    
+    color:#000 !important;
+    
+}
+.content-header{
+		background-image: none !important;
+		background-repeat: repeat;
+}
+    
+.beecabsGrid{
+    clear: both;
+    margin-bottom: 6px !important;
+    max-width: none !important;
+    border-radius: 0;
+    border: 1px solid #ddd;
+    border-spacing: 0;
+    background-color: #fff;
+    margin-top: 10px;
+}
+.beecabsGrid > thead > tr > th{
+  font-weight: 600;
+  text-transform:uppercase;
+}
+.beecabsGrid > tbody > tr > td ,.beecabsGrid > thead > tr > th{
+    white-space:nowrap !important;
+    font-size:13px !important;
+}
+table.dataTable thead > tr > th{
+    padding-left : 1px !important;
+    padding-right : 1px !important;
+}
+
+.table-bordered > thead > tr > th, .table-bordered > thead > tr > td{
+    border-bottom-width:0 !important;
+}
+.table>tbody>tr>td {
+    padding : 2px !important;
+}
+table.dataTable thead th.sorting,table.dataTable thead th.sorting_asc,table.dataTable thead .sorting_desc
+{
+    background:none;
+}
+.icon-btn{
+    text-align:center !important;
+}
+thead tr th.center{
+    text-align:center !important;
+}
+.row{
+    font-size:13px !important;
+}

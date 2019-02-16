@@ -1,0 +1,471 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+setlocale(LC_MONETARY, 'en_IN');
+use Application\Service\CommonService;
+$commonService=new CommonService();
+// Extend the TCPDF class to create custom Header and Footer
+class MYPDF extends TCPDF {
+    //public function passValue($companyAddress,$companyPhoneNo){
+	//    $this->companyAddress=$companyAddress;
+	//    $this->companyPhoneNo=$companyPhoneNo;
+	//}
+    
+    //Page header
+    public function Header() {
+        // Logo
+        //$image_file = K_PATH_IMAGES.'logo_example.jpg';
+        //$this->Image($image_file, 10, 10, 15, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        // Set font
+        //  $this->SetFont('helvetica', 'B', 20);
+        // Title
+        //$this->Cell(0, 15, '<< TCPDF Example 003 >>', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+    }
+
+    // Page footer
+    public function Footer() {
+        // Position at 15 mm from bottom
+        //$this->SetY(-15);
+        // Set font
+        //$this->SetFont('helvetica', 'I', 8);
+        // Page number
+        //$this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+    }
+}
+
+// create new PDF document
+$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+//$pdf->passValue($result['bill']['companyAddress'],$result['bill']['phone_no']);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Nicola Asuni');
+$pdf->SetTitle('Monthly Bill');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+// set default header data
+//$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+	if($result['bill']['converted_gst']=='yes'){
+		// set font
+		$pdf->SetFont('times','',12);
+		
+		// add a page
+		$pdf->AddPage();
+		
+		$pdf->SetY(38,true,false);
+		
+		$invoiceNo='<table style="width:100%;">';
+		$invoiceNo.='<tr>';
+		$invoiceNo.='<td style="width:80%">Inv.No: '.$result['bill']['invoice_no'].'</td>';
+		$invoiceNo.='<td>'.$commonService->humanDateFormat($result['bill']['invoice_date']).'</td>';
+		$invoiceNo.='</tr>';
+		$invoiceNo.='</table><br/><br/><br/>';
+		
+		$pdf->writeHTML($invoiceNo, true, 0, true, 0);
+		
+		$address="";
+		if(isset($result['bill']['client_name']) && trim($result['bill']['client_name'])!=""){
+			$address.=$result['bill']['client_name'];
+		}
+		
+		if(isset($result['bill']['clientAddress']) && trim($result['bill']['clientAddress'])!=""){
+			$address.='<br/>'.$result['bill']['clientAddress'];
+		}
+		if(isset($result['bill']['client_city']) && trim($result['bill']['client_city'])!=""){
+			$address.='<br/>'.$result['bill']['client_city'];
+		}
+		if(isset($result['bill']['pin_code']) && trim($result['bill']['pin_code'])!=""){
+			$address.=' - '.$result['bill']['pin_code'];
+		}
+		
+		$clientAddress='<table style="width:100%;">';
+		$clientAddress.='<tr>';
+		$clientAddress.='<td>'.$address.'</td>';
+		$clientAddress.='</tr>';
+		$clientAddress.='</table>';
+		$pdf->writeHTML($clientAddress, true, 0, true, 0);
+		
+		$y=$pdf->getY();
+		$pdf->SetY($y-4,true,false);
+		
+		$clientTaxDetails='<table style="width:100%;">';
+		$clientTaxDetails.='<tr>';
+		$clientTaxDetails.='<td style="width:12%">GSTIN</td>';
+		$clientTaxDetails.='<td style="width:2%">:</td>';
+		$clientTaxDetails.='<td>'.$result['bill']['client_gst_no'].'</td>';
+		$clientTaxDetails.='</tr>';
+		$clientTaxDetails.='<tr>';
+		$clientTaxDetails.='<td>PAN No</td>';
+		$clientTaxDetails.='<td>:</td>';
+		$clientTaxDetails.='<td>'.$result['bill']['client_pan_no'].'</td>';
+		$clientTaxDetails.='</tr>';
+		$clientTaxDetails.='<tr>';
+		$clientTaxDetails.='<td>State Code </td>';
+		$clientTaxDetails.='<td>:</td>';
+		$clientTaxDetails.='<td>'.$result['bill']['client_state_code'].'</td>';
+		$clientTaxDetails.='</tr>';
+		$clientTaxDetails.='</table>';
+		$pdf->writeHTML($clientTaxDetails, true, 0, true, 0);
+		
+		
+		$subject='<table style="width:100%;">';
+		$subject.='<tr>';
+		$subject.='<td>Dear Sir,<br/><br/> Sub : '.$result['bill']['subject'].'</td>';
+		$subject.='</tr>';
+		if(isset($result['bill']['particulars']) && trim($result['bill']['particulars'])!=""){
+		$subject.='<tr>';
+		$subject.='<td>'.$result['bill']['particulars'].'</td>';
+		$subject.='</tr>';
+		}
+		$subject.='</table>';
+		$pdf->writeHTML($subject, true, 0, true, 0);
+		
+		$subjectCont='<table style="width:100%;">';
+		$subjectCont.='<tr>';
+		$subjectCont.='<td>We have pleasure in submitting the following bills for favors of early payment.The cheque should be in the favor of "'.strtoupper($result['bill']['company_name']).'"</td>';
+		$subjectCont.='</tr>';
+		$subjectCont.='</table>';
+		$pdf->writeHTML($subjectCont, true, 0, true, 0);
+		
+		//Amount details
+		$particularDetails='<table style="width:100%;" border="1">';
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Particulars</td>';
+		$particularDetails.='<td style="text-align:center;">Amount</td>';
+		$particularDetails.='</tr>';
+		
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>'.$result['bill']['basic'].'</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$result['bill']['basic_amount']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		
+		if(isset($result['bill']['parking_fee']) && trim($result['bill']['parking_fee'])!=""){
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Parking Charges</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$result['bill']['parking_fee']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		if(isset($result['bill']['driver_retention']) && trim($result['bill']['driver_retention'])!="" && $result['bill']['driver_retention']>0){
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Driver Retention</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$result['bill']['driver_retention']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		if(count($result['otherAmount'])>0){
+			foreach($result['otherAmount'] as $other){
+				$particularDetails.='<tr>';
+				$particularDetails.='<td>'.$other['other_name'].'</td>';
+				$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$other['other_amount']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+				$particularDetails.='</tr>';
+			}
+		}
+		
+		if(isset($result['bill']['service_tax_type']) && trim($result['bill']['service_tax_type'])=='sgst'){
+		$sgst_tax=($result['bill']['sgst_tax']/100);
+		$sgstTaxAmt=$result['bill']['total_amount']*$sgst_tax;
+		$cgst_tax=($result['bill']['cgst_tax']/100);
+		$cgstTaxAmt=$result['bill']['total_amount']*$cgst_tax;
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>SGST @ '.$result['bill']['sgst_tax'].'%</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$sgstTaxAmt).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>CGST @ '.$result['bill']['cgst_tax'].'%</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$cgstTaxAmt).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		if(isset($result['bill']['service_tax_type']) && trim($result['bill']['service_tax_type'])=='igst'){
+		$igst_tax=($result['bill']['igst_tax']/100);
+		$igstTaxAmt=$result['bill']['total_amount']*$igst_tax;
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>IGST @ '.$result['bill']['igst_tax'].'%</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$igstTaxAmt).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		if(isset($result['bill']['net_amount']) && trim($result['bill']['net_amount'])!=""){
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>TOTAL</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',round($result['bill']['net_amount'])).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		$particularDetails.='</table>';
+		$pdf->writeHTML($particularDetails, true, 0, true, 0);
+		
+		$y=$pdf->getY();
+		
+		$pdf->SetY($y+4,true,false);
+		
+		$procedure='<table style="width:100%;margin-left:25px;">';
+		$procedure.='<tr><td style="width:3%;"> - </td><td style="width:90%;">Our Bills are payable on presentation.</td></tr>';
+		$procedure.='<tr><td> - </td><td>Discrepancies, if any, in the bills should be intimated within a week.</td></tr>';
+		$procedure.='<tr><td> - </td><td>Delay in payment over 30 days from the date of this letter will entail a debit note for interest at 18% p.a. on the bill amount from the date of this letter till the date of actual payment.</td></tr>';
+		$procedure.='</table>';
+		$pdf->writeHTML($procedure, true, 0, true, 0);
+		
+		$thankCont='<table style="width:100%;">';
+		$thankCont.='<tr><td>Thanking You</td></tr>';
+		$thankCont.='<tr><td>For '.$result['bill']['company_name'].'</td></tr>';
+		//$thankCont.='<tr><td>'.$result['bill']['invoicePreparedBy'].'</td></tr>';
+		$thankCont.='</table>';
+		$pdf->writeHTML($thankCont, true, 0, true, 0);
+		$y=$pdf->getY();
+		$pdf->writeHTMLCell(180, '', '',$y+4,$result['bill']['invoicePreparedBy'], 0, 1, 0, true, 'L');
+		$y=$pdf->getY();
+		$pdf->writeHTMLCell(180, '', '',$y+3,'Encl: As above', 0, 1, 0, true, 'L');
+		
+		
+		$taxDetails='<table style="width:100%;">';
+		$taxDetails.='<tr>';
+		$taxDetails.='<td style="width:12%">GSTIN</td>';
+		$taxDetails.='<td style="width:2%">:</td>';
+		$taxDetails.='<td>'.$result['bill']['gst_no'].'</td>';
+		$taxDetails.='</tr>';
+		$taxDetails.='<tr>';
+		$taxDetails.='<td>PAN No</td>';
+		$taxDetails.='<td>:</td>';
+		$taxDetails.='<td>'.$result['bill']['pan_no'].'</td>';
+		$taxDetails.='</tr>';
+		if(isset($result['bill']['sac_no']) && trim($result['bill']['sac_no'])!=""){
+		$taxDetails.='<tr>';
+		$taxDetails.='<td>SAC No</td>';
+		$taxDetails.='<td>:</td>';
+		$taxDetails.='<td>'.$result['bill']['sac_no'].'</td>';
+		$taxDetails.='</tr>';
+		}
+		$taxDetails.='<tr>';
+		$taxDetails.='<td>State Code </td>';
+		$taxDetails.='<td>:</td>';
+		$taxDetails.='<td>'.$result['bill']['state_code'].'</td>';
+		$taxDetails.='</tr>';
+		$taxDetails.='</table>';
+		$pdf->writeHTML($taxDetails, true, 0, true, 0);
+		
+		if(!file_exists(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill')){
+			mkdir(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill');	
+		}
+		
+		if(!file_exists(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill'. DIRECTORY_SEPARATOR.$result['bill']['month_bill_id'])){
+			mkdir(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill'. DIRECTORY_SEPARATOR.$result['bill']['month_bill_id']);	
+		}
+		
+		//Close and output PDF document
+		$attachFileName=$result['bill']['invoice_sort_key'];
+		$fileName = $result['bill']['invoice_sort_key'].".pdf";
+		
+		$filePath = UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill' . DIRECTORY_SEPARATOR.$result['bill']['month_bill_id']. DIRECTORY_SEPARATOR.$fileName;
+		//just making sure that we have a fresh file
+		if (file_exists($filePath)) {
+			unlink($filePath);
+		}
+		$pdf->Output($filePath,"F");
+		
+		$pdf->Output($filePath, 'I');
+	
+	}
+	else{
+		//Old monthly invoice Format
+		// set font
+		$pdf->SetFont('times','',12);
+		
+		// add a page
+		$pdf->AddPage();
+		
+		$pdf->SetY(38,true,false);
+		
+		$invoiceNo='<table style="width:100%;">';
+		$invoiceNo.='<tr>';
+		$invoiceNo.='<td style="width:80%">Inv.No: '.$result['bill']['invoice_no'].'</td>';
+		$invoiceNo.='<td>'.$commonService->humanDateFormat($result['bill']['invoice_date']).'</td>';
+		$invoiceNo.='</tr>';
+		$invoiceNo.='</table><br/><br/><br/>';
+		
+		$pdf->writeHTML($invoiceNo, true, 0, true, 0);
+		
+		$clientAddress='<table style="width:100%;">';
+		$clientAddress.='<tr>';
+		$clientAddress.='<td>'.$result['bill']['client_name'].'<br/>'.$result['bill']['clientAddress'].'<br/>'.$result['bill']['client_city'].' - '.$result['bill']['pin_code'].'</td>';
+		$clientAddress.='</tr>';
+		$clientAddress.='</table>';
+		$pdf->writeHTML($clientAddress, true, 0, true, 0);
+		
+		$subject='<table style="width:100%;">';
+		$subject.='<tr>';
+		$subject.='<td>Dear Sir,<br/><br/> Sub : '.$result['bill']['subject'].'</td>';
+		$subject.='</tr>';
+		if(isset($result['bill']['particulars']) && trim($result['bill']['particulars'])!=""){
+		$subject.='<tr>';
+		$subject.='<td>'.$result['bill']['particulars'].'</td>';
+		$subject.='</tr>';
+		}
+		$subject.='</table>';
+		$pdf->writeHTML($subject, true, 0, true, 0);
+		
+		$subjectCont='<table style="width:100%;">';
+		$subjectCont.='<tr>';
+		$subjectCont.='<td>We have pleasure in submitting the following bills for favors of early payment.The cheque should be in the favor of "'.strtoupper($result['bill']['company_name']).'"</td>';
+		$subjectCont.='</tr>';
+		$subjectCont.='</table>';
+		$pdf->writeHTML($subjectCont, true, 0, true, 0);
+		
+		//Amount details
+		$particularDetails='<table style="width:100%;" border="1">';
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Particulars</td>';
+		$particularDetails.='<td style="text-align:center;">Amount</td>';
+		$particularDetails.='</tr>';
+		
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>'.$result['bill']['basic'].'</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$result['bill']['basic_amount']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		
+		if(isset($result['bill']['parking_fee']) && trim($result['bill']['parking_fee'])!=""){
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Parking Charges</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$result['bill']['parking_fee']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		if(isset($result['bill']['driver_retention']) && trim($result['bill']['driver_retention'])!="" && $result['bill']['driver_retention']>0){
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Driver Retention</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$result['bill']['driver_retention']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		if(count($result['otherAmount'])>0){
+			foreach($result['otherAmount'] as $other){
+				$particularDetails.='<tr>';
+				$particularDetails.='<td>'.$other['other_name'].'</td>';
+				$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$other['other_amount']).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+				$particularDetails.='</tr>';
+			}
+		}
+		
+		if(isset($result['bill']['service_tax_amount']) && trim($result['bill']['service_tax_amount'])!=""){
+		$service_tax=($result['bill']['service_tax']/100);
+		$serviceTaxAmt=$result['bill']['total_amount']*$service_tax;
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>Service Tax @ '.$result['bill']['service_tax'].'%</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$serviceTaxAmt).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		if(isset($result['bill']['sbc_tax']) && trim($result['bill']['sbc_tax'])>0){
+		$sbc_tax=($result['bill']['sbc_tax']/100);
+		$sbcTaxAmt=$result['bill']['total_amount']*$sbc_tax;
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>SBC @ '.$result['bill']['sbc_tax'].'%</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$sbcTaxAmt).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		if(isset($result['bill']['kkc_tax']) && trim($result['bill']['kkc_tax'])>0){
+		$kkc_tax=($result['bill']['kkc_tax']/100);
+		$kkcTaxAmt=$result['bill']['total_amount']*$kkc_tax;
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>KKC @ '.$result['bill']['kkc_tax'].'%</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',$kkcTaxAmt).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		if(isset($result['bill']['net_amount']) && trim($result['bill']['net_amount'])!=""){
+		$particularDetails.='<tr>';
+		$particularDetails.='<td>TOTAL</td>';
+		$particularDetails.='<td style="text-align:right;">'.money_format('%!i',round($result['bill']['net_amount'])).'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+		$particularDetails.='</tr>';
+		}
+		
+		$particularDetails.='</table>';
+		$pdf->writeHTML($particularDetails, true, 0, true, 0);
+		
+		$y=$pdf->getY();
+		
+		$pdf->SetY($y+5,true,false);
+		
+		$procedure='<table style="width:100%;margin-left:25px;">';
+		$procedure.='<tr><td style="width:3%;"> - </td><td style="width:90%;">Our Bills are payable on presentation.</td></tr>';
+		$procedure.='<tr><td> - </td><td>Discrepancies, if any, in the bills should be intimated within a week.</td></tr>';
+		$procedure.='<tr><td> - </td><td>Delay in payment over 30 days from the date of this letter will entail a debit note for interest at 18% p.a. on the bill amount from the date of this letter till the date of actual payment.</td></tr>';
+		$procedure.='</table>';
+		$pdf->writeHTML($procedure, true, 0, true, 0);
+		
+		$thankCont='<table style="width:100%;">';
+		$thankCont.='<tr><td>Thanking You</td></tr>';
+		$thankCont.='<tr><td>For '.$result['bill']['company_name'].'</td></tr>';
+		//$thankCont.='<tr><td>'.$result['bill']['invoicePreparedBy'].'</td></tr>';
+		$thankCont.='</table>';
+		$pdf->writeHTML($thankCont, true, 0, true, 0);
+		$y=$pdf->getY();
+		$pdf->writeHTMLCell(180, '', '',$y+15,$result['bill']['invoicePreparedBy'], 0, 1, 0, true, 'L');
+		$y=$pdf->getY();
+		$pdf->writeHTMLCell(180, '', '',$y+3,'Encl: As above', 0, 1, 0, true, 'L');
+		
+		
+		$taxDetails='<br/><br/><table style="width:100%;">';
+		$taxDetails.='<tr>';
+		$taxDetails.='<td style="width:11%">S.Tax No</td>';
+		$taxDetails.='<td style="width:2%">:</td>';
+		$taxDetails.='<td>'.$result['bill']['service_tax_no'].'</td>';
+		$taxDetails.='</tr>';
+		$taxDetails.='<tr>';
+		$taxDetails.='<td>PAN No</td>';
+		$taxDetails.='<td>:</td>';
+		$taxDetails.='<td>'.$result['bill']['pan_no'].'</td>';
+		$taxDetails.='</tr>';
+		$taxDetails.='</table>';
+		$pdf->writeHTML($taxDetails, true, 0, true, 0);
+		
+		if(!file_exists(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill')){
+			mkdir(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill');	
+		}
+		
+		if(!file_exists(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill'. DIRECTORY_SEPARATOR.$result['bill']['month_bill_id'])){
+			mkdir(UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill'. DIRECTORY_SEPARATOR.$result['bill']['month_bill_id']);	
+		}
+		
+		//Close and output PDF document
+		$attachFileName=$result['bill']['invoice_sort_key'];
+		$fileName = $result['bill']['invoice_sort_key'].".pdf";
+		
+		$filePath = UPLOAD_PATH . DIRECTORY_SEPARATOR . 'monthly-bill' . DIRECTORY_SEPARATOR.$result['bill']['month_bill_id']. DIRECTORY_SEPARATOR.$fileName;
+		//just making sure that we have a fresh file
+		if (file_exists($filePath)) {
+			unlink($filePath);
+		}
+		$pdf->Output($filePath,"F");
+		
+		$pdf->Output($filePath, 'I');
+	}
+
+
+?>

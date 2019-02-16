@@ -1,0 +1,95 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'edit')) {
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+
+?>
+<!-- Content Header (Page header) -->
+<div class="content-wrapper">
+<section class="content-header">
+    <a href="<?php echo $this->url('booking',array('action' => 'add'));?>" class="btn btn-primary pull-right" style="margin-top:-5px;"><i class="fa fa-plus"></i>&nbsp;Add Booking</a>
+    <div class="pull-left">
+		<ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+		</ol>
+    </div>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+			<div class="panel panel-primary">
+            <div class="panel-heading">
+              <h2 class="panel-title" style=""><i class="fa fa-cogs"></i> Booking List</h2>
+            </div>
+			<!-- /.box-header -->
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box-body">
+								<table id="bookingDataTable" class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>Booking Ref No.</th>
+											<th>Trip Date</th>
+											<th>Trip Time</th>
+											<th>Trip Type</th>
+											<th>City</th>
+											<th>Client</th>
+											<th>Vehicle Category</th>
+											<th>Guest Name</th>
+											<?php if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'edit')) { ?>
+											<th>Action</th>
+											<?php } ?>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="9" class="dataTables_empty">Loading data from server</td>
+										</tr>
+									</tbody>
+									
+								</table>
+							</div><!-- /.box-body -->
+						</div>
+					</div>
+				</div>
+          </div>
+          <!-- /.panel -->
+            
+        </div>
+    </div>
+</section><!-- /.content -->
+</div>
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+    $(document).ready(function() {
+		$('#bookingDataTable').dataTable( {
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			 "aoColumns": [
+			<?php echo $editAction;?>
+				],
+			"aaSorting": [[ 1, "desc" ]],
+			"sAjaxSource": "<?php echo $this->url('booking',array('action' => 'index')); ?>",
+			 "fnServerData": function ( sSource, aoData, fnCallback ) {
+				$.ajax({
+					"dataType": 'json',
+					"type": "POST",
+					"url": sSource,
+					"data": aoData,
+					"success": fnCallback
+				});
+			}
+		});
+	});
+       
+</script>

@@ -1,0 +1,222 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+//\Zend\Debug\Debug::dump($renewalResult);die;
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Financial </span>
+				<span class="pageHeadingLabe12"> Dashboard</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="info-box" >
+					<span class="info-box-number"><?php echo $todayCurrentBooking; ?></span>
+					<span class="info-box-text">TOTAL BILLING</span>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="info-box">
+					<span class="info-box-number"><?php echo $todayExecutedBooking; ?></span>
+					<span class="info-box-text">PAYMENT RECEIVED</span>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="info-box">
+					<span class="info-box-number cancel-booking-count"><?php echo $todayCanceledBooking; ?></span>
+					<span class="info-box-text">VENDOR PAYMENT</span>
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-6 col-xs-12">
+				<div class="info-box">
+					<span class="info-box-number"><?php echo $todayExecutedBooking; ?></span>
+					<span class="info-box-text">MAINTENANCE COST</span>
+				</div>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+      
+
+		<div class="row">
+			<div class="col-md-6">
+				<!-- DONUT CHART -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title">Vendor Pending Payments</h3>
+		
+						<div class="box-tools pull-right">
+						  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+						</div>
+					</div>
+					<div class="box-body chart-responsive">
+					  <div class="chart" id="vendorPendingPayments" style="height: 400px;max-width:600px;margin:0 auto; position: relative;"></div>
+					</div>
+				<!-- /.box-body -->
+				</div>
+			<!-- /.box -->
+			</div>
+			
+			<div class="col-md-6">
+				<!-- DONUT CHART -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title">Client Pending Payments</h3>
+		
+						<div class="box-tools pull-right">
+						  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+						</div>
+					</div>
+					<div class="box-body chart-responsive">
+					  <div class="chart" id="clientPendingPayments" style="height: 400px;max-width:600px;margin:0 auto; position: relative;"></div>
+					</div>
+				<!-- /.box-body -->
+				</div>
+			<!-- /.box -->
+			</div>
+			
+		</div>
+		
+    </section>
+<!-- page script -->
+<script src="<?php echo $this->basePath() . '/assets/plugins/highcharts/code/highcharts.js' ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/highcharts/code/modules/exporting.js' ?>"></script>
+<script type="text/javascript">
+	oTable = null;
+	$(document).ready(function() {
+	
+	
+Highcharts.chart('vendorPendingPayments', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: ''
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Amount'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Amount : <b>{point.y:.1f}</b>'
+    },
+	colors: [
+				'#215682'
+	],
+	credits: {
+		enabled: false
+		},
+    series: [{
+        name: 'Vendor Name',
+        data: [
+			<?php
+			foreach($vendorPaymentResult as $vendor){
+				echo "['".ucwords($vendor['vendor_name'])."',".$vendor['current_balance']."],";
+			}
+			?>
+        ],
+        dataLabels: {
+            enabled: false,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+	
+	
+	//Client Pending Amount
+		
+Highcharts.chart('clientPendingPayments', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: ''
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Amount'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Amount : <b>{point.y:.1f}</b>'
+    },
+	colors: [
+				'#215682'
+	],
+	credits: {
+		enabled: false
+		},
+    series: [{
+        name: 'Client Name',
+        data: [
+			<?php
+			foreach($clientPaymentResult as $client){
+				echo "['".ucwords($client['client_name'])."',".$client['balance']."],";
+			}
+			?>
+        ],
+        dataLabels: {
+            enabled: false,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+	
+  });
+</script>

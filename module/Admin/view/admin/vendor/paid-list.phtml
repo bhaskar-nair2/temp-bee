@@ -1,0 +1,32 @@
+<?php
+    use Application\Service\CommonService;
+    $commonService=new CommonService();
+    if(count($result)>0){
+        ?>
+        <table class="table table-bordered table-striped">
+            <tr>
+                <td>Payment Code</td>
+                <td>Date</td>
+                <td>Paid Amount</td>
+                <td>Remarks</td>
+            </tr>
+        <?php
+        foreach($result as $res){
+        ?>
+        <tr>
+            <td><?php echo $res['payment_code']; ?></td>
+            <td><?php echo $commonService->humanDateFormat($res['paid_date']); ?></td>
+            <td><?php echo $res['paid_amount']; ?></td>
+            <td><?php echo $res['remarks']; ?></td>
+        </tr>
+        <?php
+        }
+        ?>
+        </table>
+        <?php
+    }else{
+    ?>
+    <div>No data available</div>
+    <?php
+    }
+    ?>

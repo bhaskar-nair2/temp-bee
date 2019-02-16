@@ -1,0 +1,80 @@
+<!-- Main content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>Edit SMS Template</h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="<?php echo $this->url('sms', array('action' => 'index')); ?>"> SMS Template</a></li>
+        <li class="active">Edit SMS Template</li>
+      </ol>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="editSmsTemplateInformation" id="editSmsTemplateInformation"  method="post" action="<?php echo $this->url('sms', array('action' => 'edit')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="roleName" class="col-lg-4 control-label">Display Name</label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo $result->display_sms_keywords; ?></p>
+									<input type="hidden" class="form-control isRequired" id="templateId" name="templateId"  value="<?php echo base64_encode($result->template_id); ?>" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Message <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea name="message" id="message" class="form-control isRequired" rows="6"><?php echo $result['message']; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Keywords</label>
+                                <div class="col-lg-6">
+                                    <?php echo $result['msg_keywords']; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        
+                    <div class="box-footer">
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                        <a href="<?php echo $this->url('sms', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+    </div>
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'editSmsTemplateInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('editSmsTemplateInformation').submit();
+            }
+        }
+    }
+</script>

@@ -1,0 +1,8 @@
+<?php
+$vehicleList='<option value="">--Select--</option>';
+if(sizeof($result)>0){
+    foreach($result as $res){
+        $vehicleList.='<option value="'.$res['vehicle_no'].'">'.$res['vehicle_no'].'</option>';
+    }
+}
+echo $vehicleList;

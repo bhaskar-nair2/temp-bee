@@ -1,0 +1,77 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+$editAction = '{"sClass":"center"},{"sClass":"center"}';
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Config</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php if ($acl->isAllowed($role, 'Admin\Controller\Config', 'edit')) { ?>
+					<a href="<?php echo $this->url('config',array('action' => 'edit'));?>" class="btn btn-primary"><i class="fa fa-edit"></i>&nbsp; Edit Config</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="globalDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Config Name</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								  <td colspan="2" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					  </table>
+				
+				
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+        $(document).ready(function() {
+    $('#globalDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+		"aaSorting": [[ 0, "desc" ]],
+        "sAjaxSource": "<?php echo $this->url('config',array('action' => 'index')); ?>",
+         "fnServerData": function ( sSource, aoData, fnCallback ) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+    } );
+
+} );
+       
+</script>

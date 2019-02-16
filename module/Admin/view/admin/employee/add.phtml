@@ -1,0 +1,378 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+     <div class="row" id="pageHeading">
+         <div class="col-xs-6" >
+             <span class="pageHeadingLabel1">Add </span>
+             <span class="pageHeadingLabe12"> Employee</span>
+         </div>
+         <div class="col-xs-6">
+             <span class="pull-right">
+                 <a href="<?php echo $this->url('employee', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                     <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+             </span>
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-xs-6">
+             <ol class="breadcrumb">
+              <li><a href="<?php echo $this->url('employee', array('action' => 'index')); ?>"> Employee</a></li>
+              <li class="active">Add Employee</li>
+             </ol>
+         </div>
+     </div>
+</section>
+
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addEmployeeInformation" id="addEmployeeInformation"  method="post" action="<?php echo $this->url('employee', array('action' => 'add')); ?>" enctype="multipart/form-data" autocomplete="off" >
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="employeeName" class="col-lg-4 control-label">Employee Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="employeeName" name="employeeName" placeholder="Enter employee name" title="Please enter employee name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="employeeCode" class="col-lg-4 control-label">Employee Code <span class="mandatory">*</span> </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired readonly" id="employeeCode" name="employeeCode" placeholder="Enter employee code" title="Please enter employee code" value="<?php echo "BC".$employeeNo; ?>" readonly="readonly" />
+                                    <input type="hidden" class="form-control isRequired" id="employeeSortKey" name="employeeSortKey" value="<?php echo $employeeNo; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mobileNo" class="col-lg-4 control-label">Mobile No. <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="mobileNo" name="mobileNo" placeholder="Enter mobile number" title="Please enter mobile number"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="emergencyPhoneNo" class="col-lg-4 control-label">Emergency Phone No. </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="emergencyPhoneNo" name="emergencyPhoneNo" placeholder="Enter Emergency Phone Number" title="Please enter emergency phone number"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email" class="col-lg-4 control-label">Email </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isEmail" id="email" name="email" placeholder="Enter email" title="Please enter valid email id"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gender" class="col-lg-4 control-label">Gender </label>
+                                <div class="col-lg-6">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="gender" value="male" checked> Male
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="gender" value="female"> Female
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address" class="col-lg-4 control-label">Address <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control isRequired" id="address" name="address" placeholder="Enter address" title="Please enter employee address" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="role" class="col-lg-4 control-label">Role <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="role" name="role" title="Please select role" onchange="checkRole(this)">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($role as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['role_id']); ?>"><?php echo ucwords($val['role_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendor" class="col-lg-4 control-label">Business Unit <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vendor" name="vendor" title="Please select business unit">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($businessUnit as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['unit_id']);  ?>"><?php echo ucwords($val['unit_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bankName" class="col-lg-4 control-label">Bank Name </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="bankName" name="bankName" placeholder="Enter Bank Name" title="Please enter bank name"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="accountNumber" class="col-lg-4 control-label">Account Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="accountNumber" name="accountNumber" placeholder="Enter Account Number" title="Please enter account number"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="insuranceNumber" class="col-lg-4 control-label">Insurance Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="insuranceNumber" name="insuranceNumber" placeholder="Enter Insurance Number" title="Please enter insurance number"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="esiNumber" class="col-lg-4 control-label">ESI Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="esiNumber" name="esiNumber" placeholder="Enter ESI Number" title="Please enter esi number"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="pfNumber" class="col-lg-4 control-label">PF Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="pfNumber" name="pfNumber" placeholder="Enter PF Number" title="Please enter pf number"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Date Of Join </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker " id="dateOfJoin" name="dateOfJoin" placeholder="Date Of Join" readonly="readonly" title="Please select the join date"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Date Of Releving </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker" id="dateOfReleving" name="dateOfReleving" placeholder="Date Of Releving" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row driverField">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">License Valid Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker" id="licenseValidDate" name="licenseValidDate" placeholder="License Valid Date" readonly="readonly" title="Please select the license valid date "/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Badge Valid Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker" id="badgeValidDate" name="badgeValidDate" placeholder="Badge Valid Date" readonly="readonly" title="Please select the dadge valid date "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bloodGroup" class="col-lg-4 control-label">Blood Group </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="bloodGroup" name="bloodGroup" placeholder="Enter Blood Group" title="Please enter blood group"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control" id="status" name="status" title="Please select status">
+                                        <option value="working">Working</option>
+                                        <option value="relieved">Relieved</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Upload Photo </label>
+                                <div class="col-lg-6">
+                                    <div class="controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                            <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                            <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=Photo">
+                                        </div>
+                                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                        <div>
+                                            <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" class="" title="please choose photo" name="photo" id="photo"></span>
+                                            <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Upload Id Proof </label>
+                                <div class="col-lg-6">
+                                   <input type="file" class="" title="please choose id proof" name="idProof" id="idProof">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                        
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Upload Contract Proof </label>
+                                <div class="col-lg-6">
+                                   <input type="file" class="" title="please choose contract proof" name="contractProof" id="contractProof">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Upload Address Proof </label>
+                                <div class="col-lg-6">
+                                   <input type="file" class="" title="please choose address proof" name="addressProof" id="addressProof">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row driverField">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Upload License <span class="mandatory">*</span> </label>
+                                <div class="col-lg-6">
+                                   <input type="file" title="please choose license image" name="licenseImg" id="licenseImg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('employee', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/jasny-bootstrap.min.js'; ?>"></script>
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'addEmployeeInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addEmployeeInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+    $(function() {
+      //$(".select2").select2({
+      // placeholder: "--Select--"
+      //});
+		$('.datepicker').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+        $(".driverField").hide();
+	});
+    
+    function checkRole(obj) {
+      if (obj.value=="NQ==") {
+        $(".driverField").show();
+        $("#licenseValidDate").addClass('isRequired');
+        $("#badgeValidDate").addClass('isRequired');
+        $("#licenseImg").addClass('isRequired');
+      }else{
+        $(".driverField").hide();
+        $("#licenseValidDate").removeClass('isRequired');
+        $("#badgeValidDate").removeClass('isRequired');
+        $("#licenseImg").removeClass('isRequired');
+      }
+    }
+</script>

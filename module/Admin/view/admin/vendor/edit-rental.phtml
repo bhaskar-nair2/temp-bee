@@ -1,0 +1,539 @@
+<!-- Main content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>Edit Vendor Rental</h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="<?php echo $this->url('vendor', array('action' => 'index')); ?>"> Vendor</a></li>
+        <li class="active">Edit Rental</li>
+      </ol>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addVendorRentalInformation" id="addVendorRentalInformation"  method="post" action="<?php echo $this->url('vendor', array('action' => 'edit-rental')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="client" class="col-lg-4 control-label">Vendor Code</label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo $result['vendor']['vendor_no']; ?></p>
+                                    <input type="hidden" name="vendorId" id="vendorId" value="<?php echo base64_encode($result['vendor']['vendor_id']); ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="client" class="col-lg-4 control-label">Vendor Name</label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo $result['vendor']['vendor_name']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="client" class="col-lg-4 control-label">Vendor Type</label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo ucwords($result['vendor']['vendor_type']); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="client" class="col-lg-4 control-label">City</label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo $result['vendor']['vendor_city']; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="panel with-nav-tabs panel-info">
+                                <div class="panel-heading">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"><a href="#tab1info" data-toggle="tab">SEDAN</a></li>
+                                            <li><a href="#suvinfo" data-toggle="tab">SUV</a></li>
+                                            <li><a href="#premiuminfo" data-toggle="tab">PREMIUM</a></li>
+                                            <li><a href="#luxuryinfo" data-toggle="tab">LUXURY</a></li>
+                                            <li><a href="#tempoinfo" data-toggle="tab">TEMPO</a></li>
+                                            
+                                        </ul>
+                                </div>
+                                    <div class="panel-body">
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade in active" id="tab1info">
+                                                <h4>Local Use</h4>
+                                                <table class="table table-striped table-bordered table-condensed">
+                                                    <tr>
+                                                        <th>Tariff Hrs</th>
+                                                        <th>Tariff Kms</th>
+                                                        <th>Tariff Amount</th>
+                                                    </tr>
+                                                    <?php
+                                                    $s=1;
+                                                    foreach($result['tariff']['Sedan']['localuse'] as $sedan){
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" id="sedanTariffHrs<?php echo $s; ?>" name="sedanTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $sedan['tariff_hrs']; ?>"/>
+                                                            <input type="hidden" id="sedanTariffId<?php echo $s; ?>" name="sedanTariffId[]" class="form-control" value="<?php echo base64_encode($sedan['vendor_tariff_id']); ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="sedanTariffKms<?php echo $s; ?>" name="sedanTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $sedan['tariff_kms']; ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="sedanTariffAmt<?php echo $s; ?>" name="sedanTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $sedan['tariff_amt']; ?>"/>
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                    <?php
+                                                    $s++;
+                                                    }
+                                                    ?>
+                                                </table>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanPerHrsPrice" class="col-lg-4 control-label">Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanPerHrsPrice" name="sedanPerHrsPrice" placeholder="Per Hours Price In Local Use" value="<?php echo $result['tariff']['Sedan']['extra_tariff']['extra_per_hrs_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanPerKmsPrice" class="col-lg-4 control-label">Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanPerKmsPrice" name="sedanPerKmsPrice" placeholder="Per Kms Price" value="<?php echo $result['tariff']['Sedan']['extra_tariff']['extra_per_kms_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanOutstationKmsPerDay" name="sedanOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" value="<?php echo $result['tariff']['Sedan']['outstation']['tariff_kms']; ?>"/>
+                                                                <input type="hidden" class="form-control checkNum" id="sedanOutstationTariffId" name="sedanOutstationTariffId" value="<?php echo base64_encode($result['tariff']['Sedan']['outstation']['vendor_tariff_id']); ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanOutstationAmtPerDay" name="sedanOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" value="<?php echo $result['tariff']['Sedan']['outstation']['tariff_amt']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanDriverAllowanceInDay" name="sedanDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" value="<?php echo $result['tariff']['Sedan']['extra_tariff']['driver_allowance_day']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="sedanDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="sedanDriverAllowanceInNight" name="sedanDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" value="<?php echo $result['tariff']['Sedan']['extra_tariff']['driver_allowance_night']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="suvinfo">
+                                                <h4>Local Use</h4>
+                                                    <table class="table table-striped table-bordered table-condensed">
+                                                    <tr>
+                                                        <th>Tariff Hrs</th>
+                                                        <th>Tariff Kms</th>
+                                                        <th>Tariff Amount</th>
+                                                    </tr>
+                                                    <?php
+                                                    $su=1;
+                                                    foreach($result['tariff']['SUV']['localuse'] as $suv){
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" id="suvTariffHrs<?php echo $su; ?>" name="suvTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $suv['tariff_hrs']; ?>"/>
+                                                            <input type="hidden" id="suvTariffId<?php echo $su; ?>" name="suvTariffId[]" class="form-control" value="<?php echo base64_encode($suv['vendor_tariff_id']); ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="suvTariffKms<?php echo $su; ?>" name="suvTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $suv['tariff_kms']; ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="suvTariffAmt<?php echo $su; ?>" name="suvTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $suv['tariff_amt']; ?>"/>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                    $su++;
+                                                    }
+                                                    ?>
+                                                </table>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvPerHrsPrice" class="col-lg-4 control-label">Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvPerHrsPrice" name="suvPerHrsPrice" placeholder="Per Hours Price In Local Use" value="<?php echo $result['tariff']['SUV']['extra_tariff']['extra_per_hrs_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvPerKmsPrice" class="col-lg-4 control-label">Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvPerKmsPrice" name="suvPerKmsPrice" placeholder="Per Kms Price" value="<?php echo $result['tariff']['SUV']['extra_tariff']['extra_per_kms_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="allowance" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvOutstationKmsPerDay" name="suvOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" value="<?php echo $result['tariff']['SUV']['outstation']['tariff_kms']; ?>"/>
+                                                                <input type="hidden" class="form-control checkNum" id="suvOutstationTariffId" name="suvOutstationTariffId" value="<?php echo base64_encode($result['tariff']['SUV']['outstation']['vendor_tariff_id']); ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvOutstationAmtPerDay" name="suvOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" value="<?php echo $result['tariff']['SUV']['outstation']['tariff_amt']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvDriverAllowanceInDay" name="suvDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" value="<?php echo $result['tariff']['SUV']['extra_tariff']['driver_allowance_day']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="suvDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="suvDriverAllowanceInNight" name="suvDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" value="<?php echo $result['tariff']['SUV']['extra_tariff']['driver_allowance_night']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="premiuminfo">
+                                                <h4>Local Use</h4>
+                                                    <table class="table table-striped table-bordered table-condensed">
+                                                    <tr>
+                                                        <th>Tariff Hrs</th>
+                                                        <th>Tariff Kms</th>
+                                                        <th>Tariff Amount</th>
+                                                    </tr>
+                                                    <?php
+                                                    $p=1;
+                                                    foreach($result['tariff']['Premium']['localuse'] as $premium){
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" id="premiumTariffHrs<?php echo $p; ?>" name="premiumTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $premium['tariff_hrs']; ?>"/>
+                                                            <input type="hidden" id="premiumTariffId<?php echo $p; ?>" name="premiumTariffId[]" class="form-control" value="<?php echo base64_encode($premium['vendor_tariff_id']); ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="premiumTariffKms<?php echo $p; ?>" name="premiumTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $premium['tariff_kms']; ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="premiumTariffAmt<?php echo $p; ?>" name="premiumTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $premium['tariff_amt']; ?>"/>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                    $p++;
+                                                    } ?>
+                                                    
+                                                </table>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumPerHrsPrice" class="col-lg-4 control-label">Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumPerHrsPrice" name="premiumPerHrsPrice" placeholder="Per Hours Price In Local Use" value="<?php echo $result['tariff']['Premium']['extra_tariff']['extra_per_hrs_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumPerKmsPrice" class="col-lg-4 control-label">Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumPerKmsPrice" name="premiumPerKmsPrice" placeholder="Per Kms Price" value="<?php echo $result['tariff']['Premium']['extra_tariff']['extra_per_kms_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="allowance" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumOutstationKmsPerDay" name="premiumOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" value="<?php echo $result['tariff']['Premium']['outstation']['tariff_kms']; ?>"/>
+                                                                <input type="hidden" class="form-control checkNum" id="premiumOutstationTariffId" name="premiumOutstationTariffId" value="<?php echo base64_encode($result['tariff']['Premium']['outstation']['vendor_tariff_id']); ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumOutstationAmtPerDay" name="premiumOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" value="<?php echo $result['tariff']['Premium']['outstation']['tariff_amt']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumDriverAllowanceInDay" name="premiumDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" value="<?php echo $result['tariff']['Premium']['extra_tariff']['driver_allowance_day']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="premiumDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="premiumDriverAllowanceInNight" name="premiumDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" value="<?php echo $result['tariff']['Premium']['extra_tariff']['driver_allowance_night']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="luxuryinfo">
+                                                <h4>Local Use</h4>
+                                                    <table class="table table-striped table-bordered table-condensed">
+                                                    <tr>
+                                                        <th>Tariff Hrs</th>
+                                                        <th>Tariff Kms</th>
+                                                        <th>Tariff Amount</th>
+                                                        
+                                                    </tr>
+                                                    <?php
+                                                    $l=1;
+                                                    foreach($result['tariff']['Luxury']['localuse'] as $luxury){
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" id="luxTariffHrs<?php echo $l; ?>" name="luxuryTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $luxury['tariff_hrs']; ?>"/>
+                                                            <input type="hidden" id="luxuryTariffId<?php echo $l; ?>" name="luxuryTariffId[]" class="form-control" value="<?php echo base64_encode($luxury['vendor_tariff_id']); ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="luxuryTariffKms<?php echo $l; ?>" name="luxuryTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $luxury['tariff_kms']; ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="luxuryTariffAmt<?php echo $l; ?>" name="luxuryTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $luxury['tariff_amt']; ?>"/>
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                    <?php
+                                                    $l++;
+                                                    } ?>
+                                                </table>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryPerHrsPrice" class="col-lg-4 control-label">Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryPerHrsPrice" name="luxuryPerHrsPrice" placeholder="Per Hours Price In Local Use" value="<?php echo $result['tariff']['Luxury']['extra_tariff']['extra_per_hrs_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryPerKmsPrice" class="col-lg-4 control-label">Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryPerKmsPrice" name="luxuryPerKmsPrice" placeholder="Per Kms Price" value="<?php echo $result['tariff']['Luxury']['extra_tariff']['extra_per_kms_price']; ?>" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryOutstationKmsPerDay" name="luxuryOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" value="<?php echo $result['tariff']['Luxury']['outstation']['tariff_kms']; ?>"/>
+                                                                <input type="hidden" class="form-control checkNum" id="luxuryOutstationTariffId" name="luxuryOutstationTariffId" value="<?php echo base64_encode($result['tariff']['Luxury']['outstation']['vendor_tariff_id']); ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryOutstationAmtPerDay" name="luxuryOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" value="<?php echo $result['tariff']['Luxury']['outstation']['tariff_amt']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryDriverAllowanceInDay" name="luxuryDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" value="<?php echo $result['tariff']['Luxury']['extra_tariff']['driver_allowance_day']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="luxuryDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="luxuryDriverAllowanceInNight" name="luxuryDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" value="<?php echo $result['tariff']['Luxury']['extra_tariff']['driver_allowance_night']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="tempoinfo">
+                                                <h4>Local Use</h4>
+                                                    <table class="table table-striped table-bordered table-condensed">
+                                                    <tr>
+                                                        <th>Tariff Hrs</th>
+                                                        <th>Tariff Kms</th>
+                                                        <th>Tariff Amount</th>
+                                                    </tr>
+                                                    <?php
+                                                    $t=1;
+                                                    foreach($result['tariff']['Tempo']['localuse'] as $tempo){
+                                                    ?>
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" id="tempoTariffHrs<?php echo $t; ?>" name="tempoTariffHrs[]" class="form-control isNumeric checkNum" placeholder="Tariff Hrs" title="Please enter the tariff hours" value="<?php echo $tempo['tariff_hrs']; ?>"/>
+                                                            <input type="hidden" id="tempoTariffId<?php echo $t; ?>" name="tempoTariffId[]" class="form-control" value="<?php echo base64_encode($tempo['vendor_tariff_id']); ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="tempoTariffKms<?php echo $t; ?>" name="tempoTariffKms[]" class="form-control isNumeric checkNum" placeholder="Tariff Kms" title="Please enter the the tariff Kms" value="<?php echo $tempo['tariff_kms']; ?>"/>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="tempoTariffAmt<?php echo $t; ?>" name="tempoTariffAmt[]" class="form-control isNumeric checkNum" placeholder="Tariff Amount" title="Please enter the tariff amount" value="<?php echo $tempo['tariff_amt']; ?>"/>
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                    <?php
+                                                    $t++;
+                                                    }
+                                                    ?>
+                                                </table>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoPerHrsPrice" class="col-lg-4 control-label">Extra Price Per Hours </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoPerHrsPrice" name="tempoPerHrsPrice" placeholder="Per Hours Price In Local Use" value="<?php echo $result['tariff']['Tempo']['extra_tariff']['extra_per_hrs_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoPerKmsPrice" class="col-lg-4 control-label">Extra Price Per Kms </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoPerKmsPrice" name="tempoPerKmsPrice" placeholder="Per Kms Price" value="<?php echo $result['tariff']['Tempo']['extra_tariff']['extra_per_kms_price']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoOutstationKmsPerDay" class="col-lg-4 control-label">Outstation Km Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoOutstationKmsPerDay" name="tempoOutstationKmsPerDay" placeholder="Outstation Km Per Day" title="Please enter the outstation km per day" value="<?php echo $result['tariff']['Tempo']['outstation']['tariff_kms']; ?>"/>
+                                                                <input type="hidden" class="form-control checkNum" id="tempoOutstationTariffId" name="tempoOutstationTariffId" value="<?php echo base64_encode($result['tariff']['Tempo']['outstation']['vendor_tariff_id']); ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoOutstationAmtPerDay" class="col-lg-4 control-label">Outstation Amount Per Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoOutstationAmtPerDay" name="tempoOutstationAmtPerDay" placeholder="Outstation Amount Per Day" title="Please enter the outstation amount per day" value="<?php echo $result['tariff']['Tempo']['outstation']['tariff_amt']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoDriverAllowanceInDay" class="col-lg-4 control-label">Driver Allowance In Day</label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoDriverAllowanceInDay" name="tempoDriverAllowanceInDay" placeholder="Driver Allowance In Day" title="Please enter the driver allowance in day" value="<?php echo $result['tariff']['Tempo']['extra_tariff']['driver_allowance_day']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="tempoDriverAllowanceInNight" class="col-lg-4 control-label">Driver Allowance In Night </label>
+                                                            <div class="col-lg-6">
+                                                                <input type="text" class="form-control checkNum" id="tempoDriverAllowanceInNight" name="tempoDriverAllowanceInNight" placeholder="Driver Allowance In Night" title="Please enter the driver allowance in night" value="<?php echo $result['tariff']['Tempo']['extra_tariff']['driver_allowance_night']; ?>"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    <a href="<?php echo $this->url('vendor', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+</div>
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addVendorRentalInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addVendorRentalInformation').submit();
+            }
+        }
+    }
+    
+</script>
+

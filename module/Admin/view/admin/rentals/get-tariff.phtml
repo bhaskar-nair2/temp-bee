@@ -1,0 +1,11 @@
+<?php
+$typeResult="";
+if(sizeof($result)>0){
+    if($result[0]['rental_type']==1){
+        $typeResult="<option value=''>--Select Tariff--</option>";
+    }
+    foreach($result as $res){
+        $typeResult.='<option value="'.$res['tariff_id'].'">'.$res['tariff_name'].'</option>';
+    }
+}
+echo $typeResult;

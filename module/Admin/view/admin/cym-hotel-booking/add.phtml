@@ -1,0 +1,805 @@
+<?php
+$bookingDate=date('Y-m-d');
+$serviceTax='5';
+?>
+<style>
+	body {
+        color:#000000 !important;
+    }
+    label{
+        font-weight :500 !important;
+    }
+	.form-horizontal .control-label{
+		text-align:left;
+	}
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8,.col-md-4{
+		padding-right:11px !important;
+		padding-left:11px !important;
+	}
+	.datepicker.dropdown-menu {
+		background-color: #1972bffc !important ;
+		color: #fff !important ;
+	}
+	.table>tbody>tr>td{
+		border:1px solid #5a5454 !important;
+	}
+	.datepicker table tr td.old, .datepicker table tr td.new{
+		color:#ccc9c9 !important;
+	}
+	
+	tr td.active.active{
+		background: #f59e00 !important;
+	}
+	.datepicker table tr td.day:hover{
+		background: #f59e00 !important;
+	}
+	.pageHeadingLabe12,.pageHeadingLabel1{
+		font-size:17px;
+	}
+	.select2-container--default .select2-selection--single{
+		border:1px solid #aaa;
+		border-radius:4px;
+	}
+	.form-control {
+		border:1px solid #aaa;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        -webkit-transition: none;
+        transition: none;
+    }
+</style>
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-left" style="font-size:15px;">
+					<span class="pageHeadingLabel1">Add </span>
+					<span class="pageHeadingLabe12">Hotel Booking</span>
+				</div>
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addBookingInformation" id="addBookingInformation"  method="post" action="<?php echo $this->url('cym-hotel-booking', array('action' => 'add')); ?>" autocomplete="off">
+                <div class="box-body box-footer">
+					<div class="row">
+                        
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Reference<span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="bookingRef" name="bookingRef" title="Please enter booking reference" placeholder="Enter Booking Reference" tabindex="1" value="<?php echo $bookingRef['bookCode'].$bookingRef['bookSortNo']; ?>" onblur="checkNameValidation('hotel_bookings', 'booking_no', this, null, 'Already exist this reference code . Please enter another name.');" readonly="readonly"/>
+                                    <input type="hidden" class="form-control" id="bookingCode" name="bookingCode" title="Please enter booking code" value="<?php echo $bookingRef['bookCode']; ?>"/>
+									<input type="hidden" class="form-control" id="vehicleType" name="vehicleType">
+									<input type="hidden" class="form-control" id="vehicleId" name="vehicleId">
+									<input type="hidden" class="form-control" id="driverId" name="driverId">
+									<input type="hidden" class="form-control" id="extAmtPerHrs" name="extAmtPerHrs"/>
+                            		<input type="hidden" class="form-control" id="extAmtPerKms" name="extAmtPerKms"/>
+									<input type="hidden" class="form-control" id="driverAllowancePerDay" name="driverAllowancePerDay"/>
+                            		<input type="hidden" class="form-control" id="driverAllowancePerNight" name="driverAllowancePerNight"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired datepicker" placeholder="Booking Date" id="bookingDate" name="bookingDate" title="Please select the booking date" readonly="readonly" tabindex="2" data-date-end-date="0d"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Guest Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control isRequired" id="guestName" name="guestName" title="Please enter guest name" placeholder="Enter Guest Name" tabindex="3"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Room Number </label>
+                                <div class="col-lg-8">
+                                    <input type="text" class="form-control" id="roomNo" name="roomNo" title="Please enter room number" placeholder="Enter Room Number" tabindex="4"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Given By</label>
+                                <div class="col-lg-8">
+									<select  class="form-control" id="bookingGivenBy" name="bookingGivenBy" title="Please select booking given by" tabindex="5">
+									<option value=""></option>
+									<option value="ays">AYS</option>
+									<option value="front_office">Front Office</option>
+									<option value="hotel">Hotel</option>
+									<option value="self">Self</option>
+									<option value="travel_desk">Travel Desk</option>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Type <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <select  class="form-control isRequired" id="dutyType" name="dutyType" title="Please select booking type" tabindex="6">
+									<option value=""></option>
+									<?php
+									foreach($rentalTypeResult as $rentalType){
+									?>
+									<option value="<?php echo $rentalType['type_id']; ?>" ><?php echo ucwords($rentalType['type_name']);  ?></option>
+									<?php
+									}
+									?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle No <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <select  class="form-control isRequired " id="vehicle" name="vehicle" title="Please select vehicle" tabindex="7">
+									<option value=""></option>
+									<?php
+									foreach($vehicleResult as $vehicle){
+									?>
+									<option value="<?php echo $vehicle['vehicle_no']; ?>" data-vehicle-id="<?php echo $vehicle['vehicle_id']; ?>" data-vehicle-mode="<?php echo $vehicle['type_name']; ?>" data-vehicle-type="own"><?php echo ucwords($vehicle['vehicle_no']);  ?></option>
+									<?php
+									}
+									?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle Type </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="vehicleMode" name="vehicleMode" placeholder="Vehicle Type"  title="Please enter the vehicle type" tabindex="8">
+                                </div>
+                            </div>
+                        </div>
+
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Driver Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <select  class="form-control isRequired " id="driverName" name="driverName" title="Please select driver" tabindex="9">
+										<option value=""></option>
+										<?php
+										foreach($driverResult as $driver){
+										?>
+										<option value="<?php echo ucwords($driver['employee_name']); ?>" data-driver-id="<?php echo $driver['employee_id']; ?>"><?php echo ucwords($driver['employee_name']);  ?></option>
+										<?php
+										}
+										?>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<div class="row">
+					<!--
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Pickup <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="pickup" name="pickup" placeholder="Pickup"  title="Please enter pickup" tabindex="10">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Drop <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="drop" name="drop" placeholder="Drop"  title="Please enter drop place" tabindex="11">
+                                </div>
+                            </div>
+                        </div>
+					-->
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Package</label>
+                                <div class="col-lg-8">
+									<select class="form-control" name="package" id="package" title="Please select the package" tabindex="12">
+										<option value=""></option>
+										<option value="bth">BTH</option>
+										<option value="btr">BTR</option>
+										<option value="non_revenue">Non Revenue</option>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Start Time <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="bookingTime" name="bookingTime" data-inputmask="'mask': '99:99'" placeholder="hh:mm" tabindex="13" title="Please enter start time" onblur="getTariffAmount();">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">End Time <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="endTime" name="endTime" data-inputmask="'mask': '99:99'" placeholder="hh:mm" tabindex="14" title="Please enter end time" onblur="getTariffAmount();">
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Total Hrs <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="totalHrs" name="totalHrs" data-inputmask="'mask': '99:99'" placeholder="Total Hrs" title="Please enter total hrs" tabindex="15">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Start Kms <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="startKms" name="startKms" placeholder="Start Kms"  title="Please enter starting kms" onblur="calTotalKms();" tabindex="16">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">End Kms <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="endKms" name="endKms" placeholder="End Kms"  title="Please enter ending kms" onblur="calTotalKms();getTariffAmount();" tabindex="17">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Total Kms <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control isRequired" id="totalKms" name="totalKms" placeholder="Total Kms"  title="Please enter total kms" tabindex="18">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Tariff </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="tariff" name="tariff" placeholder="Tariff"  title="Please enter tariff" readonly />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Hrs </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="extraHrs" name="extraHrs" placeholder="Extra Hrs"  title="Please enter extra hrs" tabindex="19"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+					<div class="row">
+						
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Hrs Amount</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum" id="extraHrsAmt" name="extraHrsAmt" placeholder="Extra Hrs Amount"  title="Please enter extra hrs amount" tabindex="20" onblur="calTotalAmt();" />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Kms </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="extraKms" name="extraKms" placeholder="Extra Kms"  title="Please enter extra kms" tabindex="21"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Extra Kms Amount</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum" id="extraKmsAmt" name="extraKmsAmt" placeholder="Extra Kms Amount"  title="Please enter extra kms amount" tabindex="22" onblur="calTotalAmt();"/>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Package Rate <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum" id="tariffAmount" name="tariffAmount" placeholder="Package Rate"  title="Please enter tariff amount" onblur="calTotalAmt();"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Parking</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum calTotAmt" id="parking" name="parking" placeholder="Parking"  title="Please enter parking" tabindex="23" onblur="calTotalAmt();"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Toll</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum calTotAmt" id="toll" name="toll" placeholder="Toll"  title="Please enter toll" onkeyup="calTotalAmt();" tabindex="24">
+                                </div>
+                            </div>
+                        </div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Permit</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum calTotAmt" id="permit" name="permit" placeholder="Permit"  title="Please enter permit" onkeyup="calTotalAmt();" tabindex="25" readonly />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Driver Allowance </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum calTotAmt" id="dayTimeDriverAllowance" name="dayTimeDriverAllowance" placeholder="Driver Allowance"  title="Please enter driver allowance" onkeyup="calTotalAmt();" tabindex="26" readonly/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Night Allowance</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum calTotAmt" id="nightTimeDriverAllowance" name="nightTimeDriverAllowance" placeholder="Night Allowance"  title="Please enter night allowance" onkeyup="calTotalAmt();" tabindex="27" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">GST (<?php echo $serviceTax; ?>%)</label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control" id="serviceTaxAmt" name="serviceTaxAmt" placeholder="GST"  readonly="readonly" tabindex="27">
+								   <input type="hidden" id="serviceTax" name="serviceTax" class="form-control" value="<?php echo $serviceTax; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Total Amount <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum isRequired" id="totalAmount" name="totalAmount" placeholder="Total Amount"  title="Please enter total amount" tabindex="29">
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">BC Revenue </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum isRequired" id="bcRevenue" name="bcRevenue" placeholder="BC Revenue"  title="Please enter bc revenue" readonly="readonly" >
+								   <input type="hidden" class="form-control" id="bcRevenuePer" name="bcRevenuePer" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vendor Revenue </label>
+                                <div class="col-lg-8">
+                                   <input type="text" class="form-control checkNum" id="vendorRevenue" name="vendorRevenue" placeholder="Vendor Revenue"  title="Please enter vendor Revenue" tabindex="30">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+            </div>
+                <div class="box-footer">
+                    <a href="<?php echo $this->url('cym-hotel-booking', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;" tabindex="29">
+                </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/bootstrap-typeahead.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/input-mask/jquery.inputmask.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/input-mask/jquery.inputmask.date.extensions.js'; ?>"></script>
+<script src="<?php echo $this->basePath() . '/assets/plugins/input-mask/jquery.inputmask.extensions.js'; ?>"></script>
+
+
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('addBookingInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+       $("#bookingTime").inputmask("hh:mm");
+	   $("#endTime").inputmask("hh:mm");
+       $("#totalHrs").inputmask("hh:mm");
+		$('.datepicker').datepicker({
+        //todayBtn: "linked",
+        clearBtn: true,
+        autoclose: true,
+        todayHighlight: true,
+        format: 'dd-M-yyyy'
+		}).on('changeDate', function(e) {
+		$(this).parent('.div-group').addClass('-active');
+		});
+       
+		
+		$("#driverName").select2({
+			placeholder: "--Select Driver--",
+			tags: true,
+		}).on("change", function(e) {
+			selected=this.options[this.selectedIndex];
+			checkEmpId=selected.getAttribute('data-driver-id');
+			if(checkEmpId=='' || checkEmpId=='null' || checkEmpId==null){
+				$("#driverId").val('');
+			}else{
+				$("#driverId").val(checkEmpId);
+			}
+		});
+		
+		$("#vehicle").select2({
+			placeholder: "--Select Vehicle--",
+			tags: true
+		}).on("change", function(e) {
+			selected=this.options[this.selectedIndex];
+			checkType=selected.getAttribute('data-vehicle-type');
+			vehicleId=selected.getAttribute('data-vehicle-id');
+			vehicleMode=selected.getAttribute('data-vehicle-mode');
+			if(checkType=='' || checkType=='null' || checkType==null){
+				$("#vehicleType").val('Vendor');
+				$("#vehicleId").val('');
+				$("#vehicleMode").val('');
+				checkBookingType();
+			}else{
+				$("#vehicleType").val('Own');
+				$("#vehicleMode").val(vehicleMode);
+				$("#vehicleId").val(vehicleId);
+				getLastClosingKms();
+				checkBookingType();
+			}
+		});
+		
+		$("#dutyType").select2({
+			placeholder: "--Select Booking Type--",
+			//allowClear: true
+		}).on("change", function(e) {
+			checkBookingType();
+			getTariffAmount();
+		});
+		
+		$("#bookingGivenBy").select2({
+			placeholder: "--Select--",
+			//allowClear: true
+		});
+		
+		$("#package").select2({
+			placeholder: "--Select--"
+		}).on("change", function(e) {
+			selected=this.options[this.selectedIndex];
+			//console.log(selected.value);
+			getTariffAmount();
+		});
+
+		$("#bookingRef").focus();
+	});
+	
+	$("#driverName").on("select2:close", function (e) {
+		$("#package").select2('open');
+	});
+	
+	$("#vehicle").on("select2:close", function (e) {
+		$('#driverName').select2('open');
+	});
+	
+	$("#vehicleMode").blur(function(){
+		$("#driverName").select2('open');
+	});
+	
+	$("#bookingGivenBy").on("select2:close", function (e) {
+		$("#dutyType").focus();
+	});
+	
+	$("#dutyType").on("select2:close", function (e) {
+		$("#vehicle").focus();
+	});
+
+	$("#package").on("select2:close", function (e) {
+		$("#bookingTime").focus();
+	});
+
+	$("#roomNo").blur(function(){
+		$("#bookingGivenBy").select2('open');
+	});
+
+	$("#bookingGivenBy").on("select2:close", function (e) {
+		$("#dutyType").select2('open');
+	});
+
+	$("#dutyType").on("select2:close", function (e) {
+		$("#vehicle").select2('open');
+	});
+
+	function getTariffAmount(){
+		pack=$("#package").val();
+		dutyType=$("#dutyType").val();
+		totalKms=$("#totalKms").val();
+		//totHours=$("#totalHrs").val();
+		//startTime=$("#bookingTime").val();
+		//endTime=$("#endTime").val();
+
+		start_time=$("#bookingTime").val();
+		close_time=$("#endTime").val();
+		start_date="<?php echo $bookingDate; ?>";
+		if(start_time!="" && close_time!=""){
+			startDateTime=start_date+" "+start_time;
+			endDateTime=start_date+" "+close_time;
+			objDiff=diffDateTime(startDateTime,endDateTime);
+			
+			totHours=objDiff.hours;
+			totMins=objDiff.minutes;
+			
+			if(totHours.toString().length==1){
+				totHours="0"+totHours;
+			}
+			if(totMins.toString().length==1){
+				totMins="0"+totMins;
+			}
+			$("#totalHrs").val(totHours+":"+totMins);
+		}
+
+		if(pack!="" && dutyType!="" && totalKms!=""){
+			$.post("<?php echo $this->url('cym-hotel-booking', array('action' => 'get-tariff-amt')); ?>",{package:pack,dutyType:dutyType,travHrs:totHours,travMins:objDiff.minutes,totalKms:totalKms,startTime:start_time,endTime:close_time},
+			function(data){
+				//console.log(data);
+				data=JSON.parse(data);
+				$("#extraHrs").val(data.extraHrs);
+                $("#extraKms").val(data.extraKms);
+				$("#extraHrsAmt").val(data.extraAmtInHrs);
+				$("#extraKmsAmt").val(data.extraAmtInKms);
+                $("#tariffAmount").val(data.tariffAmt);
+				$("#tariff").val(data.tariff);
+				$("#tariff").val(data.tariffName);
+				$("#extAmtPerKms").val(data.extAmtPerKms);
+                $("#extAmtPerHrs").val(data.extAmtPerHrs);
+
+				if(dutyType!=2){
+					$("#dayTimeDriverAllowance").val(0);
+                    $("#nightTimeDriverAllowance").val(0);
+					$("#driverAllowancePerDay").val(0);
+                    $("#driverAllowancePerNight").val(0);
+				}
+				else if(dutyType==2){
+					$("#dayTimeDriverAllowance").val(data.dayTimeDriverAllowance);
+                    $("#nightTimeDriverAllowance").val(data.nightTimeDriverAllowance);
+                    $("#driverAllowancePerDay").val(data.driverAllowancePerDay);
+                    $("#driverAllowancePerNight").val(data.driverAllowancePerNight);
+				}else if (dutyType==3) {
+                    $("#dayTimeDriverAllowance").val(0);
+                    $("#nightTimeDriverAllowance").val(0);
+					$("#driverAllowancePerDay").val(0);
+                    $("#driverAllowancePerNight").val(0);
+                    $("#driverAllowance").val(0);
+                }
+				calTotalAmt();
+			})
+		}
+	}
+
+	function calTotalAmt() {
+		//$.blockUI();
+		ext_hrs_amt=0;
+		ext_kms_amt=0;
+		park_amt=0;
+		permit_amt=0;
+		toll_amt=0;
+		day_driver_allowance=0;
+		night_driver_allowance=0;
+		dutyType=$("#dutyType").val();
+
+		if ($("#extraHrsAmt").val()!="") {
+			ext_hrs_amt=$("#extraHrsAmt").val();
+		}
+		if ($("#extraKmsAmt").val()!="") {
+			ext_kms_amt=$("#extraKmsAmt").val();
+		}
+		if ($("#parking").val()!="") {
+			park_amt=$("#parking").val();
+		}
+		if ($("#toll").val()!="") {
+			toll_amt=$("#toll").val();
+		}
+        if ($("#permit").val()!="") {
+			permit_amt=$("#permit").val();
+		}
+		if ($("#dayTimeDriverAllowance").val()!="") {
+			day_driver_allowance=$("#dayTimeDriverAllowance").val();
+		}
+		if ($("#nightTimeDriverAllowance").val()!="") {
+			night_driver_allowance=$("#nightTimeDriverAllowance").val();
+		}
+		
+		tariff_amt=$("#tariffAmount").val();
+		
+		if (tariff_amt!="") {
+			tot_amt=parseFloat(ext_hrs_amt)+parseFloat(ext_kms_amt)+parseFloat(tariff_amt)+parseFloat(day_driver_allowance)+parseFloat(night_driver_allowance)+parseFloat(park_amt)+parseFloat(permit_amt)+parseFloat(toll_amt);
+			
+            packageVal=$("#package").val();
+			
+			if(packageVal=='btr'){
+				$("#bcRevenuePer").val('80');
+				bcRev=(parseFloat($("#bcRevenuePer").val())/100);
+				bcRevenueAmt=parseFloat(tot_amt*bcRev).toFixed(2);
+				$("#bcRevenue").val(bcRevenueAmt);
+				venRevenueAmt=parseFloat(bcRevenueAmt*0.8).toFixed(2);
+				$("#vendorRevenue").val(venRevenueAmt);
+			}
+			else if(packageVal=='bth'){
+				$("#bcRevenuePer").val('100');
+				bcRev=(parseFloat($("#bcRevenuePer").val())/100);
+				bcRevenueAmt=parseFloat(tot_amt*bcRev).toFixed(2);
+				$("#bcRevenue").val(bcRevenueAmt);
+				venRevenueAmt=parseFloat(bcRevenueAmt*0.8).toFixed(2);
+				$("#vendorRevenue").val(venRevenueAmt);
+			}
+			
+			if($("#serviceTax").val()!=""){
+                service_tax=(parseFloat($("#serviceTax").val())/100);
+                serviceTaxAmt=parseFloat(tot_amt*service_tax).toFixed(2);
+                tot_amt=Math.round(parseFloat(tot_amt)+parseFloat(serviceTaxAmt));
+                $("#serviceTaxAmt").val(serviceTaxAmt);
+            }
+            
+            $("#totalAmount").val(tot_amt);
+            
+		}
+		//$.unblockUI();
+	}
+
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+	}
+    
+	function calTotalKms(){
+		stat_kms=parseFloat($("#startKms").val());
+		close_kms=parseFloat($("#endKms").val());
+		if (stat_kms!="" && close_kms!="") {
+			if (stat_kms>close_kms) {
+				alert("Please check the close kms");
+				$("#closeKms").val('');
+				return;
+			}
+			tot_kms=close_kms-stat_kms;
+			$("#totalKms").val(tot_kms);
+		}
+	}
+	
+	function getLastClosingKms(){
+		vehicle_id=$("#vehicleId").val();
+		$.post("<?php echo $this->url('hotel-booking', array('action' => 'get-last-closing-kms')); ?>", {vehicle_id: vehicle_id},
+        function(data) {
+            if(data!=""){
+				$("#startKms").val(data);
+				if(data>0){
+				$('#startKms').attr('readonly', true);
+				}
+			}
+        });
+	}
+	
+	function checkBookingType(){
+		if($("#dutyType").val()==2){
+			$("#driverAllowancePerDay").addClass('isRequired');
+			$('#permit').attr('readonly',false);
+		}else{
+			$("#driverAllowancePerDay").removeClass('isRequired');
+			$('#permit').attr('readonly', true);
+		}
+	}
+	
+	function diffDateTime(startDT, endDT){
+	 if(typeof startDT == 'string' && startDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}[amp ]{0,3}$/i)){
+	   startDT = startDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}/);
+	   startDT = startDT.toString().split(':');
+	   var obstartDT = new Date();
+	   obstartDT.setHours(startDT[0]);
+	   obstartDT.setMinutes(startDT[1]);
+	   obstartDT.setSeconds(startDT[2]);
+	 }
+	 else if(typeof startDT == 'string' && startDT.match(/^now$/i)) var obstartDT = new Date();
+	 else if(typeof startDT == 'string' && startDT.match(/^tomorrow$/i)){
+	   var obstartDT = new Date();
+	   obstartDT.setHours(24);
+	   obstartDT.setMinutes(0);
+	   obstartDT.setSeconds(1);
+	 }
+	 else var obstartDT = new Date(startDT);
+       
+	 if(typeof endDT == 'string' && endDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}[amp ]{0,3}$/i)){
+	   endDT = endDT.match(/^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}/);
+	   endDT = endDT.toString().split(':');
+	   var obendDT = new Date();
+	   obendDT.setHours(endDT[0]);
+	   obendDT.setMinutes(endDT[1]);
+	   obendDT.setSeconds(endDT[2]);  
+	 }
+	 else if(typeof endDT == 'string' && endDT.match(/^now$/i)) var obendDT = new Date();
+	 else if(typeof endDT == 'string' && endDT.match(/^tomorrow$/i)){
+	   var obendDT = new Date();
+	   obendDT.setHours(24);
+	   obendDT.setMinutes(0);
+	   obendDT.setSeconds(1);
+	 }
+	 else var obendDT = new Date(endDT);
+       
+	 // gets the difference in number of seconds
+	 // if the difference is negative, the hours are from different days, and adds 1 day (in sec.)
+	 var secondsDiff = (obendDT.getTime() - obstartDT.getTime()) > 0 ? (obendDT.getTime() - obstartDT.getTime()) / 1000 :  (86400000 + obendDT.getTime() - obstartDT.getTime()) / 1000;
+	 secondsDiff = Math.abs(Math.floor(secondsDiff));
+       
+	 var oDiff = {};     // object that will store data returned by this function
+       
+	 oDiff.days = Math.floor(secondsDiff/86400);
+	 oDiff.totalhours = Math.floor(secondsDiff/3600);      // total number of hours in difference
+	 oDiff.totalmin = Math.floor(secondsDiff/60);      // total number of minutes in difference
+	 oDiff.totalsec = secondsDiff;      // total number of seconds in difference
+       
+	 secondsDiff -= oDiff.days*86400;
+	 oDiff.hours = Math.floor(secondsDiff/3600);     // number of hours after days
+       
+	 secondsDiff -= oDiff.hours*3600;
+	 oDiff.minutes = Math.floor(secondsDiff/60);     // number of minutes after hours
+       
+	 secondsDiff -= oDiff.minutes*60;
+	 oDiff.seconds = Math.floor(secondsDiff);     // number of seconds after minutes
+       
+	 return oDiff;
+	}
+</script>

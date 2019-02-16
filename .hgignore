@@ -1,0 +1,13 @@
+syntax: regexp
+beecabs.komodoproject
+^.idea
+^public/uploads/(?!index.php)
+^public/temporary/cache(?!index.php)
+^public/temporary/(?!index.php)
+^public/cron/(?!sendNotificationLock)
+error_log
+npm-debug.log
+Thumbs.db
+Thumbs.db.orig
+.DS_Store
+.DS_Store.orig

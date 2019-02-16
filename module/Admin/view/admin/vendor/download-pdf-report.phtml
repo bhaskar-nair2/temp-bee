@@ -1,0 +1,185 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+setlocale(LC_MONETARY, 'en_IN');
+use Application\Service\CommonService;
+$commonService=new CommonService();
+// Extend the TCPDF class to create custom Header and Footer
+class MYPDF extends TCPDF {
+    //public function passValue($companyAddress,$companyPhoneNo){
+	//    $this->companyAddress=$companyAddress;
+	//    $this->companyPhoneNo=$companyPhoneNo;
+	//}
+    
+    //Page header
+    public function Header() {
+        // Logo
+        //$image_file = K_PATH_IMAGES.'logo_example.jpg';
+        //$this->Image($image_file, 10, 10, 15, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        // Set font
+        $this->SetFont('helvetica', 'B', 15);
+        // Title
+        $this->Cell(0, 15, 'Beecabs ', 0, 1, 'C', 0, '', 0, false, 'M', 'M');
+        $this->Cell(0, 18, 'Vendor Payment Report', 0, 1, 'C', 0, '', 0, false, 'M', 'M');
+    }
+
+    // Page footer
+    public function Footer() {
+        // Position at 15 mm from bottom
+        //$this->SetY(-15);
+        // Set font
+        //$this->SetFont('helvetica', 'I', 8);
+        // Page number
+        $this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+    }
+}
+
+// create new PDF document
+$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+//$pdf->passValue($result['bill']['companyAddress'],$result['bill']['phone_no']);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Nicola Asuni');
+$pdf->SetTitle('Vendor Payment Report');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+// set default header data
+//$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+	
+		// set font
+		$pdf->SetFont('times','',12);
+		
+		// add a page
+		$pdf->AddPage('L', 'A4');
+		
+		//$pdf->SetY(38,true,false);
+		
+		$vendorDetails='<table>';
+		$vendorDetails.='<tr>';
+		$vendorDetails.='<td style="width:10%">Vendor Name </td>';
+		$vendorDetails.='<td style="width:2%">:</td>';
+		$vendorDetails.='<td>'.$result['vendor']['vendor_name'].' - '.$result['vendor']['vendor_no'].'</td>';
+		$vendorDetails.='</tr>';
+		$vendorDetails.='<tr>';
+		$vendorDetails.='<td>Vendor Type</td>';
+		$vendorDetails.='<td>:</td>';
+		$vendorDetails.='<td>'.ucwords($result['vendor']['vendor_type']).'</td>';
+		$vendorDetails.='</tr>';
+		$vendorDetails.='</table>';
+		
+		$pdf->writeHTML($vendorDetails, true, 0, true, 0);
+		
+		
+		
+		$vendorPaymentDetails="";
+		foreach($result['paymentDetails'] as $res){
+			$vendorPaymentDetails.='<table border="1" cellpadding="5" style="width:100%;">';
+			$vendorPaymentDetails.='<tr style="text-align:center;">';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:9%;">Month/<br/>Year</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:7%;">Total Revenue</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:7%;">Fuel<br/> Amount</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:7%;">Fuel Surcharge</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:9%;">Total<br/> Deductions</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:9%;">GST Applicable </td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:8%;">GST Amount </td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:8%;">Total Amount</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:9%;">TDS Applicable</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:8%;">TDS Amount</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:8%;">Net Amount</td>';
+			$vendorPaymentDetails.='<td style="font-weight:bold;width:9%;">Status</td>';
+			$vendorPaymentDetails.='</tr>';
+		
+			$vendorPaymentDetails.='<tr style="text-align:center;">';
+			$vendorPaymentDetails.='<td>'.$res['payment_month'].'-'.$res['payment_year'].'</td>';
+			$vendorPaymentDetails.='<td>'.$res['total_revenue'].'</td>';
+			$vendorPaymentDetails.='<td>'.$res['fuel_amount'].'</td>';
+			$vendorPaymentDetails.='<td>'.$res['fuel_surcharge'].'</td>';
+			$vendorPaymentDetails.='<td>'.$res['total_deductions'].'</td>';
+			$vendorPaymentDetails.='<td>'.ucwords($res['service_tax_applicable']).'</td>';
+			$vendorPaymentDetails.='<td>'.$res['service_tax_amount'].'</td>';
+			$vendorPaymentDetails.='<td>'.$res['total_payment'].'</td>';
+			$vendorPaymentDetails.='<td>'.ucwords($res['tds_applicable']).'</td>';
+			$vendorPaymentDetails.='<td>'.$res['tds_amount'].'</td>';
+			$vendorPaymentDetails.='<td>'.$res['net_amount'].'</td>';
+			$vendorPaymentDetails.='<td>'.ucwords($res['payment_status']).'</td>';
+			$vendorPaymentDetails.='</tr>';
+			
+			if(isset($res['paidResult']) && count($res['paidResult'])>0){
+				$n=count($res['paidResult']);
+				$vendorPaymentDetails.='<tr>';
+				$vendorPaymentDetails.='<td colspan="12" style="background-color:#f2f2f2;">';
+				$vendorPaymentDetails.='<h4 style="font-weight:bold;">Paid Details</h4>';
+				$vendorPaymentDetails.='<table>';
+				foreach($res['paidResult'] as $k=>$val){
+					$vendorPaymentDetails.='<tr>';
+					$vendorPaymentDetails.='<td style="width:12%;font-weight:bold;">Payment Code : </td>';
+					$vendorPaymentDetails.='<td style="width:10%;">'.$val['payment_code'].'</td>';
+					$vendorPaymentDetails.='<td style="width:8%;font-weight:bold;">Paid Date : </td>';
+					$vendorPaymentDetails.='<td style="width:10%;">'.$commonService->humanDateFormat($val['paid_date']).'</td>';
+					$vendorPaymentDetails.='<td style="width:11%;font-weight:bold;">Paid Amount : </td>';
+					$vendorPaymentDetails.='<td style="width:10%;">Rs '.$val['paid_amount'].'</td>';
+					$vendorPaymentDetails.='<td style="width:8%;font-weight:bold;">Remarks : </td>';
+					$vendorPaymentDetails.='<td>'.$val['remarks'].'</td>';
+					$vendorPaymentDetails.='</tr>';
+				}
+				
+				$vendorPaymentDetails.='</table>';
+				$vendorPaymentDetails.='</td>';
+				$vendorPaymentDetails.='</tr>';
+			}
+			$vendorPaymentDetails.='</table><br/><br/>';
+		}
+		
+		
+		$pdf->writeHTML($vendorPaymentDetails, true, 0, true, 0);
+//Close and output PDF document
+$attachFileName='';
+$fileName = "report.pdf";
+
+$filePath = TEMP_UPLOAD_PATH . DIRECTORY_SEPARATOR .$fileName;
+//just making sure that we have a fresh file
+if (file_exists($filePath)) {
+	unlink($filePath);
+}
+
+
+$pdf->Output($filePath, 'I');
+
+//$pdf->Output('example_003.pdf', 'I');
+
+//============================================================+
+// END OF FILE
+//============================================================+
+
+		
+		
+		
+
+?>

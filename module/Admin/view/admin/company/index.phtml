@@ -1,0 +1,83 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Company', 'edit')) {
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+?>
+<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Company</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="sourceDataTable" class="beecabsTable table">
+						  <thead>
+							  <tr>
+								  <th>Company Name</th>
+								  <th>City</th>
+								  <th>Pincode</th>
+								  <th>Phone No</th>
+								  <th>Pan No</th>
+								  <th>Service Tax No</th>
+								  <th>Status</th>
+								  <?php
+								  if ($acl->isAllowed($role, 'Admin\Controller\Company', 'edit')) {
+								  ?>
+								  <th>Action</th>
+								  <?php } ?>
+							  </tr>
+						  </thead>
+						  <tbody>
+							  <tr>
+								  <td colspan="8" class="dataTables_empty">Loading data from server</td>
+							  </tr>
+						  </tbody>
+					  </table>
+				
+				
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+        $(document).ready(function() {
+    $('#sourceDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+        "sAjaxSource": "<?php echo $this->url('company',array('action' => 'index')); ?>",
+         "fnServerData": function ( sSource, aoData, fnCallback ) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+    } );
+
+} );
+       
+</script>

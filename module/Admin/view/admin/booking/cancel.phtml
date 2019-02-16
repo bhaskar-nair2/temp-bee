@@ -1,0 +1,81 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+	if(isset($cancelBooking)){
+?>
+<script type="text/javascript">
+	$(function() {
+		<?php
+		if(isset($cancelBooking)){
+		?>
+		alert("Added successfully");
+		parent.closeModal();
+		parent.oTable.fnDraw();
+		<?php
+		}
+		?>
+	});
+</script>
+<?php }else{ ?>
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>Reason For Cancellation</h1>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-left" style="font-size:20px;">Booking Details</div> 
+                <div class="pull-right" style="font-size:12px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="cancelBookingInformation" id="cancelBookingInformation"  method="post" action="<?php echo $this->url('booking', array('action' => 'cancel')); ?>" autocomplete="off">
+                <div class="box-body">
+					
+					<table class="table" style="width:50%">
+						<tr>
+							<td>Booking Ref No.</td>
+							<td>:</td>
+							<td><?php echo $result['booking_no']; ?></td>
+						</tr>
+					</table>
+					<br/>
+					<input type="hidden" class="form-control isRequired" id="bookingId" name="bookingId" value="<?php echo base64_encode($result['booking_id']); ?>" />
+                    <div class="row">
+                        <div class="col-md-6">
+							<div class="form-group">
+                              <label for="remarks" class="col-lg-3 control-label">Reason For Cancellation  <span class="mandatory">*</span></label>
+                              <div class="col-lg-4">
+                                  <textarea class="form-control isRequired" name="reasonForCancellation" id="reasonForCancellation" title="Please enter the reason for cancellation"></textarea>
+                              </div>
+							</div>
+                        </div>
+                    </div>
+					
+                    <div class="box-footer">
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                        <a href="javascript:void(0);" onclick="parent.closeModal();" class="btn btn-default">Close</a>
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+	
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'cancelBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('cancelBookingInformation').submit();
+            }
+        }
+    }
+    
+</script>
+<?php } ?>

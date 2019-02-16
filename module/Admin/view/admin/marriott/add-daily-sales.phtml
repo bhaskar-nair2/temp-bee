@@ -1,0 +1,201 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12"> Marriott Daily Sale</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('marriott', array('action' => 'daily-sales')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('marriott', array('action' => 'index')); ?>"> Marriott</a></li>
+                <li class="active">Add Marriott Daily Sale</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+  
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addMarriottDailySales" id="addMarriottDailySales"  method="post" action="<?php echo $this->url('marriott', array('action' => 'add-daily-sales')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Sales Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired readonly" id="salesDate" name="salesDate" placeholder="Select sales date" title="Please select sales date" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bthSale" class="col-lg-4 control-label">BTH Sales <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum calTarget isRequired" id="bthSale" name="bthSale" placeholder="Enter BTH sales" title="Please enter BTH sale" onkeyup="calculateTarget()"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="btrSale" class="col-lg-4 control-label">BTR Sales </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum calTarget" id="btrSale" name="btrSale" placeholder="Enter BTR sales" title="Please enter BTR sale" onkeyup="calculateTarget()"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cash" class="col-lg-4 control-label">Cash </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum calTarget" id="cash" name="cash" placeholder="Enter cash" title="Please enter cash" onkeyup="calculateTarget()"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nonCommisionable" class="col-lg-4 control-label">Non Commisionable</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum calTarget" id="nonCommisionable" name="nonCommisionable" placeholder="Enter non commisionable" title="Please enter non commisionable" onkeyup="calculateTarget();"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="totalSales" class="col-lg-4 control-label">Total Sales <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum isRequired readonly" id="totalSales" name="totalSales" placeholder="Enter total sales" title="Please enter total sale" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dailyTarget" class="col-lg-4 control-label">Daily Target <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired checkNum readonly" id="dailyTarget" name="dailyTarget" placeholder="Enter daily target" title="Please enter daily target" value="<?php echo "-".$targetResult['dailyTarget']; ?>" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="monthlyTarget" class="col-lg-4 control-label">Monthly Target </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum readonly" id="monthlyTarget" name="monthlyTarget" placeholder="Enter monthly target" title="Please enter target" value="<?php //echo $targetResult['monthlyTarget']; ?>" readonly="readonly"/>
+                                    <input type="hidden" class="form-control" id="currentTarget" name="currentTarget" readonly="readonly" value="<?php echo $targetResult['currentTarget']; ?>"/>
+                                    <input type="hidden" class="form-control" id="corporateId" name="corporateId" value="<?php echo base64_encode($targetResult['corporateId']); ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" class="form-control checkNum" name="globalDailyTarget" id="globalDailyTarget" value="<?php echo $targetResult['dailyTarget']; ?>"/>
+                    <input type="hidden" class="form-control checkNum" name="globalMonthlyTarget" id="globalMonthlyTarget" value="<?php echo $targetResult['monthlyTarget']; ?>"/>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('marriott', array('action' => 'daily-sales')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addMarriottDailySales'
+        });
+        if (flag) {
+            if (duplicateName) {
+              document.getElementById('addMarriottDailySales').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        $.blockUI();
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: selectedDate, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+              $.unblockUI();
+              alert(msg);
+              duplicateName = false;
+              document.getElementById(obj.id).value = "";
+            }
+            else {
+              duplicateName = true;
+              $.unblockUI();
+            }
+        });
+    }
+    $(function() {
+		$('#salesDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy',
+            startDate:'<?php echo $targetResult['startTargetDate']; ?>',
+            endDate:'<?php echo $targetResult['endTargetDate']; ?>'
+		}).on('changeDate', function(e) {
+          // `e` here contains the extra attributes
+          var date = new Date($('#salesDate').val());
+          var day = date.getDate();
+          var monthIndex = date.getMonth()+parseInt(1);
+          var year = date.getFullYear();
+          selectedDate=year+"-"+monthIndex+"-"+day;
+          //console.log($('#salesDate').val());
+          checkNameValidation('marriott_daily_sales','sales_date',this,null, 'Already exist this sale date . Please select another date.');
+        });
+	});
+    
+    function calculateTarget() {
+        totalTarget=0;
+        currentTarget=$("#currentTarget").val();
+        if(currentTarget=='') {
+            currentTarget=0;
+        }
+        $(".calTarget").each(function() {
+          if(this.value>0){
+            totalTarget=parseFloat(this.value)+parseFloat(totalTarget);
+          }
+        });
+        $("#totalSales").val(totalTarget);
+        todayTarget=parseFloat($("#globalDailyTarget").val())-parseFloat(totalTarget);
+        if(parseFloat(todayTarget)>0){
+            todayTarget=todayTarget*-1;
+        }else{
+            todayTarget=todayTarget*-1;
+            //todayTarget=Math.abs(todayTarget);
+        }
+        monthlyTarget=parseFloat(currentTarget)+parseFloat(todayTarget);
+        $("#dailyTarget").val(todayTarget);
+        $("#monthlyTarget").val(monthlyTarget);
+    }
+</script>

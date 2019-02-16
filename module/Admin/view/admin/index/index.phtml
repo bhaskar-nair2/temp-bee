@@ -1,0 +1,360 @@
+<style>
+  .small-box{
+    min-height:155px;
+    max-height:155px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .salesData tr td:nth-child(1n+1) {
+    font-size:15px;
+    width:30%;
+    text-align:left !important;
+  }
+  .salesData tr td:nth-child(2n+2) {
+    width:8%;
+  }
+  .salesData tr td:nth-child(3n+3) {
+    font-weight: bold;
+    font-size:16px;
+  }
+</style>
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Dashboard
+       
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+       
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <span  class="small-box-footer" style="font-size:18px;font-weight: bold;">Vehicle Renewal </span>
+            <div class="inner">
+              <div class="row">
+                <div class="col-md-6">
+                  Ins. Renewal <span id="insuranceExpiryCount" style="font-size:20px !important;font-weight:bold;"></span>
+                </div>
+                <div class="col-md-6">
+                  Tax Renewal <span id="taxExpiryCount" style="font-size:20px !important;font-weight:bold;"></span>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  Fc Renewal <span id="fcExpiryCount" style="font-size:20px !important;font-weight:bold;"></span>
+                </div>
+                <div class="col-md-6" style="padding-left:5px !important;">
+                  Permit Renewal <span id="permitExpiryCount" style="font-size:20px !important;font-weight:bold;"></span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-7">
+                  Pollution Renewal <span id="pollutionExpiryCount" style="font-size:20px !important;font-weight:bold;"></span>
+                </div>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+        
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6" style="">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <span  class="small-box-footer" style="font-size:18px;font-weight: bold;">Sales Data </span>
+            <div class="inner">
+              <?php
+              if($corporateCount<0){
+                $corColor="color:red";
+              }
+              else if($corporateCount>0){
+                $corColor="color:green";
+              }else{
+                $corColor="color:#D2691E";
+              }
+              
+              if($marriottCount<0){
+                $marColor="color:red";
+              }
+              else if($marriottCount>0){
+                $marColor="color:green";
+              }else{
+                $marColor="color:#D2691E";
+              }
+              
+              if($retailCount<0){
+                $retColor="color:red";
+              }
+              else if($retailCount>0){
+                $retColor="color:green";
+              }else{
+                $retColor="color:#D2691E";
+              }
+              
+              if($tajCount<0){
+                $tajColor="color:red";
+              }
+              else if($tajCount>0){
+                $tajColor="color:green";
+              }else{
+                $tajColor="color:#D2691E";
+              }
+              
+              ?>
+              <table class="salesData" style="width:100%;">
+                <tr>
+                  <td>Corporate</td>
+                  <td>:</td>
+                  <td style="<?php echo $corColor; ?>"><?php echo $corporateCount; ?></td>
+                </tr>
+                <tr>
+                  <td>Marriott</td>
+                  <td>:</td>
+                  <td style="<?php echo $marColor; ?>"><?php echo $marriottCount; ?></td>
+                </tr>
+                <tr>
+                  <td>Retail</td>
+                  <td>:</td>
+                  <td style="<?php echo $retColor; ?>"><?php echo $retailCount; ?></td>
+                </tr>
+                <tr>
+                  <td>Taj</td>
+                  <td>:</td>
+                  <td style="<?php echo $tajColor; ?>"><?php echo $tajCount; ?></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- ./col -->
+        
+        <!-- Contract Expiry Start-->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <span  class="small-box-footer" style="font-size:18px;font-weight: bold;">Contract Expiry</span>
+            <div class="inner">
+              <table class="salesData" style="width:100%;">
+                <?php
+                if(count($clientContractExpiryResult)>0){
+                  foreach($clientContractExpiryResult as $client){
+                ?>
+                <tr>
+                  <td><?php echo ucwords($client['client_name']); ?></td>
+                  <td>:</td>
+                  <td><?php echo $client['contract_exp_date']; ?></td>
+                </tr>
+                <?php
+                  }
+                }else{
+                ?>
+                <tr>
+                  <td colspan="3">No data available</td>
+                </tr>
+                <?php
+                }
+                ?>
+              </table>
+            </div>            
+          </div>
+        </div>
+        <!-- Contract Expiry End-->
+        
+        <!-- Employees License Expiry Start-->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <span  class="small-box-footer" style="font-size:18px;font-weight: bold;">Employees License Expiry</span>
+            <div class="inner">
+              <table class="salesData" style="width:100%;">
+                <tr>
+                  <td>License Expiry</td>
+                  <td>:</td>
+                  <td><?php echo $employeeExpiryResult['licenseCount']; ?></td>
+                </tr>
+                <tr>
+                  <td>Badge Expiry</td>
+                  <td>:</td>
+                  <td><?php echo $employeeExpiryResult['badgeCount']; ?></td>
+                </tr>
+              </table>
+            </div>            
+          </div>
+        </div>
+        <!-- Contract Expiry End-->
+        
+        <!-- Pending Work Order Start-->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <span  class="small-box-footer" style="font-size:18px;font-weight: bold;">Pending Work Order</span>
+            <div class="inner">
+              <table class="salesData" style="width:100%;">
+                <?php
+                if(count($workOrderResult)>0){
+                  foreach($workOrderResult as $vehicle){
+                ?>
+                <tr>
+                  <td><?php echo ucwords($vehicle['vehicle_no']); ?></td>
+                  <td>:</td>
+                  <td><?php echo $vehicle['garage_in_date']; ?></td>
+                </tr>
+                <?php
+                  }
+                }else{
+                ?>
+                <tr>
+                  <td colspan="3" style="text-align:center !important;">No data available</td>
+                </tr>
+                <?php
+                }
+                ?>
+              </table>
+            </div>            
+          </div>
+        </div>
+        <!-- Pending Work Order End-->
+        
+        
+        <!-- Payment Pending Start-->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <span  class="small-box-footer" style="font-size:18px;font-weight: bold;">Payment Pending</span>
+            <div class="inner">
+              <table class="salesData" style="width:100%;">
+                <?php
+                if(count($monthlyPendingPayment)>0){
+                  foreach($monthlyPendingPayment as $bill){
+                ?>
+                <tr>
+                  <td><?php echo ucwords($bill['client_name']); ?></td>
+                  <td>:</td>
+                  <td><?php echo $bill['payment_due_date']; ?></td>
+                </tr>
+                <?php
+                  }
+                }else{
+                ?>
+                <tr>
+                  <td colspan="3" style="text-align:center !important;">No data available</td>
+                </tr>
+                <?php
+                }
+                ?>
+              </table>
+            </div>            
+          </div>
+        </div>
+        <!-- Payment Pending End-->
+        
+      </div>
+      
+      
+      
+      <div class="row" style="display:none;" id="insuranceExpiry">
+        <div class="col-xs-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h2 class="panel-title" style=""><i class="fa fa-cogs"></i> Renewal List</h2>
+            </div>
+            <!-- /.box-header -->
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="box-body">
+                    <table id="insuranceExpiryDataTable" class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Count</th>
+                          <th>Vehicle No</th>
+                          <th>Vehicle Type</th>
+                          <th>Vehicle Mode</th>
+                          <th>Ins. Renewal Date</th>
+                          <th>Tax Renewal Date</th>
+                          <th>Fc Renewal Date</th>
+                          <th>Permit Renewal Date</th>
+                          <th>Pollution Renewal Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td colspan="9" class="dataTables_empty">Loading data from server</td>
+                        </tr>
+                      </tbody>
+                      
+                    </table>
+                  </div><!-- /.box-body -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.panel -->
+        </div>
+    </div>
+      
+      <!-- /.row -->
+    </section>
+   
+  
+<script type="text/javascript">
+    $(document).ready(function() {
+        insuranceExpiry();
+    });
+    function insuranceExpiry() {
+      var insuranceoTable = null;
+      insuranceoTable =$('#insuranceExpiryDataTable').dataTable( {
+        "bAutoWidth": false,
+        "bRetrieve": true,
+        "bProcessing": true,
+        "bServerSide": true,
+        "aoColumns": [
+            {"bVisible": false},
+            {"sClass": "center"},
+            {"sClass": "center"},
+            {"sClass": "center"},
+            {"sClass": "center"},
+            {"sClass": "center"},
+            {"sClass": "center"},
+            {"sClass": "center"},
+            {"sClass": "center"}
+        ],
+        "aaSorting": [[ 4, "asc" ]],
+        "sAjaxSource": "<?php echo $this->url('vehicles',array('action' => 'get-insurance-expiry')); ?>",
+        "fnServerData": function ( sSource, aoData, fnCallback ) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
+            "fnDrawCallback": function() {
+              //aPos=insuranceoTable.fnGetPosition(this);
+              //console.log(insuranceoTable.fnGetData(aPos));
+                var oSettings = this.fnSettings();
+                str=oSettings.aoData[0]._aData[0];
+                res=str.split("#");
+                //console.log(oSettings.aoData[0]._aData[0]);
+                
+               // var iTotalRecords = oSettings.fnRecordsTotal();
+                $("#insuranceExpiryCount").html(res[0]);
+                $("#taxExpiryCount").html(res[1]);
+                $("#fcExpiryCount").html(res[2]);
+                $("#permitExpiryCount").html(res[3]);
+                $("#pollutionExpiryCount").html(res[4]);
+            }
+      });
+      $('#insuranceExpiry').show();
+    }
+</script>

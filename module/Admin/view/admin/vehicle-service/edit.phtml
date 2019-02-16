@@ -1,0 +1,316 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+if(isset($result->payment_date) && trim($result->payment_date)!=""){
+  $result->payment_date=$commonService->humanDateFormat($result->payment_date);
+}
+if(isset($result->insurance_paid_date) && trim($result->insurance_paid_date)!=""){
+  $result->insurance_paid_date=$commonService->humanDateFormat($result->insurance_paid_date);
+}
+if(isset($result->garage_in_date) && trim($result->garage_in_date)!=""){
+  $result->garage_in_date=$commonService->humanDateFormat($result->garage_in_date);
+}
+$pathname = UPLOAD_PATH . DIRECTORY_SEPARATOR . "vehicle-service" . DIRECTORY_SEPARATOR .$result->service_id;
+?>
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Edit </span>
+				<span class="pageHeadingLabe12"> Vehicle Service</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('vehicle-service', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+          <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('vehicle-service', array('action' => 'index')); ?>"> Vehicle Service</a></li>
+                <li class="active">Edit Vehicle Service</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+    
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addServiceInformation" id="addServiceInformation"  method="post" action="<?php echo $this->url('vehicle-service', array('action' => 'edit')); ?>" enctype="multipart/form-data" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="workOrderNo" class="col-lg-4 control-label">Work Order Number </label>
+                                <div class="col-lg-6">
+                                    <p class="form-control"><?php echo $result->work_order_no; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vehicle" class="col-lg-4 control-label">Vehicle <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vehicle" name="vehicle" title="Please select vehicle" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($ownVehicle as $vehicle){
+                                        ?>
+                                        <option value="<?php echo base64_encode($vehicle['vehicle_id']); ?>" <?php echo(($result->vehicle_id==$vehicle['vehicle_id']) ? "selected='selected'" : "") ?>><?php echo $vehicle['vehicle_no']; ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="garageName" class="col-lg-4 control-label">Garage Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="garageName" name="garageName" placeholder="Enter garage name" title="Please enter garage name" value="<?php echo $result->garage_name; ?>"/>
+                                    <input type="hidden" class="form-control isRequired" id="serviceId" name="serviceId" value="<?php echo base64_encode($result->service_id); ?>"/>
+                                    <input type="hidden" id="deletedFile" name="deletedFile" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Service Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired datepicker readonly" id="serviceDate" name="serviceDate" placeholder="Enter service date" title="Please select service date" readonly="readonly" value="<?php echo $result->garage_in_date; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceKm" class="col-lg-4 control-label">Garage In Km <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="serviceKm" name="serviceKm" placeholder="Enter service km" title="Please enter service km" value="<?php echo $result->garage_in_kms; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="workDescription" class="col-lg-4 control-label">Work Description <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control isRequired" name="workDescription" id="workDescription" placeholder="Work Description" title="Please enter the work description"><?php echo $result->work_description; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="billAmount" class="col-lg-4 control-label">Bill Amount <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="billAmount" name="billAmount" placeholder="Enter bill amount" title="Please enter bill amount" value="<?php echo $result->bill_amount; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="billNo" class="col-lg-4 control-label">Bill Number <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="billNo" name="billNo" placeholder="Enter bill number" title="Please enter bill number" value="<?php echo $result->bill_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="paymentStatus" class="col-lg-4 control-label">Payment Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" id="paymentStatus" name="paymentStatus" title="Please select payment status" onchange="checkPaymentStatus(this.value)">
+                                        <option value="">--Select--</option>
+                                        <option value="paid" <?php echo(($result->payment_status=='paid') ? "selected='selected'" : "") ?>>Paid</option>
+                                        <option value="credit" <?php echo(($result->payment_status=='credit') ? "selected='selected'" : "") ?>>Credit</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="paymentMode" class="col-lg-4 control-label">Payment Mode </label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control" id="paymentMode" name="paymentMode" title="Please select payment mode" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($paymentMode as $mode){
+                                        ?>
+                                        <option value="<?php echo base64_encode($mode['type_id']); ?>" <?php echo(($result->payment_mode==$mode['type_id']) ? "selected='selected'" : "") ?>><?php echo $mode['payment_type']; ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Payment Date <span class="mandatory" id="paymentDateSpan">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired readonly" id="paymentDate" name="paymentDate" placeholder="Enter payment date" title="Please select payment date" readonly="readonly" value="<?php echo $result->payment_date; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="remarks" class="col-lg-4 control-label">Remarks</label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control" name="remarks" id="remarks" placeholder="Remarks" title="Please enter the work remarks"><?php echo $result->remarks; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nextServiceKm" class="col-lg-4 control-label">Next Service Km <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="nextServiceKm" name="nextServiceKm" placeholder="Enter next service km" title="Please enter next service km" value="<?php echo $result->next_service_kms; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="insClaimAmount" class="col-lg-4 control-label">Insurance Claim Amount</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="insClaimAmount" name="insClaimAmount" placeholder="Enter insurance claim amount" value="<?php echo $result->insurance_claim_amount; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="insAmountPaid" class="col-lg-4 control-label">Insurance Paid Amount</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="insAmountPaid" name="insAmountPaid" placeholder="Enter insurance paid amount" value="<?php echo $result->insurance_amount_paid; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Insurance Paid Date</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="insPaidDate" name="insPaidDate" placeholder="Enter insurance paid date" readonly="readonly" value="<?php echo $result->insurance_paid_date; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTax" class="col-lg-4 control-label">Bill Attachment </label>
+                                <div class="col-lg-6">
+                                    <?php
+                                    if(isset($result->file_name) && trim($result->file_name)!="" && file_exists($pathname. DIRECTORY_SEPARATOR.$result->file_name)){
+                                    ?>
+                                    <div id="fileDiv" style="margin-top:5px;">
+                                    <a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."vehicle-service". DIRECTORY_SEPARATOR .$result->service_id. DIRECTORY_SEPARATOR.$result->file_name ?>" ><?php echo $result->file_name; ?></a>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a href="javascript:void(0)" class="btn-sm btn-danger" onclick="deleteAttachment('<?php echo $result->file_name; ?>')"> <i class="fa fa-close"></i> Delete</a>
+                                    </div>
+                                    <?php
+                                    }
+                                    ?>
+                                    <input type="file" class="form-control" title="please choose file" name="file" id="file">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vehicle-service', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+
+<script type="text/javascript">
+    duplicateName = true;
+    
+    $(function() {
+      $('.datepicker').datepicker({
+          todayBtn: "linked",
+          clearBtn: true,
+          autoclose: true,
+          todayHighlight: true,
+          format: 'dd-M-yyyy'
+      });
+    $('#paymentDate').datepicker({
+        //todayBtn: "linked",
+        clearBtn: true,
+        autoclose: true,
+        todayHighlight: true,
+        format: 'dd-M-yyyy',
+        endDate:'today'
+		});
+    
+    <?php
+		if( trim($result->file_name)!="" && file_exists($pathname. DIRECTORY_SEPARATOR.$result->file_name)){
+		?>
+		$('#file').hide();
+		<?php
+		}
+		?>
+	});
+    
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addServiceInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addServiceInformation').submit();
+            }
+        }
+    }
+    function deleteAttachment(fileName) {
+	  conf=confirm("Are you sure you want to delete this file");
+	  if (conf) {
+      $("#deletedFile").val(fileName);
+      $('#file').show();
+      $('#fileDiv').hide();
+      }
+    }
+    
+    function checkPaymentStatus(objVal){
+      if(objVal=='credit'){
+        $("#paymentDate").removeClass('isRequired');
+        $("#paymentDateSpan").hide();
+      }else{
+        $("#paymentDateSpan").show();
+        $("#paymentDate").addClass('isRequired');
+      }
+    }
+</script>

@@ -1,0 +1,496 @@
+    <!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Add </span>
+				<span class="pageHeadingLabe12">Monthly Bill</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('monthly-billing', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+          <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+            <li><a href="<?php echo $this->url('monthly-billing', array('action' => 'index')); ?>"> Monthly Billing</a></li>
+            <li class="active">Add Monthly Bill</li>
+				</ol>
+			</div>
+		</div>
+  </section>
+
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addMonthlyBillInfo" id="addMonthlyBillInfo"  method="post" action="<?php echo $this->url('monthly-billing', array('action' => 'add')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="company" class="col-lg-4 control-label">Company <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" name="company" id="company" onchange="getClient(this);getInvoiceNo(this.value);">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($company as $com){
+                                        ?>
+                                        <option value="<?php echo $com['company_id'];?>"><?php echo $com['company_name'];?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="businessUnit" class="col-lg-4 control-label">Business Unit <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="businessUnit" name="businessUnit" title="Please select business unit">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($businessUnit as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['unit_id']);  ?>"><?php echo ucwords($val['unit_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="invoiceNo" class="col-lg-4 control-label">Invoice No. <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired " id="invoiceNo" name="invoiceNo" placeholder="Enter invoice number" title="Please enter invoice number" onblur="checkMultipleFieldValidations();"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Invoice Month & Year <span class="mandatory">*</span></label>
+                                <div class="col-lg-6 input-append date" id="dpMonths" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+                                    <input type="text" class="form-control isRequired readonly" id="invoiceMonth" name="invoiceMonth" placeholder="Select invoice month & year" title="Please select invoice month and year" readonly="readonly"/>
+                                    <span class="add-on"><i class="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Invoice Date <span class="mandatory">*</span> </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control readonly isRequired" id="invoiceDate" name="invoiceDate" placeholder="Invoice Date" readonly="readonly" title="Please select the invoice date"/>
+                                    <input type="hidden" class="form-control " id="searchInvoiceDate" name="searchInvoiceDate" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="client" class="col-lg-4 control-label">Client <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="client" name="client" title="Please select client" onchange="getServiceTax(this);">
+                                        <option value="">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="subject" class="col-lg-4 control-label">Subject <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="subject" name="subject" placeholder="Enter subject" title="Please enter the subject"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="usageParticulars" class="col-lg-4 control-label">Usage Particulars </label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control" id="usageParticulars" name="usageParticulars" placeholder="Enter usage particulars" title="Please enter the usage particulars"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="basic" class="col-lg-4 control-label">Basic Particulars <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="basic" name="basic" placeholder="Enter basic" title="Please enter the basic"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="basicAmount" class="col-lg-4 control-label">Basic Amount <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired checkNum" id="basicAmount" name="basicAmount" placeholder="Enter basic amount" title="Please enter the basic amount" onblur="calTotalAmt();calBalanceAmt();"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="toll" class="col-lg-4 control-label">Toll/Parking </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="toll" name="toll" placeholder="Enter toll/parking" onblur="calTotalAmt();calBalanceAmt();"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="driverRetention" class="col-lg-4 control-label">Driver Retention </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="driverRetention" name="driverRetention" placeholder="Enter driver retention" onblur="calTotalAmt();calBalanceAmt();"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <div class="form-group" >
+                                <label class="col-lg-4 control-label">Other Details </label>
+                                <div class="col-lg-8">
+                                    <table id="otherDetailsTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" style="width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th>Other Name</th>
+                                        <th style="width:30%;">Other Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                        <input type="text" id="otherName1" name="otherName[]" class="form-control" placeholder="Other Name"/>
+                                        </td>
+                                        <td>
+                                        <input type="text" class="form-control otherAmount checkNum" id="otherAmount1" name="otherAmount[]" placeholder="Other Amount" title="" onblur="calTotalAmt();calBalanceAmt();"/>
+                                        </td>
+                                        
+                                        <td align="center">
+                                        <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                                        </td>
+                                        
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTaxAmount" class="col-lg-4 control-label">Service Tax <span id="serviceTaxSpan"></span> <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="hidden" class="form-control isRequired" id="serviceTaxType" name="serviceTaxType"/>
+                                    <input type="hidden" class="form-control" id="sgstTax" name="sgstTax"/>
+                                    <input type="hidden" class="form-control" id="cgstTax" name="cgstTax"/>
+                                    <input type="hidden" class="form-control" id="igstTax" name="igstTax"/>
+                                    <input type="hidden" class="form-control" id="calTax" name="calTax"/>
+                                    <input type="text" class="form-control isRequired checkNum readonly" id="serviceTaxAmount" name="serviceTaxAmount" placeholder="Enter service tax" readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="netAmount" class="col-lg-4 control-label">Total Amount </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control checkNum" id="netAmount" name="netAmount" placeholder="Enter total amount"/>
+                                    <input type="hidden" class="form-control" id="totalAmount" name="totalAmount" placeholder="Enter total amount"/>
+                                    <input type="hidden" class="form-control" id="balance" name="balance" placeholder="Enter balance"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Payment Due Date <span class="mandatory">*</span> </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly isRequired" id="paymentDate" name="paymentDate" placeholder="Payment Due Date" readonly="readonly" title="Please select the payment date"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="invoicePreparedBy" class="col-lg-4 control-label">Invoice Prepared By <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control isRequired" id="invoicePreparedBy" name="invoicePreparedBy" title="Please select invoice prepared by">
+                                      <option value="">--Select--</option>
+                                      <?php
+                                      foreach($employee as $val){
+                                      ?>
+                                      <option value="<?php echo $val['employee_id']; ?>"><?php echo ucwords($val['employee_name'])." - ".$val['employee_no']; ?></option>
+                                      <?php
+                                      }
+                                      ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('monthly-billing', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+    rowCount=1;
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'addMonthlyBillInfo'
+        });
+        if (flag) {
+            if (duplicateName) {
+              document.getElementById('addMonthlyBillInfo').submit();
+            }
+        }
+    }
+    
+    function checkMultipleFieldValidations()
+	{
+	    companyId=$("#company").val();
+        invoiceNo=$("#invoiceNo").val();
+	    if(companyId!="" && invoiceNo!=""){
+		var json_data = { 
+		    "tableName" : "monthly_billing_details",
+		    "columns":[
+                {
+                    "column_name" : "company_id",
+                    "column_value": companyId
+                },
+                {
+                    "column_name" : "invoice_no",
+                    "column_value": invoiceNo
+                }
+		    ]
+		}
+		//console.log(json_data);
+		$.post("<?php echo $this->url('common', array('action' => 'check-multiple-column-value')); ?>", { json_data : json_data},
+		function(data){
+		    if(data>0)
+		    {
+			alert("This invoice number already exist,Please enter another number");
+			document.getElementById("invoiceNo").value="";
+			duplicateName=false;
+		    }
+		    else{
+			duplicateName=true;
+		    }
+		});
+	     
+	    }
+	}
+    
+    $(function() {
+        $('#invoiceDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+        $('.datepicker').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy',
+            startDate:'today'
+		});
+        $('#dpMonths').datepicker({
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'M-yyyy',
+            viewMode: "months",
+            minViewMode: "months",
+		}).on('changeDate', function(e) {
+            var date = new Date($('#invoiceMonth').val());
+            var day = date.getDate();
+            var monthIndex = date.getMonth()+parseInt(1);
+            var year = date.getFullYear();
+            selectedDate=year+"-"+monthIndex+"-"+day;
+            //console.log(selectedDate);
+            $("#searchInvoiceDate").val(selectedDate);
+        });
+	});
+    
+    function getServiceTax(obj){
+        sbcTax=0;
+        kkcTax=0;
+        selected=obj.options[obj.selectedIndex];
+        service_tax_type=selected.getAttribute('data-service-tax-type');
+        sgst="";
+        cgst="";
+        igst="";
+        calTax="";
+        if(service_tax_type=='sgst'){
+            sgst=selected.getAttribute('data-sgst');
+            cgst=selected.getAttribute('data-cgst');
+            calTax=parseFloat(sgst)+parseFloat(cgst);
+            $("#sgstTax").val(sgst);
+            $("#cgstTax").val(cgst);
+        }else if(service_tax_type=='igst'){
+            igst=selected.getAttribute('data-igst');
+            calTax=parseFloat(igst);
+            $("#igstTax").val(igst);
+        }
+        if(calTax==0){
+		$("#serviceTaxAmount").removeClass("isRequired");;
+	  }
+        //calTax=parseFloat(serviceTax)+parseFloat(sbcTax)+parseFloat(kkcTax);
+        $("#serviceTaxType").val(service_tax_type);
+        $("#calTax").val(calTax);
+        document.getElementById("serviceTaxSpan").innerHTML="("+calTax+"%)";
+    }
+    
+    function calTotalAmt(){
+		totAmt=0;
+        basicAmount=$("#basicAmount").val();
+        serviceTax=$("#calTax").val();
+        other=$("#other").val();
+        toll=$("#toll").val();
+        driverRetention=$("#driverRetention").val();
+        $("#netAmount").val();
+        discount=$("#discount").val();
+        if(basicAmount!=""){
+            totAmt=parseFloat(basicAmount);
+        }
+        
+        if(toll!=""){
+            totAmt=parseFloat(totAmt)+parseFloat(toll);
+        }
+        if(driverRetention!=""){
+            totAmt=parseFloat(totAmt)+parseFloat(driverRetention);
+        }
+        
+        $(".otherAmount").each(function() {
+          if(this.value>0){
+            totAmt=parseFloat(this.value)+parseFloat(totAmt);
+          }
+        });
+        $("#totalAmount").val(totAmt);
+        if(basicAmount!="" && serviceTax!=""){
+            service_tax=(parseFloat(serviceTax)/100);
+            serviceTaxAmt=parseFloat(totAmt*service_tax).toFixed(2);
+            $("#serviceTaxAmount").val(serviceTaxAmt);
+            totAmt=parseFloat(totAmt)+parseFloat(serviceTaxAmt);
+        }
+        $("#netAmount").val(totAmt);
+    }
+    
+    function calBalanceAmt(){
+        tds='';
+        discount='';
+        receivedAmount='';
+        if(tds!=""){
+            totAmt=parseFloat(totAmt)-parseFloat(tds);
+        }
+        if(discount!=""){
+            totAmt=parseFloat(totAmt)-parseFloat(discount);
+        }
+        if(receivedAmount!=""){
+            totAmt=parseFloat(totAmt)-parseFloat(receivedAmount);
+        }
+        $("#balance").val(totAmt);
+    }
+    
+    function getClient(obj){
+        $.blockUI();
+        $.post("<?php echo $this->url('clients', array('action' => 'get-client-by-company')); ?>", {company: obj.value},
+        function(data) {
+            if (data!="")
+            {
+                $("#client").html(data);
+		    
+			$("#client").select2({
+				placeholder: "--Select Client--",
+				tags: true
+			}).on("change", function(e) {
+				calTotalAmt();
+				calBalanceAmt();
+			});
+		    
+                $.unblockUI();
+            }
+        });
+    }
+    
+    function insRow() {
+		rowCount++;
+		rl = document.getElementById("otherDetailsTable").rows.length;
+		var a = document.getElementById("otherDetailsTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		
+		d.setAttribute("align", "center");
+		
+		rl = document.getElementById("otherDetailsTable").rows.length - 1;
+		b.innerHTML = '<input type="text" class="form-control" id="otherName' + rowCount + '" name="otherName[]" placeholder="Other Name" />';
+		c.innerHTML = '<input type="text" class="form-control otherAmount checkNum" id="otherAmount' + rowCount + '" name="otherAmount[]" placeholder="Other Amount" onblur="calTotalAmt();calBalanceAmt();"/>';
+		d.innerHTML = '<a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+		checkNum();
+    }
+	
+	function removeRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("otherDetailsTable").rows.length;
+		    if (rl == 1) {
+			insRow();
+		    }
+		    calTotalAmt();
+		    calBalanceAmt();
+		});
+    }
+    
+    function getInvoiceNo(objValue){
+        $.blockUI();
+        //$monthlyInvoiceCode
+        $.post("<?php echo $this->url('monthly-billing', array('action' => 'get-invoice-no')); ?>", {company: objValue},
+        function(data) {
+            if (data!="")
+            {
+                $("#invoiceNo").val(data+'<?php echo $monthlyInvoiceCode ?>');
+                $.unblockUI();
+            }
+        });
+    }
+</script>

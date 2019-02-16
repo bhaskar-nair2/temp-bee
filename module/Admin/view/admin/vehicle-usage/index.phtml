@@ -1,0 +1,169 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\VehicleUsage', 'edit')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+$currentMonth=date('M-Y',strtotime('this month'));
+//$endDate=date('t-M-Y',strtotime('this month'));
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Vehicle Usage</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\VehicleUsage', 'add')) {
+					?>
+					<a href="<?php echo $this->url('vehicle-usage',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Vehicle Usage</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group input-append date" id="dpMonths" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+				<label>Search From &nbsp;</label>
+				<input type="text" class="form-control isRequired readonly" id="usageFromMonth" name="usageFromMonth" placeholder="From month & year" title="Please select from month and year" readonly="readonly" value="<?php echo $currentMonth; ?>"/>
+				<span class="add-on"><i class="icon-calendar"></i></span>
+			</div>
+			<div class="form-group input-append date" id="dpToMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+				<label>Search To &nbsp;</label>
+				<input type="text" class="form-control readonly" id="usageToMonth" name="usageToMonth" placeholder="To month & year" title="Please select to month and year" readonly="readonly" value="<?php echo $currentMonth; ?>"/>
+				<span class="add-on"><i class="icon-calendar"></i></span>
+			</div>
+			<div class="form-group">
+			<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-default ">
+			&nbsp;<a href="" class="btn btn-danger">Reset</a>
+			&nbsp;<a href="javascript:void(0)" onclick="exportToExcel();" class="btn btn-primary" title="Download"><i class="fa fa-download"> Export to excel </i></a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<table id="vehicleUsageDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Vehicle</th>
+								<th>Vehicle Type</th>
+								<th>Usage Month & Year</th>
+								<th>Total Used Kms</th>
+								<th>Non Revenue Kms</th>
+								<th>Hotel Revenue Per Km</th>
+								<th>Corp Revenue Per Km</th>
+								<th>Mileage Per Litre</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\VehicleUsage', 'add')) { ?>
+								<th style="width:60px;">Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="10" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+				
+				
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+    oTable = null;
+	startDate="<?php echo date('Y-m'); ?>";
+	endDate="<?php echo date('Y-m'); ?>";
+    $(document).ready(function() {
+		oTable=$('#vehicleUsageDataTable').dataTable( {
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			"bRetrieve": false,
+			"bStateSave" : true,
+			"aoColumns": [
+			<?php echo $editAction;?>
+            ],
+			"aaSorting": [[ 2, "desc" ]],
+			"sAjaxSource": "<?php echo $this->url('vehicle-usage',array('action' => 'index')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				aoData.push({ "name":"startDate","value": startDate});
+				aoData.push({ "name":"endDate","value": endDate});
+					$.ajax({
+						"dataType": 'json',
+						"type": "POST",
+						"url": sSource,
+						"data": aoData,
+						"success": fnCallback
+					});
+				}
+		} );
+		
+		$('#dpMonths').datepicker({
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'M-yyyy',
+		viewMode: "months",
+		minViewMode: "months",
+	}).on('changeDate', function(e) {
+	  // `e` here contains the extra attributes
+	  var date = new Date($('#usageFromMonth').val());
+	  var day = date.getDate();
+	  var monthIndex = date.getMonth()+parseInt(1);
+	  var year = date.getFullYear();
+	  startDate=year+"-"+monthIndex;
+	  if(isNaN(year)) {
+        startDate=""
+      }
+	  oTable.fnDraw();
+	});
+	
+	$('#dpToMonth').datepicker({
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'M-yyyy',
+		viewMode: "months",
+		minViewMode: "months",
+	}).on('changeDate', function(e) {
+	  // `e` here contains the extra attributes
+	  var date = new Date($('#usageToMonth').val());
+	  var day = date.getDate();
+	  var monthIndex = date.getMonth()+parseInt(1);
+	  var year = date.getFullYear();
+	  endDate=year+"-"+monthIndex;
+	  if(isNaN(year)) {
+        endDate=""
+      }
+	  oTable.fnDraw();
+	});
+} );
+    function exportToExcel(){
+		$.blockUI();
+		$.post("<?php echo $this->url('vehicle-usage',array('action'=>'export-to-excel')); ?>",{startDate:startDate,endDate:endDate},
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+	}
+</script>

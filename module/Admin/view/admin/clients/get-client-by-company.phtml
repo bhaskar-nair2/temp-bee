@@ -1,0 +1,8 @@
+<?php
+$client="<option value=''>-- Select Client --</option>";
+if(sizeof($result)>0){
+    foreach($result as $res){
+        $client.='<option value="'.$res['client_id'].'" data-service-tax-type="'.$res['service_tax_type'].'" data-sgst="'.trim($res['sgst_tax']).'" data-cgst="'.trim($res['cgst_tax']).'" data-igst="'.trim($res['igst_tax']).'">'.$res['client_no']."-".ucwords($res['client_name']).'</option>';
+    }
+}
+echo $client;

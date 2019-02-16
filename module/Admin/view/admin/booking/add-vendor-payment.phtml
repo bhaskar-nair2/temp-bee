@@ -1,0 +1,481 @@
+<style>
+    p.readonly{
+       background:#f4f4f4 !important; 
+    }
+</style>
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+//$result['vendor_type']='oncall';
+if(isset($result['vendor_type']) && trim($result['vendor_type'])=='attached'){
+    $commissionPer=0.8;
+?>
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>Add Vendor Payment </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="<?php echo $this->url('booking', array('action' => 'index')); ?>"> Booking</a></li>
+        <li class="active">Add Vendor Payment</li>
+      </ol>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="vendorPaymentInformation" id="vendorPaymentInformation"  method="post" action="<?php echo $this->url('booking', array('action' => 'add-vendor-payment')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Booking No </label>
+                            <p class="form-control readonly"><?php echo $result['booking_no']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Vendor Name</label>
+                            <p class="form-control readonly"><?php echo $result['vendor_name']." - ".$result['vendor_no']." / ".ucwords($result['vendor_type']);; ?></p>
+                            <input type="hidden" class="form-control isRequired" id="bookingId" name="bookingId" value="<?php echo base64_encode($result['booking_id']); ?>"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <?php if(isset($result['duty_type']) && $result['duty_type']=='1'){ ?>
+                            <label>Total Hrs </label>
+                            <p class="form-control readonly"><?php echo $result['total_hrs']; ?></p>
+                            <?php } ?>
+                            <?php if(isset($result['duty_type']) && $result['duty_type']=='3'){ ?>
+                            <label>Total Hrs </label>
+                            <p class="form-control readonly"><?php echo $result['total_hrs']; ?></p>
+                            <?php } ?>
+                            <?php if(isset($result['duty_type']) && $result['duty_type']=='2'){ ?>
+                            <label>Total Days </label>
+                            <p class="form-control readonly"><?php echo $result['total_days']; ?></p>
+                            <?php } ?>
+                        </div>
+                         <div class="col-md-3 div-group -animated">
+                            <label>Total Kms </label>
+                            <p class="form-control readonly"><?php echo $result['total_kms']; ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Hrs </label>
+                            <p class="form-control readonly"><?php echo $result['extra_hrs']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Kms </label>
+                            <p class="form-control readonly"><?php echo $result['extra_kms']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Basic Amount </label>
+                            <p class="form-control readonly"><?php echo $result['tariff_amount']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Hrs Amount </label>
+                            <p class="form-control readonly"><?php echo $result['ext_hrs_amount']; ?></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Kms Amount </label>
+                            <p class="form-control readonly"><?php echo $result['ext_kms_amount']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Total Amount</label>
+                            <p class="form-control readonly"><?php echo $result['total_amount']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Advance</label>
+                            <p class="form-control readonly"><?php echo ($result['advance']!='') ? $result['advance'] : "0"; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Balance</label>
+                            <p class="form-control readonly"><?php echo $result['balance']; ?></p>
+                            <input type="hidden" class="form-control checkNum" id="billBalance" name="billBalance" value="<?php echo $result['balance']; ?>"/>
+                        </div>
+                    </div>
+                    <h4>Vendor Payment</h4>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Vendor Basic Amount </label>
+                            <input type="text" class="form-control checkNum" id="vendorBasicAmount" name="vendorBasicAmount" value="<?php echo round($result['tariff_amount']*$commissionPer); ?>" onblur="calServiceTaxAmt();"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Hrs Amount </label>
+                            <input type="text" class="form-control checkNum" id="extraHrsAmt" name="extraHrsAmt" value="<?php echo round($result['ext_hrs_amount']*$commissionPer); ?>" onblur="calServiceTaxAmt();"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Kms Amount </label>
+                            <input type="text" class="form-control checkNum" id="vendorExtKmsAmt" name="vendorExtKmsAmt" value="<?php echo round($result['ext_kms_amount']*$commissionPer); ?>" onblur="calServiceTaxAmt();"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Parking / Toll </label>
+                            <input type="text" class="form-control checkNum" id="parkingToll" name="parkingToll" value="<?php echo $result['parking_toll']; ?>" onblur="calServiceTaxAmt();"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Permit </label>
+                            <input type="text" class="form-control checkNum" id="permit" name="permit" value="<?php echo $result['permit']; ?>" onblur="calServiceTaxAmt();"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Driver Allowance </label>
+                            <input type="text" class="form-control checkNum" id="driverAllowance" name="driverAllowance" value="<?php echo $result['driver_allowance']; ?>" onblur="calServiceTaxAmt();"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Service Tax % </label>
+                            <input type="text" class="form-control checkNum" id="serviceTax" name="serviceTax" onblur="calServiceTaxAmt();"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Service Tax Amount </label>
+                            <input type="text" class="form-control" id="serviceTaxAmt" name="serviceTaxAmt"  readonly="readonly"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Total Payable </label>
+                            <input type="text" class="form-control" id="totalPayable" name="totalPayable" />
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>BC Revenue </label>
+                            <input type="text" class="form-control" id="bcRevenue" name="bcRevenue" />
+                        </div>
+                    </div>
+                    
+                    </div>
+                    <div class="box-footer">
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                        <a href="<?php echo $this->url('booking', array('action' => 'closed-list')); ?>" class="btn btn-default">Cancel</a>
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/animate-label.js'; ?>"></script>
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'vendorPaymentInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('vendorPaymentInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+		$('.datepicker').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+        
+        if ($('.div-group .-animated .form-control').val() != '') {
+            //$('.div-group input').parent('.div-group').addClass('-active');
+            $('.div-group .form-control').parent('.div-group').addClass('-active');
+        } else {
+            $(this).parent('.div-group').removeClass('-active');
+        }
+      
+	});
+    
+    
+</script>
+<?php
+}else if(isset($result['vendor_type']) && trim($result['vendor_type'])=='oncall'){
+?>
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>Add Vendor Payment </h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="<?php echo $this->url('booking', array('action' => 'index')); ?>"> Booking</a></li>
+        <li class="active">Add Vendor Payment</li>
+      </ol>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="vendorPaymentInformation" id="vendorPaymentInformation"  method="post" action="<?php echo $this->url('booking', array('action' => 'add-vendor-payment')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Booking No </label>
+                            <p class="form-control readonly"><?php echo $result['booking_no']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Vendor Name</label>
+                            <p class="form-control readonly"><?php echo $result['vendor_name']." - ".$result['vendor_no']." / ".ucwords($result['vendor_type']); ?></p>
+                            <input type="hidden" class="form-control isRequired" id="bookingId" name="bookingId" value="<?php echo base64_encode($result['booking_id']); ?>"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <?php if(isset($result['duty_type']) && $result['duty_type']=='1'){ ?>
+                            <label>Total Hrs </label>
+                            <p class="form-control readonly"><?php echo $result['total_hrs']; ?></p>
+                            <?php } ?>
+                            <?php if(isset($result['duty_type']) && $result['duty_type']=='3'){ ?>
+                            <label>Total Hrs </label>
+                            <p class="form-control readonly"><?php echo $result['total_hrs']; ?></p>
+                            <?php } ?>
+                            <?php if(isset($result['duty_type']) && $result['duty_type']=='2'){ ?>
+                            <label>Total Days </label>
+                            <p class="form-control readonly"><?php echo $result['total_days']; ?></p>
+                            <?php } ?>
+                        </div>
+                         <div class="col-md-3 div-group -animated">
+                            <label>Total Kms </label>
+                            <p class="form-control readonly"><?php echo $result['total_kms']; ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Hrs </label>
+                            <p class="form-control readonly"><?php echo $result['extra_hrs']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Kms </label>
+                            <p class="form-control readonly"><?php echo $result['extra_kms']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Basic Amount </label>
+                            <p class="form-control readonly"><?php echo $result['tariff_amount']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Hrs Amount </label>
+                            <p class="form-control readonly"><?php echo $result['ext_hrs_amount']; ?></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Kms Amount </label>
+                            <p class="form-control readonly"><?php echo $result['ext_kms_amount']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Total Amount</label>
+                            <p class="form-control readonly"><?php echo $result['total_amount']; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Advance</label>
+                            <p class="form-control readonly"><?php echo ($result['advance']!='') ? $result['advance'] : "0"; ?></p>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Balance</label>
+                            <p class="form-control readonly"><?php echo $result['balance']; ?></p>
+                            <input type="hidden" class="form-control checkNum" id="billBalance" name="billBalance" value="<?php echo $result['balance']; ?>"/>
+                        </div>
+                    </div>
+                    <h4>Vendor Payment</h4>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Vendor BasicAmount </label>
+                            <input type="text" class="form-control checkNum" id="vendorBasicAmount" name="vendorBasicAmount" value="<?php echo $result['tariff_amount']; ?>" onblur="calServiceTaxAmt()"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Hrs Amount </label>
+                            <input type="text" class="form-control checkNum" id="extraHrsAmt" name="extraHrsAmt" onblur="calServiceTaxAmt()" />
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Extra Kms Amount </label>
+                            <input type="text" class="form-control checkNum" id="vendorExtKmsAmt" name="vendorExtKmsAmt" onblur="calServiceTaxAmt()"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Parking / Toll </label>
+                            <input type="text" class="form-control checkNum" id="parkingToll" name="parkingToll" value="<?php echo $result['parking_toll']; ?>" onblur="calServiceTaxAmt()"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Permit </label>
+                            <input type="text" class="form-control checkNum" id="permit" name="permit" value="<?php echo $result['permit']; ?>" onblur="calServiceTaxAmt()"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Driver Allowance </label>
+                            <input type="text" class="form-control checkNum" id="driverAllowance" name="driverAllowance" value="<?php echo $result['driver_allowance']; ?>" onblur="calServiceTaxAmt()"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Service Tax % </label>
+                            <input type="text" class="form-control checkNum" id="serviceTax" name="serviceTax" onblur="calServiceTaxAmt()"/>
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>Service Tax Amount </label>
+                            <input type="text" class="form-control" id="serviceTaxAmt" name="serviceTaxAmt" readonly="readonly"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 div-group -animated">
+                            <label>Total Payable </label>
+                            <input type="text" class="form-control" id="totalPayable" name="totalPayable" />
+                        </div>
+                        <div class="col-md-3 div-group -animated">
+                            <label>BC Revenue </label>
+                            <input type="text" class="form-control" id="bcRevenue" name="bcRevenue" />
+                        </div>
+                        <div class="col-md-3 div-group -animated select-wrapper">
+                            <label>Payment Status</label>
+                            <select class="form-control isRequired" id="paymentStatus" name="paymentStatus" title="Please select payment status" onchange="checkVendorPaymentStatus();">
+                                <option value="">--Select Payment Status--</option>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="paymentDiv" style="display:none;">
+                        <h3>Payment Details</h3>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-3 div-group -animated">
+                                <label>Paid Amount </label>
+                                <input type="text" class="form-control checkNum" id="paidAmount" name="paidAmount" />
+                            </div>
+                            <div class="col-md-3 div-group -animated select-wrapper">
+                                <label>Payment Mode</label>
+                                <select  class="form-control" id="paymentMode" name="paymentMode" title="Please select payment mode" >
+                                    <option value="">-- Select Payment Mode --</option>
+                                    <?php
+                                    foreach($paymentMode as $mode){
+                                    ?>
+                                    <option value="<?php echo base64_encode($mode['type_id']); ?>"><?php echo $mode['payment_type']; ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3 div-group -animated">
+                                <label>Paid Date </label>
+                                <input type="text" class="form-control datepicker" id="paidDate" name="paidDate" title="Please select the paid date" readonly="readonly" value=""/>
+                            </div>
+                            <div class="col-md-3 div-group -animated">
+                                <label>Balance </label>
+                                <input type="text" class="form-control checkNum" id="balance" name="balance" />
+                            </div>
+                        </div>
+                    
+                    </div>
+                    
+                    
+                    </div>
+                    <div class="box-footer">
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                        <a href="<?php echo $this->url('booking', array('action' => 'closed-list')); ?>" class="btn btn-default">Cancel</a>
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/animate-label.js'; ?>"></script>
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'vendorPaymentInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('vendorPaymentInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+		$('.datepicker').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+        
+        if ($('.div-group .-animated .form-control').val() != '') {
+            //$('.div-group input').parent('.div-group').addClass('-active');
+            $('.div-group .form-control').parent('.div-group').addClass('-active');
+        } else {
+            $(this).parent('.div-group').removeClass('-active');
+        }
+      
+	});
+    
+    function checkVendorPaymentStatus(){
+        paymentStatus=$("#paymentStatus").val();
+        if(paymentStatus=='paid'){
+            $("#paymentDiv").css('display','block');
+        }else{
+            $("#paymentDiv").css('display','none');
+        }
+    }
+</script>
+<?php
+}
+?>
+<script>
+    <?php if(isset($result['duty_type']) && $result['duty_type']=='2'){ ?>
+        $("#extraHrsAmt").val("0");
+        $("#extraHrsAmt").attr("readonly","readonly");
+    <?php } ?>
+    function calServiceTaxAmt(){
+        var totAmt=0;
+        var serviceTaxAmt=0;
+        serviceTax=$("#serviceTax").val();
+        basicAmount=$("#vendorBasicAmount").val();
+        extraHrsAmt=$("#extraHrsAmt").val();
+        extKmsAmt=$("#vendorExtKmsAmt").val();
+        parkingToll=$("#parkingToll").val();
+        permitAmt=$("#permit").val();
+        driverAllowance=$("#driverAllowance").val();
+        billBalanceAmt=$("#billBalance").val();
+        
+        if(basicAmount!=''){
+            totAmt=parseFloat(totAmt)+parseFloat(basicAmount);
+        }
+        if(extraHrsAmt!=''){
+            totAmt=parseFloat(totAmt)+parseFloat(extraHrsAmt);
+        }
+        if(extKmsAmt!=''){
+            totAmt=parseFloat(totAmt)+parseFloat(extKmsAmt);
+        }
+        if(parkingToll!=''){
+            totAmt=parseFloat(totAmt)+parseFloat(parkingToll);
+        }
+        if(permitAmt!=''){
+            totAmt=parseFloat(totAmt)+parseFloat(permitAmt);
+        }
+        if(driverAllowance!=''){
+            totAmt=parseFloat(totAmt)+parseFloat(driverAllowance);
+        }
+        if(serviceTax!=""){
+            service_tax=(parseFloat(serviceTax)/100);
+            serviceTaxAmt=parseFloat(totAmt*service_tax).toFixed(2);
+            $("#serviceTaxAmt").val(serviceTaxAmt);
+        }
+        
+        totAmt=parseFloat(totAmt)+parseFloat(serviceTaxAmt);
+        if(billBalanceAmt!=""){
+			bcRevenueAmt=parseFloat(billBalanceAmt)-parseFloat(totAmt);
+            $("#bcRevenue").val(bcRevenueAmt.toFixed(2));
+        }
+        $("#totalPayable").val(totAmt);
+    }
+</script>

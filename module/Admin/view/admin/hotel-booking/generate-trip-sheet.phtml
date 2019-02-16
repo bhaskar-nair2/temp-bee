@@ -1,0 +1,273 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+//\Zend\Debug\Debug::dump($result);die;
+if(isset($result['trip_from_date']) && trim($result['trip_from_date'])!=""){
+    $result['trip_from_date']=$commonService->humanDateFormat($result['trip_from_date']);
+}
+
+if(isset($result['booking_date']) && trim($result['booking_date'])!=""){
+    $result['booking_date']=$commonService->humanDateFormat($result['booking_date']);
+}
+
+// Extend the TCPDF class to create custom Header and Footer
+class MYPDF extends TCPDF {
+
+    //Page header
+    public function Header() {
+        // Set font
+        $this->SetFont('helvetica', 'B', 12);
+        // Title
+        $this->writeHTMLCell(0,0,6,5,'Duty Slip', 0, 1, 0, true, 'C', true);
+        $this->SetFont('helvetica', '', 10);
+        $address="COURTYARD & FAIRFIELD MARRIOTT <br/> OUTER RING ROAD,BENGALURU<br/>Service Provider: BEECABS INDIA PRIVATE LIMITED";
+        $this->writeHTMLCell(0,0,6,10,$address, 0, 1, 0, true, 'L', true);
+        
+    }
+
+    // Page footer
+    public function Footer() {
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        // Set font
+        $this->SetFont('helvetica', 'I', 8);
+        // Page number
+        $this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+    }
+}
+
+// create new PDF document
+$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Nicola Asuni');
+$pdf->SetTitle('Trip Sheet');
+$pdf->SetSubject('TCPDF Tutorial');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+// set default header data
+$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+
+// set font
+$pdf->SetFont('helvetica', '', 9);
+
+// add a page
+$pdf->AddPage();
+
+$pdf->SetY(26,true,false);
+
+// set some text to print
+$trip='<table style="width:100%;border:1px solid black;" cellpadding="5">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="15%"> Company Name</td>';
+$trip.='<td width="2%">:</td>';
+$trip.='<td width="54%" colspan="3">'.$result['client_name'].'</td>';
+
+$trip.='<td style="text-align:left;font-weight:bold;border:1px solid black;" width="13%" colspan="2">Booking No</td>';
+
+$trip.='<td width="15%" style="border:1px solid black;">'.trim($result['booking_no']).'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;"> Guest Name</td>';
+$trip.='<td>:</td>';
+$trip.='<td colspan="3">'.ucwords($result['guest_name']).'</td>';
+//$trip.='<td></td>';
+$trip.='<td style="text-align:left;font-weight:bold;border:1px solid black;" colspan="2">Date</td>';
+
+if(isset($result['booking_date_time']) && trim($result['booking_date_time'])!=""){
+	$expDateTime=explode(" ",$result['booking_date_time']);
+	$bookingDate=$commonService->humanDateFormat($expDateTime[0]);
+	$bookingTime=substr($expDateTime[1],0,-3);
+}
+
+$trip.='<td style="border:1px solid black;">'.$bookingDate.'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;">Guset Mobile No</td>';
+$trip.='<td>:</td>';
+$trip.='<td colspan="3">'.$result['guest_mobile_no'].'</td>';
+//$trip.='<td></td>';
+$trip.='<td style="text-align:left;font-weight:bold;" colspan="2">Trip Type &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</td>';
+//$trip.='<td>:</td>';
+$trip.='<td>'.$result['type_name'].'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;"> Driver Name</td>';
+$trip.='<td>:</td>';
+$trip.='<td colspan="3">'.ucwords($result['driver_name']).'</td>';
+$trip.='<td style="text-align:left;font-weight:bold;" colspan="2">Vehicle No &nbsp;&nbsp;&nbsp;&nbsp;:</td>';
+$trip.='<td>'.$result['vehicle_no'].'</td>';
+$trip.='</tr>';
+
+
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;">Pickup Time</td>';
+$trip.='<td>:</td>';
+$trip.='<td width="20%">'.$bookingTime.'</td>';
+$trip.='<td style="font-weight:bold;" width="13%">Pickup Point :</td><td width="21%">'.$result['pickup_place'].'</td>';
+$trip.='<td style="text-align:left;font-weight:bold;" colspan="2">Drop Point &nbsp;&nbsp; :</td>';
+//$trip.='<td>:</td>';
+$trip.='<td>'.$result['drop_place'].'</td>';
+$trip.='</tr>';
+
+$trip.='</table>';
+
+// print a block of text using Write()
+//$pdf->writeHTML($trip, true, 0, true, 0);
+//$pdf->SetLineStyle(array('width' => 0.5, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0, 0, 255)));
+$pdf->writeHTMLCell(200, '',5,'', $trip, 0, 1, 0, true, 'L', true);
+
+
+$tripTime='<table width="630" border="1" cellpadding="10" style="text-align:center;">';
+$tripTime.='<tr>';
+$tripTime.='<td width="10%"></td>';
+$tripTime.='<td style="font-weight:bold;" width="15%">DATE</td>';
+$tripTime.='<td style="font-weight:bold;" width="13%">HOURS</td>';
+$tripTime.='<td style="font-weight:bold;" width="15%">KMS</td>';
+$tripTime.='</tr>';
+
+$tripTime.='<tr>';
+$tripTime.='<td style="font-weight:bold;">Starting</td>';
+$tripTime.='<td>'.$bookingDate.'</td>';
+$tripTime.='<td></td>';
+$tripTime.='<td></td>';
+$tripTime.='</tr>';
+
+$tripTime.='<tr>';
+$tripTime.='<td style="font-weight:bold;">Closing</td>';
+$tripTime.='<td></td>';
+$tripTime.='<td></td>';
+$tripTime.='<td></td>';
+$tripTime.='</tr>';
+
+$tripTime.='<tr>';
+$tripTime.='<td style="font-weight:bold;">Total</td>';
+$tripTime.='<td></td>';
+$tripTime.='<td></td>';
+$tripTime.='<td></td>';
+$tripTime.='</tr>';
+
+$tripTime.='</table>';
+
+//$pdf->writeHTML($tripTime, true, 0, true, 0);
+
+// get current vertical position
+$y = $pdf->getY();
+
+// write the first column
+$pdf->writeHTMLCell(100,'',5, $y+3, $tripTime, 0, 0, 0, true, 'J', true);
+
+$y = $pdf->getY();
+
+$splIns='<table cellpadding="6">';
+$splIns.='<tr>';
+$splIns.='<td style="font-size:12px;font-weight:bold;">SPL INSTRUCTION :</td>';
+$splIns.='</tr>';
+$splIns.='<tr>';
+$splIns.='<td style="border-bottom:1px dashed #000;"></td>';
+$splIns.='</tr>';
+
+$splIns.='<tr>';
+$splIns.='<td style="border-bottom:1px dashed #000;"></td>';
+$splIns.='</tr>';
+$splIns.='</table>';
+//$pdf->writeHTMLCell(100,'',100, $y+2, $feedback, 0, 0, 0, true, 'L', true);
+// write the second column
+$pdf->writeHTMLCell(80, '', 105,$y, $splIns, 0, 1, 0, true, 'J', true);
+// Print some HTML Cells
+$y = $pdf->getY();
+$pdf->SetY($y+20,true,false);
+
+$feedback='<table border="1" cellpadding="6" width="400">';
+$feedback.='<tr>';
+$feedback.='<td style="font-weight:bold;" width="33%"> FEED BACK</td>';
+$feedback.='<td style="font-weight:bold;text-align:center;" width="20%">EXCELLENT</td>';
+$feedback.='<td style="font-weight:bold;text-align:center;" width="14%">GOOD</td>';
+$feedback.='<td style="font-weight:bold;text-align:center;" width="14%">POOR</td>';
+$feedback.='</tr>';
+
+$feedback.='<tr>';
+$feedback.='<td> DRIVER</td>';
+$feedback.='<td></td>';
+$feedback.='<td></td>';
+$feedback.='<td></td>';
+$feedback.='</tr>';
+
+$feedback.='<tr>';
+$feedback.='<td> CAR CLEANESS</td>';
+$feedback.='<td></td>';
+$feedback.='<td></td>';
+$feedback.='<td></td>';
+$feedback.='</tr>';
+
+$feedback.='<tr>';
+$feedback.='<td> REPORTED IN TIME</td>';
+$feedback.='<td></td>';
+$feedback.='<td></td>';
+$feedback.='<td></td>';
+$feedback.='</tr>';
+
+$feedback.='</table>';
+
+//$pdf->writeHTML($feedback, true, 0, true, 0);
+
+// write the first column
+$pdf->writeHTMLCell(90,'',5, '', $feedback, 0, 0, 0, true, 'L', true);
+
+
+$y = $pdf->getY();
+$feedback='<table cellpadding="3">';
+$feedback.='<tr>';
+$feedback.='<td style="text-align:center;font-weight:bold;font-size:14px;"><h4 style="border-bottom:1px line #000;">Guest Signature</h4></td>';
+$feedback.='</tr>';
+
+//$feedback.='<tr>';
+//$feedback.='<td style="font-size:10px;text-align:center;">I agree that I am responsible for full payment of this bill in the event it is not <br/> paid by the organization or the person indicated</td>';
+//$feedback.='</tr>';
+
+$feedback.='</table>';
+
+// write the second column
+$pdf->writeHTMLCell(100, '', 100,$y+10, $feedback, 0, 1, 0, true, 'J', true);
+
+$attachFileName=trim($result['booking_no']);
+// ---------------------------------------------------------
+$fileName = UPLOAD_PATH . DIRECTORY_SEPARATOR . 'tripsheet' . DIRECTORY_SEPARATOR.$attachFileName.".pdf";
+//Close and output PDF document
+$pdf->Output($fileName, "F");
+$pdf->Output($attachFileName, 'I');
+exit;
+//============================================================+
+// END OF FILE
+//============================================================+

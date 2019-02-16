@@ -1,0 +1,241 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+use Application\Service\CommonService;
+$commonService=new CommonService();
+$bookingDate="";
+$bookingTime="";
+if(isset($result['booking_date_time']) && trim($result['booking_date_time'])!=""){
+	$expDateTime=explode(" ",$result['booking_date_time']);
+	$bookingDate=$commonService->humanDateFormat($expDateTime[0]);
+	$bookingTime=$expDateTime[1];
+}
+?>
+<style>
+	body {
+        color:#000000 !important;
+    }
+    label{
+        font-weight :500 !important;
+    }
+	.form-horizontal .control-label{
+		text-align:left;
+	}
+	.col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8,.col-md-4{
+		padding-right:11px !important;
+		padding-left:11px !important;
+	}
+	.pageHeadingLabe12,.pageHeadingLabel1{
+		font-size:17px;
+	}
+</style>
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+				<div class="pull-left" style="font-size:15px;">
+					<span class="pageHeadingLabel1">Cancel </span>
+					<span class="pageHeadingLabe12">Hotel Booking</span>
+				</div>
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addBookingInformation" id="addBookingInformation"  method="post" action="<?php echo $this->url('hotel-booking', array('action' => 'cancel')); ?>" autocomplete="off">
+                <div class="box-body box-footer">
+					<div class="row">
+                       
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Reference<span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <div class="form-control" id="bookingRef" name="bookingRef">
+									<?php echo $result['booking_no']; ?>
+									</div>
+									<input type="hidden" class="form-control isRequired" id="bookingId" name="bookingId" placeholder="" value="<?php echo base64_encode($result['booking_id']); ?>"/>
+									<input type="hidden" class="form-control" id="bookingRef" name="bookingRef" placeholder="" value="<?php echo $result['booking_no']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <div class="form-control"><?php echo $bookingDate; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Trip Time <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                   <div class="form-control"><?php echo $bookingTime; ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Guest Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <div class="form-control"><?php echo $result['guest_name']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Room Number <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <div class="form-control"><?php echo $result['room_no'] ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Guest Mobile No.</label>
+                                <div class="col-lg-8">
+                                    <div class="form-control"><?php echo $result['guest_mobile_no']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Pickup Point</label>
+                                <div class="col-lg-8">
+                                    <div class="form-control"><?php echo $result['pickup_place']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Drop Point</label>
+                                <div class="col-lg-8">
+                                    <div class="form-control"><?php echo $result['drop_place']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Given By</label>
+                                <div class="col-lg-8">
+									<?php
+									if($result['booking_given_by']=='ays'){
+										$result['booking_given_by']='AYS';
+									}
+									else if($result['booking_given_by']=='front_office'){
+										$result['booking_given_by']='Front Office';
+									}else if($result['booking_given_by']=='hotel'){
+										$result['booking_given_by']='Hotel';
+									}
+									else if($result['booking_given_by']=='self'){
+										$result['booking_given_by']='Self';
+									}
+									else if($result['booking_given_by']=='travel_desk'){
+										$result['booking_given_by']='Travel Desk';
+									}
+									?>
+                                    <div class="form-control"><?php echo $result['booking_given_by']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						
+					</div>
+					
+					<div class="row">
+						
+						
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Vehicle No <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<div class="form-control"><?php echo $result['vehicle_no']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Driver Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<div class="form-control"><?php echo $result['driver_name']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Booking Type <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<div class="form-control"><?php echo $result['type_name']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					
+					<h4>Cancellation Details</h4>
+					<div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Cancelled By <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+                                    <select  class="form-control isRequired" id="cancelledBy" name="cancelledBy" title="Please select cancelled by" tabindex="1">
+									<option value=""></option>
+									<option value="guest">Guest</option>
+									<option value="front_office">Front Office</option>
+									<option value="travel_desk">Travel Desk</option>
+									</select>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Reason For Cancellation <span class="mandatory">*</span></label>
+                                <div class="col-lg-8">
+									<textarea calss="form-control isRequired" name="reasonForCancellation" id="reasonForCancellation" style="width:100%;" tabindex="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+					
+					
+            </div>
+                <div class="box-footer">
+                    <a href="<?php echo $this->url('hotel-booking', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;" tabindex="3">
+					
+                </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'addBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('addBookingInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+		$("#cancelledBy").select2({
+			placeholder: "--Select--",
+			allowClear: true
+		});
+		$('#cancelledBy').select2('open');
+		
+		$("#cancelledBy").on("select2:close", function (e) {
+			$("#reasonForCancellation").focus();
+		});
+	});
+</script>

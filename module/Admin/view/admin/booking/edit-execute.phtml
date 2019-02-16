@@ -1,0 +1,258 @@
+<?php
+//\Zend\Debug\Debug::dump($result);
+use Application\Service\CommonService;
+$commonService=new CommonService();
+?>
+<style type="text/css">
+    .select2-search__field{
+        text-transform:uppercase;
+    }
+</style>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Edit </span>
+				<span class="pageHeadingLabe12"> Execute Booking</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('booking', array('action' => 'executed-list')); ?>" class="btn btn-default">Cancel</a>
+                    <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">
+				<ol class="breadcrumb">
+                <li><a href="<?php echo $this->url('booking', array('action' => 'executed-list')); ?>">Execute Booking</a></li>
+                <li class="active">Edit Execute Booking</li>
+				</ol>
+			</div>
+		</div>
+    </section>
+  
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="executeBookingInformation" id="executeBookingInformation"  method="post" action="<?php echo $this->url('booking', array('action' => 'edit-execute')); ?>" autocomplete="off">
+                <div class="box-body">
+                    <div class="row">
+                        <div class=" col-md-3 ">
+                            <label>Booking Ref.</label>
+                            <p class="form-control"><?php echo $bookingDetails['booking_no']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                           <label>Company</label>
+                          <p class="form-control"><?php echo $bookingDetails['company_name']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Booking Type</label>
+                            <p class="form-control"><?php echo $bookingDetails['unit_name']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Client</label>
+                            <p class="form-control"><?php echo $bookingDetails['client_name']; ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-3 ">
+                            <label>City</label>
+                            <p class="form-control"><?php echo $bookingDetails['city_name']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                           <label>Vehicle Category</label>
+                          <p class="form-control"><?php echo $bookingDetails['make_type']; ?></p>
+                        </div>
+						<div class=" col-md-3 ">
+                           <label>Vehicle Make Type</label>
+                          <p class="form-control"><?php echo $bookingDetails['reqVehicleMake']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Duty Type</label>
+                            <p class="form-control"><?php echo $bookingDetails['dutyType']; ?></p>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+						<div class=" col-md-3 ">
+                            <label>Customer Name</label>
+                            <p class="form-control"><?php echo $bookingDetails['guest_name']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                           <label>Customer Mobile No.</label>
+                          <p class="form-control"><?php echo $bookingDetails['guest_mobile_no']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Booker Name</label>
+                            <p class="form-control"><?php echo $bookingDetails['booker_name']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Booker Mobile No.</label>
+                            <p class="form-control"><?php echo $bookingDetails['booker_mobile_no']; ?></p>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="row">
+						<div class=" col-md-3 ">
+                           <label>Trip Date</label>
+                          <p class="form-control"><?php echo $commonService->humanDateFormat($bookingDetails['trip_from_date']); ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Trip Time</label>
+                            <p class="form-control"><?php echo $bookingDetails['trip_start_time']; ?></p>
+                        </div>
+                        <div class=" col-md-3 ">
+                            <label>Pickup Address</label>
+                            <p class="form-control"><?php echo $bookingDetails['pickup_address']; ?></p>
+                        </div>
+                    </div>
+                    <br/>
+                    
+                    <h4>Execution Details</h4>
+                    <hr/>
+                    <div class="row">
+                        <div class=" col-md-4 ">
+                            <label>Vendor <span class="mandatory">*</span></label>
+                            <select  class="form-control isRequired" id="vendor" name="vendor" title="Please select vendor" onchange="getVehicleNo();">
+                                <option value="">--Select--</option>
+                                <?php
+                                foreach($vendorResult as $vendor){
+                                ?>
+                                <option value="<?php echo $vendor['vendor_id']; ?>" data-vendor-type="<?php echo $vendor['vendor_type']; ?>" <?php echo(($vendor['vendor_id']==$result['vendor_id']) ? "selected='selected'" : "") ?>><?php echo ucwords($vendor['vendor_name'])." - ".$vendor['vendor_no']." / ".ucwords($vendor['vendor_type']); ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class=" col-md-4 ">
+                           <label>Vehicle No. <span class="mandatory">*</span></label>
+                           <select  class="form-control isRequired" id="vehicleNo" name="vehicleNo" title="please select vehicle nummber">
+                                <option value="<?php echo $result['vehicle_no']; ?>"><?php echo $result['vehicle_no']; ?></option>
+                            </select>
+                          
+                        </div>
+                        <div class=" col-md-4 ">
+                            <label>Driver Name <span class="mandatory">*</span></label>
+                            <input type="text" class="form-control isRequired" id="driverName" name="driverName" placeholder="Driver Name" value="<?php echo $result['driver_name']; ?>"/>
+                            <input type="hidden" class="form-control isRequired" id="bookingId" name="bookingId" value="<?php echo base64_encode($result['booking_id']); ?>"/>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class=" col-md-4 ">
+                            <label>Driver Mobile No. <span class="mandatory">*</span> </label>
+                            <input type="text" id="driverMobileNo" name="driverMobileNo" class="form-control" placeholder="Driver Mobile No" value="<?php echo $result['driver_mobile_no']; ?>"/>
+                        </div>
+                        <div class=" col-md-4 ">
+                            <label>Vehicle Category <span class="mandatory">*</span></label>
+                            <select  class="form-control isRequired" id="vehicleCategory" name="vehicleCategory" title="Please select vehicle category">
+                                <option value="">--Select--</option>
+                                <?php
+                                foreach($vehicleCategoryResult as $vehicleCategory){
+                                ?>
+                                <option value="<?php echo $vehicleCategory['make_id']; ?>" <?php echo(($vehicleCategory['make_id']==$result['provided_make_type']) ? "selected='selected'" : "") ?>><?php echo ucwords($vehicleCategory['make_type']);  ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class=" col-md-4 ">
+                            <label>Vehicle Make Type <span class="mandatory">*</span></label>
+                            <select  class="form-control isRequired" id="vehicleType" name="vehicleType" title="Please select vehicle type" >
+                                <option value="">--Select--</option>
+                                <?php
+                                foreach($vehicleType as $val){
+                                ?>
+                                <option value="<?php echo base64_encode($val['type_id']); ?>" <?php echo(($val['type_id']==$result['vehicle_type']) ? "selected='selected'" : "") ?>><?php echo $val['type_name'];  ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class=" col-md-4 ">
+                            <label>Special Instruction </label>
+                            <textarea id="specialIns" name="specialIns" class="form-control" placeholder="Special Instruction"><?php echo $result['spec_ins']; ?></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class=" col-md-4 ">
+                            <div class="checkbox">
+                              <label>
+                                <input type="checkbox" name="sendSms" id="sendSms" checked="checked">
+                                Send booking SMS
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    </div>
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('booking', array('action' => 'executed-list')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/bootstrap-typeahead.js'; ?>"></script>
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'executeBookingInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                $.blockUI();
+                document.getElementById('executeBookingInformation').submit();
+            }
+        }
+    }
+    
+    $(function() {
+        $("#vehicleNo").select2({
+            placeholder: "--Select Vehicle No--",
+            tags: true
+        });
+	});
+    
+    function getVehicleNo(){
+        vendor=$("#vendor").val();
+        if(vendor!=""){
+            $.blockUI();
+            obj=document.getElementById("vendor");
+            selected=obj.options[obj.selectedIndex];
+            objValue=selected.getAttribute('data-vendor-type');
+            if(objValue=='attached'){
+                $.post("<?php echo $this->url('vendor', array('action' => 'get-vehicle-no')); ?>", {vendor:vendor},
+                function(data){
+                    if (data!="") {
+                        document.getElementById("vehicleNo").innerHTML=data;
+                    }
+                    $.unblockUI();
+                });
+            }else{
+                document.getElementById("vehicleNo").innerHTML='<option value="">--Select--</option>';
+                $.unblockUI();
+            }
+        }
+    }
+
+    
+ 
+  
+</script>

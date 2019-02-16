@@ -1,0 +1,214 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'edit-payment') || $acl->isAllowed($role, 'Admin\Controller\Vendor', 'view-payment')) {
+$editAction = '{"sClass":"center noWrap","bSortable":false},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center noWrap","bSortable":false},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';	
+}
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Vendor Payment</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group input-append date" id="dpMonths" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+			  <label>Search From</label>
+			  <input type="text" class="form-control isRequired readonly" id="paymentFromMonth" name="paymentMonth" placeholder="Select from month & year" title="Please select from month and year" readonly="readonly"/>
+			  <span class="add-on"><i class="icon-calendar"></i></span>
+			</div>
+			<div class="form-group input-append date" id="dpToMonth" data-date-format="M/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+			  <label>Search To</label>
+			  <input type="text" class="form-control readonly" id="paymentToMonth" name="paymentToMonth" placeholder="Select to month & year" title="Please select to month and year" readonly="readonly"/>
+			  <span class="add-on"><i class="icon-calendar"></i></span>
+			</div>
+			<div class="form-group">
+				<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-success" />
+				<a href="" class="btn btn-danger">Reset</a>
+				<a href="javascript:void(0)" onclick="downloadReport();" class="btn btn-primary" title="Download"><i class="fa fa-download"> Download PDF Report </i></a>
+				<a href="<?php echo $this->url('vendor', array('action' => 'ledger')); ?>" class="btn btn-default" title="Go Back"><i class="fa fa-backward"> Back </i></a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<table id="vendorPaymentDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Vendor Name</th>
+								<th>Vendor Code</th>
+								<th>Vendor Type</th>
+								<th>Month/Year</th>
+								<th>Total Amount</th>
+								<th>Net Company Revenue</th>
+								<th>Balance Amount</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Vendor', 'edit-payment') || $acl->isAllowed($role, 'Admin\Controller\Clients', 'view-payment')) { ?>
+								<th style="width:210px;">Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="10" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+	 searchFromDate="";
+	 searchToDate="";
+    $(document).ready(function() {
+    oTable=$('#vendorPaymentDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+		"lengthMenu": [[20,30,50,100,-1], [20,30,50,100,"All"]],
+		"pageLength": 30,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+		"aaSorting": [[ 4, "desc" ]],
+        "sAjaxSource": "<?php echo $this->url('vendor',array('action' => 'view-ledger')); ?>",
+         "fnServerData": function ( sSource, aoData, fnCallback ) {
+			aoData.push({ "name":"startDate","value": $("#paymentFromMonth").val()});
+			aoData.push({ "name":"endDate","value": $("#paymentToMonth").val()});
+			aoData.push({ "name":"vendorName","value": <?php echo $vendorId ?>});
+			$.ajax({
+				"dataType": 'json',
+				"type": "POST",
+				"url": sSource,
+				"data": aoData,
+				"success": fnCallback
+			});
+        }
+    } );
+	
+	$('#dpMonths').datepicker({
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'M-yyyy',
+		viewMode: "months",
+		minViewMode: "months",
+	}).on('changeDate', function(e) {
+	  // `e` here contains the extra attributes
+	  var date = new Date($('#paymentFromMonth').val());
+	  var day = date.getDate();
+	  var monthIndex = date.getMonth()+parseInt(1);
+	  var year = date.getFullYear();
+	  searchFromDate=year+"-"+monthIndex;
+	  if(isNaN(year)) {
+        searchFromDate=""
+      }
+	  oTable.fnDraw();
+	});
+	
+	$('#dpToMonth').datepicker({
+		clearBtn: true,
+		autoclose: true,
+		todayHighlight: true,
+		format: 'M-yyyy',
+		viewMode: "months",
+		minViewMode: "months",
+	}).on('changeDate', function(e) {
+	  // `e` here contains the extra attributes
+	  var date = new Date($('#paymentToMonth').val());
+	  var day = date.getDate();
+	  var monthIndex = date.getMonth()+parseInt(1);
+	  var year = date.getFullYear();
+	  searchToDate=year+"-"+monthIndex;
+	  if(isNaN(year)) {
+        searchToDate=""
+      }
+	  oTable.fnDraw();
+	});
+		
+} );
+	
+	
+	function deleteVendorPayment(paymentId) {
+        conf=confirm("Are you sure you want to delete this payment");
+		if (conf) {
+			$.blockUI();
+			$.post("<?php echo $this->url('vendor',array('action' => 'delete-payment')); ?>", {paymentId:paymentId},
+			function(data){
+				if (data>0) {
+					alert("Vendor payment deleted successfully");
+					location="";
+				}
+				$.unblockUI();
+			});
+		}
+    }
+	
+	var xhttp = null;
+    var celliD= null;
+	function insRow(tableId,paymentId,obj){
+        rowId = obj.parentNode.parentNode.rowIndex+1;
+        len = document.getElementById(tableId).rows[0].cells.length;
+        var x=document.getElementById(tableId).insertRow(rowId);
+        celliD = "cell"+rowId
+        x.innerHTML="<td colspan='"+len+"' align='left' id='"+celliD+"' style='background:#ebf2ae;padding:20px;'>Loading ..... </td>";
+        obj.src = "/assets/img/details_close.png";
+        obj.setAttribute("onclick", "delRow('"+tableId+"','"+paymentId+"',this)");
+        obj.setAttribute("alt", "Close");
+        obj.setAttribute("title", "Close");
+		$.blockUI();
+		$.post("<?php echo $this->url('vendor',array('action' => 'paid-list')); ?>", {paymentId:paymentId},
+		function(data){
+			if (data!='') {
+				document.getElementById(celliD).innerHTML=data;	
+			}
+			$.unblockUI();
+		});
+    }
+	
+	function delRow(tableId,paymentId,obj){
+        rowId = obj.parentNode.parentNode.rowIndex+1;
+        document.getElementById(tableId).deleteRow(rowId);
+        obj.src = "/assets/img/details_open.png";
+        obj.setAttribute("onclick", "insRow('"+tableId+"','"+paymentId+"',this)");
+        obj.setAttribute("alt", "Show");
+        obj.setAttribute("title", "Show");
+    }
+	
+	function downloadReport(){
+		
+        paymentFromMonth=$("#paymentFromMonth").val();
+        paymentToMonth=$("#paymentToMonth").val();
+        if(paymentFromMonth==""){
+            alert("Please select search from date");
+            return false;
+        }
+        else if(paymentToMonth==""){
+            alert("Please select search to date");
+            return false;
+        }
+        else{
+			 var win = window.open('../download-pdf-report/<?php echo base64_encode($vendorId); ?>/'+paymentFromMonth+'/'+paymentToMonth, '_blank');
+        }
+	}
+</script>

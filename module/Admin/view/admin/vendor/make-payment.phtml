@@ -1,0 +1,223 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+
+use Application\Service\CommonService;
+$commonService=new CommonService();
+	if(isset($makePayment)){
+?>
+<script type="text/javascript">
+	$(function() {
+		<?php
+		if(isset($makePayment)){
+		?>
+		alert("Added successfully");
+		parent.closeModal();
+		parent.oTable.fnDraw();
+		<?php
+		}
+		?>
+	});
+</script>
+<?php }else{ ?>
+	<!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" >
+				<span class="pageHeadingLabel1">Make </span>
+				<span class="pageHeadingLabe12"> Vendor Payment</span>
+			</div>
+		</div>
+		
+  </section>
+     <!-- Content Header (Page header) -->
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="makePaymentInformation" id="makePaymentInformation"  method="post" action="<?php echo $this->url('vendor', array('action' => 'make-payment')); ?>" autocomplete="off">
+                <div class="box-body">
+					
+					<h4>Vendor Details</h4>
+					<table class="table">
+						<tr>
+							<td>Vendor Name</td>
+							<td>:</td>
+							<td><?php echo ucwords($result['vendor_name']); ?></td>
+							<td>Vendor Code</td>
+							<td>:</td>
+							<td><?php echo $result['vendor_no']; ?></td>
+						</tr>
+						<tr>
+							<td>Vendor Type</td>
+							<td>:</td>
+							<td><?php echo ucwords($result['vendor_type']); ?></td>
+							<td>Payment Month & Year</td>
+							<td>:</td>
+							<td><?php echo $result['payment_month']." - ".$result['payment_year']; ?></td>
+						</tr>
+						<tr>
+							<td>Net Amount</td>
+							<td>:</td>
+							<td><?php echo ucwords($result['net_amount']); ?></td>
+							<td>Balance</td>
+							<td>:</td>
+							<td><?php echo $result['net_balance']; ?></td>
+						</tr>
+					</table>
+					<br/>
+					<a href="javascript:void(0);" onclick="showPaymentHistory()"><h4>Payment History</h4></a>
+					<?php
+					if(count($paidResult)>0){
+						?>
+						<table class="table table-bordered table-striped" id="paymentHistory" style="display: none;">
+							<tr>
+								<td>Payment Code</td>
+								<td>Date</td>
+								<td>Paid Amount</td>
+								<td>Balance Amount</td>
+								<td>Remarks</td>
+							</tr>
+						<?php
+						foreach($paidResult as $res){
+						?>
+						<tr>
+							<td><?php echo $res['payment_code']; ?></td>
+							<td><?php echo $commonService->humanDateFormat($res['paid_date']); ?></td>
+							<td><?php echo $res['paid_amount']; ?></td>
+							<td><?php echo $res['balance_amount']; ?></td>
+							<td><?php echo $res['remarks']; ?></td>
+						</tr>
+						<?php
+						}
+						?>
+						</table>
+						<?php
+					}else{
+					?>
+					<div id="paymentHistory" style="display: none;">No data available</div>
+					<?php
+					}
+					?>
+                    <br/>
+					<?php if($result['net_balance']!=0){ ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="paymentCode" class="col-lg-4 control-label">Payment Code <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="paymentCode" name="paymentCode" placeholder="Payment Code" title="Please enter payment code " value="<?php echo "PC".$paymentNo; ?>" readonly="readonly" />
+                                    <input type="hidden" class="form-control isRequired" id="paymentId" name="paymentId" value="<?php echo base64_encode($result['payment_id']); ?>" />
+                                    <input type="hidden" class="form-control isRequired" id="vendorId" name="vendorId" value="<?php echo base64_encode($result['vendor_id']); ?>" />
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="payDate" class="col-lg-4 control-label">Paid Date <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="payDate" name="payDate" placeholder="Paid Date" title="Please select the paid date " readonly="readonly"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+                        <div class="col-md-6">
+							<div class="form-group">
+                              <label for="payAmount" class="col-lg-4 control-label">Payment Amount <span class="mandatory">*</span></label>
+                              <div class="col-lg-6">
+                                  <input type="text" class="form-control isRequired checkNum" id="payAmount" name="payAmount" placeholder="Payment Amount" title="Please enter payment amount" onkeyup="calBalanceAmt(this)"/>
+                              </div>
+							</div>
+                        </div>
+						<div class="col-md-6">
+							<div class="form-group">
+                              <label for="balanceAmount" class="col-lg-4 control-label">Balance Amount <span class="mandatory">*</span></label>
+                              <div class="col-lg-6">
+                                  <input type="text" class="form-control" id="balanceAmount" name="balanceAmount" placeholder="Balance Amount" title="Please enter balance amount" value="<?php echo $result['net_balance']; ?>"/>
+                              </div>
+							</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+							<div class="form-group">
+                              <label for="remarks" class="col-lg-4 control-label">Remarks </label>
+                              <div class="col-lg-6">
+                                  <textarea class="form-control" name="remarks" id="remarks"></textarea>
+                              </div>
+							</div>
+                        </div>
+                    </div>
+					
+                    <div class="box-footer">
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();">
+                        <a href="javascript:void(0);" onclick="parent.closeModal();" class="btn btn-default">Close</a>
+                    </div>
+					<?php } ?>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script type="text/javascript">
+    duplicateName = true;
+    selectedDate="";
+	
+    function validateNow() {
+        flag = deforayValidator.init({
+            formId: 'makePaymentInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('makePaymentInformation').submit();
+				$.blockUI();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+	
+	$(function() {
+		$('#payDate').datepicker({
+            //todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+	});
+	
+	function calBalanceAmt(obj){
+		if(obj.value>0){
+			bal=parseFloat('<?php echo $result['net_balance']; ?>')-parseFloat(obj.value);
+			bal=Math.round(bal);
+			$("#balanceAmount").val(bal);
+		}else{
+			$("#balanceAmount").val('<?php echo $result['net_balance']; ?>');
+		}
+	}
+	
+	function showPaymentHistory(){
+		$("#paymentHistory").toggle('slide');
+	}
+</script>
+<?php } ?>

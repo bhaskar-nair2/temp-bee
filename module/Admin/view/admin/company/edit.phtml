@@ -1,0 +1,330 @@
+<?php
+//\Zend\Debug\Debug::dump($result['company']['company_id']);die;
+$pathname = UPLOAD_PATH . DIRECTORY_SEPARATOR . "company" . DIRECTORY_SEPARATOR .$result['company']['company_id'];
+?>
+	<!-- Content Header (Page header) -->
+  <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Edit </span>
+				<span class="pageHeadingLabe12"> Company</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<a href="<?php echo $this->url('company', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+          <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+				</span>
+			</div>
+		</div>
+  </section>
+		
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box-header" style="padding-top:2px !important;">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="editCompanyInformation" id="editCompanyInformation"  method="post" action="<?php echo $this->url('company', array('action' => 'edit')); ?>" enctype="multipart/form-data" autocomplete="off">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="companyName" class="col-lg-4 control-label">Company Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="companyName" name="companyName" placeholder="Enter company name" title="Please enter company name" onblur="checkNameValidation('company_details', 'company_name', this,'<?php echo "company_id##" .$result['company']['company_id']; ?>', 'Already exist this company name . Please enter another name.');" value="<?php echo $result['company']['company_name']; ?>"/>
+									<input type="hidden" class="form-control" id="companyId" name="companyId"  value="<?php echo base64_encode($result['company']['company_id']); ?>" />
+									<input type="hidden" id="deletedId" name="deletedId" value="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="phoneNo" class="col-lg-4 control-label">Phone No</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="phoneNo" name="phoneNo" placeholder="Enter phone number" title="Please enter phone number" value="<?php echo $result['company']['phone_no']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="panNo" class="col-lg-4 control-label">Pan No <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="panNo" name="panNo" placeholder="Enter pan number" title="Please enter pan number" value="<?php echo $result['company']['pan_no']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceTaxNo" class="col-lg-4 control-label">GST No <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="serviceTaxNo" name="serviceTaxNo" placeholder="Enter service tax number" title="Please enter service tax number" value="<?php echo $result['company']['gst_no']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="sacNo" class="col-lg-4 control-label">SAC No <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="sacNo" name="sacNo" placeholder="Enter SAC number" title="Please enter SAC number" value="<?php echo $result['company']['sac_no']; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address" class="col-lg-4 control-label">Address <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control isRequired" name="address" id="address" placeholder="Address" title="Please enter the address"><?php echo str_replace("<br />", '', $result['company']['address']); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                    <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                              <label for="city" class="col-lg-4 control-label">City <span class="mandatory">*</span></label>
+                              <div class="col-lg-6">
+                                  <input type="text" class="form-control isRequired" id="city" name="city" placeholder="Enter city" title="Please enter city" value="<?php echo $result['company']['city']; ?>"/>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                              <label for="pincode" class="col-lg-4 control-label">Pincode <span class="mandatory">*</span></label>
+                              <div class="col-lg-6">
+                                  <input type="text" class="form-control isRequired" id="pincode" name="pincode" placeholder="Enter pincode" title="Please enter pincode" value="<?php echo $result['company']['pin_code']; ?>"/>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+					<div class="row">
+					  <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control" id="status" name="status" title="Please select status">
+                                        <option value="active" <?php echo(($result['company']['status']=='active') ? "selected='selected'" : "") ?>>Active</option>
+                                        <option value="inactive" <?php echo(($result['company']['status']=='inactive') ? "selected='selected'" : "") ?>>Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					<h4>Upload Company Documents </h4>
+                    <table id="documentTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Document Name</th>
+                            <th>Attach File</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+							<?php
+							$i=1;
+							if(sizeof($result['document'])>0){
+								foreach($result['document'] as $document){
+							?>
+                        <tr>
+                            <td>
+                            <input type="text" id="documentName<?php echo $i;?>" name="documentName[]" class="form-control" placeholder="Enter document name" title="Please enter the document name" value="<?php echo $document['document_name']; ?>"/>
+							<input type="hidden" id="documentId<?php echo $i;?>" name="documentId[]" class="form-control" value="<?php echo $document['document_id']; ?>"/>
+                            </td>
+                            <td>
+								<?php
+									if(isset($document['file_name']) && trim($document['file_name'])!="" && file_exists($pathname. DIRECTORY_SEPARATOR.$document['file_name'])){
+								?>
+								<div class="form-control">
+									<a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."company". DIRECTORY_SEPARATOR .$result['company']['company_id']. DIRECTORY_SEPARATOR.$document['file_name'] ?>" ><?php echo $document['file_name']; ?></a>
+								</div>
+								<input type="file" class="form-control" title="please choose file" name="file[]" id="file<?php echo $i;?>" style="display: none;">
+								<?php }else{ ?>
+								<input type="file" class="form-control" title="please choose file" name="file[]" id="file<?php echo $i;?>">
+								<?php } ?>
+                            
+                            </td>
+                            <td align="center">
+                            <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="<?php echo $document['document_id']?>" onclick="removeRow(this.parentNode.parentNode);countDelete(this.id);"><i class="fa fa-minus"></i></a>
+                            </td>
+                            
+                        </tr>
+						<?php
+							$i++;
+								}
+							}else{
+						?>
+						<tr>
+                            <td>
+                            <input type="text" id="documentName1" name="documentName[]" class="form-control" placeholder="Enter document name" title="Please enter the document name"/>
+                            </td>
+                            <td>
+                            <input type="file" class="form-control" title="please choose file" name="file[]" id="file1">
+                            </td>
+                            <td align="center">
+                            <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                            </td>
+                            
+                        </tr>
+						<?php
+							}
+						?>
+                        </tbody>
+                    </table>
+                    <!--
+                    <h4>Branch Details</h4>
+                    <table id="branchTable" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>City <span class="mandatory">*</span></th>
+                            <th>Phone No <span class="mandatory">*</span></th>
+                            <th>Alt. Phone No</th>
+                            <th>Address <span class="mandatory">*</span> </th>
+							<th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+							< ?php
+							$i=1;
+							if(sizeof($result['branch'])>0){
+								foreach($result['branch'] as $branch){
+							?>
+                        <tr>
+                            <td>
+                            <input type="text" id="city< ?php echo $i;?>" name="city[]" class="form-control isRequired" placeholder="City" title="Please enter the city" value="< ?php echo $branch['city']; ?>"/>
+							<input type="hidden" id="branchId< ?php echo $i;?>" name="branchId[]" class="form-control" placeholder="" value="< ?php echo $branch['branch_id']; ?>"/>
+                            </td>
+                            <td>
+                            <input type="text" class="form-control isRequired" id="phoneNo< ?php echo $i;?>" name="phoneNo[]" placeholder="Phone No" title="Please enter the phone number" value="< ?php echo $branch['phone_no']; ?>"/>
+                            </td>
+                            <td><input type="text" class="form-control" id="altPhoneNo< ?php echo $i;?>" name="altPhoneNo[]" placeholder="Alt. Phone No" title="Please enter the alternate phone number" value="< ?php echo $branch['alt_phone_no']; ?>"/></td>
+                            <td>
+                            <textarea class="form-control isRequired" name="address[]" id="address< ?php echo $i;?>" placeholder="Address" title="Please enter the address">< ?php echo str_replace("<br />", '', $branch['address']); ?></textarea>
+                            </td>
+							<td>
+								<select class="form-control" id="branchStatus< ?php echo $i;?>" name="branchStatus[]" title="Please select branch status">
+                                    <option value="active" < ?php echo(($branch['status']=='active') ? "selected='selected'" : "") ?>>Active</option>
+                                    <option value="inactive" < ?php echo(($branch['status']=='inactive') ? "selected='selected'" : "") ?>>Inactive</option>
+                                </select>
+							</td>
+                            <td align="center">
+                            <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="< ?php echo $branch['branch_id']?>" onclick="removeRow(this.parentNode.parentNode);countDelete(this.id);"><i class="fa fa-minus"></i></a>
+                            </td>
+                        </tr>
+						< ?php
+							$i++;
+								}
+						}else{
+						?>
+						<tr>
+                            <td>
+                            <input type="text" id="city1" name="city[]" class="form-control isRequired" placeholder="City" title="Please enter the city"/>
+                            </td>
+                            <td>
+                            <input type="text" class="form-control isRequired" id="phoneNo1" name="phoneNo[]" placeholder="Phone No" title="Please enter the phone number"/>
+                            </td>
+                            <td><input type="text" class="form-control" id="altPhoneNo1" name="altPhoneNo[]" placeholder="Alt. Phone No" title="Please enter the alternate phone number"/></td>
+                            <td>
+                            <textarea class="form-control isRequired" name="address[]" id="address1" placeholder="Address" title="Please enter the address"></textarea>
+                            </td>
+							<td>
+								<select class="form-control" id="branchStatus1" name="branchStatus[]" title="Please select branch status">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+							</td>
+                            <td align="center">
+                            <a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" id="" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>
+                            </td>
+                            
+                        </tr>
+						< ?php
+						}
+						?>
+                        </tbody>
+                    </table>
+                    -->
+                    <div class="box-footer">
+											<a href="<?php echo $this->url('company', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                      <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+
+    </div>
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+
+<script type="text/javascript">
+    duplicateName = true;
+	rowCount='<?php echo $i; ?>';
+	deletedId=[];
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'editCompanyInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('editCompanyInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+    
+	function insRow() {
+		rowCount++;
+		rl = document.getElementById("documentTable").rows.length;
+		var a = document.getElementById("documentTable").insertRow(rl);
+		a.setAttribute("style", "display:none;");
+		a.setAttribute("class", "data");
+		var b = a.insertCell(0);
+		var c = a.insertCell(1);
+		var d = a.insertCell(2);
+		
+		d.setAttribute("align", "center");
+		
+		rl = document.getElementById("documentTable").rows.length - 1;
+		b.innerHTML = '<input type="text" class="form-control" id="documentName' + rowCount + '" name="documentName[]" placeholder="Enter document name" title="Please enter the document name"/>';
+		c.innerHTML = '<input type="file" class="form-control" title="please choose file" name="file[]" id="file'+rowCount+'">';
+		d.innerHTML = '<a class="btn btn-xs btn-success" href="javascript:void(0);" onclick="insRow();"><i class="fa fa-plus"></i></a> <a class="btn btn-xs btn-warning" href="javascript:void(0);" onclick="removeRow(this.parentNode.parentNode);"><i class="fa fa-minus"></i></a>';
+		$(a).fadeIn(800);
+    }
+	
+	function removeRow(el) {
+		$(el).fadeOut("slow", function() {
+		    el.parentNode.removeChild(el);
+		    rl = document.getElementById("documentTable").rows.length;
+		    if (rl == 1) {
+			insRow();
+		    }
+		});
+    }
+	
+	function countDelete(e){
+		deletedId.push(e);
+		document.getElementById("deletedId").value=deletedId;
+	}
+	
+</script>

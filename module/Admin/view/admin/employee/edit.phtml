@@ -1,0 +1,525 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+if(isset($result->date_of_join) && trim($result->date_of_join)!=""){
+  $result->date_of_join=$commonService->humanDateFormat($result->date_of_join);
+}
+if(isset($result->date_of_releving) && trim($result->date_of_releving)!=""){
+  $result->date_of_releving=$commonService->humanDateFormat($result->date_of_releving);
+}
+if(isset($result->license_valid_date) && trim($result->license_valid_date)!=""){
+  $result->license_valid_date=$commonService->humanDateFormat($result->license_valid_date);
+}
+if(isset($result->badge_valid_date) && trim($result->badge_valid_date)!=""){
+  $result->badge_valid_date=$commonService->humanDateFormat($result->badge_valid_date);
+}
+?>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+     <div class="row" id="pageHeading">
+         <div class="col-xs-6" >
+             <span class="pageHeadingLabel1">Edit </span>
+             <span class="pageHeadingLabe12"> Employee</span>
+         </div>
+         <div class="col-xs-6">
+             <span class="pull-right">
+                <a href="<?php echo $this->url('employee', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+             </span>
+         </div>
+     </div>
+     <div class="row">
+         <div class="col-xs-6">
+             <ol class="breadcrumb">
+              <li><a href="<?php echo $this->url('employee', array('action' => 'index')); ?>"> Employee</a></li>
+              <li class="active">Edit Employee</li>
+             </ol>
+         </div>
+     </div>
+</section>
+   
+<section class="content">
+    <!-- left column -->
+    <div class="row">
+        <!-- general form elements -->
+        <div class="col-xs-12">
+            <div class="box-header">
+                <div class="pull-right" style="font-size:15px;"><span class="mandatory">*</span> indicates required field &nbsp;</div> 
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addEmployeeInformation" id="addEmployeeInformation"  method="post" action="<?php echo $this->url('employee', array('action' => 'edit')); ?>" enctype="multipart/form-data" autocomplete="off" >
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="employeeName" class="col-lg-4 control-label">Employee Name <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="employeeName" name="employeeName" placeholder="Enter employee name" title="Please enter employee name" value="<?php echo $result->employee_name; ?>"/>
+                                    <input type="hidden" class="form-control isRequired" id="employeeId" name="employeeId" value="<?php echo base64_encode($result->employee_id); ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="employeeCode" class="col-lg-4 control-label">Employee Code </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control readonly" id="employeeCode" name="employeeCode" placeholder="Enter employee code" title="Please enter employee code" value="<?php echo $result->employee_no; ?>" readonly="readonly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mobileNo" class="col-lg-4 control-label">Mobile No. <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isRequired" id="mobileNo" name="mobileNo" placeholder="Enter mobile number" title="Please enter mobile number" value="<?php echo $result->mobile_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="emergencyPhoneNo" class="col-lg-4 control-label">Emergency Phone No. </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="emergencyPhoneNo" name="emergencyPhoneNo" placeholder="Enter Emergency Phone Number" title="Please enter emergency phone number" value="<?php echo $result->emergency_contact_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email" class="col-lg-4 control-label">Email </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control isEmail" id="email" name="email" placeholder="Enter email" title="Please enter valid email id" value="<?php echo $result->email; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gender" class="col-lg-4 control-label">Gender </label>
+                                <div class="col-lg-6">
+                                    <label class="radio-inline">
+                                      <input type="radio" name="gender" value="male" <?php echo(($result->gender=='male') ? "checked='checked'" : "") ?>> Male
+                                    </label>
+                                    <label class="radio-inline">
+                                      <input type="radio" name="gender" value="female" <?php echo(($result->gender=='female') ? "checked='checked'" : "") ?>> Female
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address" class="col-lg-4 control-label">Address <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control isRequired" id="address" name="address" placeholder="Enter address" title="Please enter employee address" ><?php echo $result->address; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="role" class="col-lg-4 control-label">Role <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="role" name="role" title="Please select role" >
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($role as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['role_id']); ?>" <?php echo(($result->role==$val['role_id']) ? "selected='selected'" : "") ?>><?php echo ucwords($val['role_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="vendor" class="col-lg-4 control-label">Business Unit <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select  class="form-control isRequired" id="vendor" name="vendor" title="Please select business unit">
+                                        <option value="">--Select--</option>
+                                        <?php
+                                        foreach($businessUnit as $val){
+                                        ?>
+                                        <option value="<?php echo base64_encode($val['unit_id']); ?>" <?php echo(($val['unit_id']==$result->business_unit) ? "selected='selected'" : "") ?>><?php echo ucwords($val['unit_name']);  ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bankName" class="col-lg-4 control-label">Bank Name </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="bankName" name="bankName" placeholder="Enter Bank Name" title="Please enter bank name" value="<?php echo $result->bank_name; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="accountNumber" class="col-lg-4 control-label">Account Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="accountNumber" name="accountNumber" placeholder="Enter Account Number" title="Please enter account number" value="<?php echo $result->account_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="insuranceNumber" class="col-lg-4 control-label">Insurance Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="insuranceNumber" name="insuranceNumber" placeholder="Enter Insurance Number" title="Please enter insurance number" value="<?php echo $result->insurance_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="esiNumber" class="col-lg-4 control-label">ESI Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="esiNumber" name="esiNumber" placeholder="Enter ESI Number" title="Please enter esi number" value="<?php echo $result->esi_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="pfNumber" class="col-lg-4 control-label">PF Number </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="pfNumber" name="pfNumber" placeholder="Enter PF Number" title="Please enter pf number" value="<?php echo $result->pf_no; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Date Of Join </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="dateOfJoin" name="dateOfJoin" placeholder="Date Of Join" readonly="readonly" title="Please select the join date" value="<?php echo $result->date_of_join; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Date Of Releving </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="dateOfReleving" name="dateOfReleving" placeholder="Date Of Releving" readonly="readonly" value="<?php echo $result->date_of_releving; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">License Valid Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="licenseValidDate" name="licenseValidDate" placeholder="License Valid Date" readonly="readonly" value="<?php echo $result->license_valid_date; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Badge Valid Date </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control datepicker readonly" id="badgeValidDate" name="badgeValidDate" placeholder="Badge Valid Date" readonly="readonly" value="<?php echo $result->badge_valid_date; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bloodGroup" class="col-lg-4 control-label">Blood Group </label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control" id="bloodGroup" name="bloodGroup" placeholder="Enter Blood Group" title="Please enter blood group" value="<?php echo $result->blood_group; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="col-lg-4 control-label">Status <span class="mandatory">*</span></label>
+                                <div class="col-lg-6">
+                                    <select class="form-control" id="status" name="status" title="Please select status">
+                                        <option value="working" <?php echo(($result->status=='working') ? "selected='selected'" : "") ?>>Working</option>
+                                        <option value="relieved" <?php echo(($result->status=='relieved') ? "selected='selected'" : "") ?>>Relieved</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Upload License </label>
+                                <div class="col-lg-6">
+                                    <div class="controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput" id="licenseImgIcon">
+											<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">
+												<?php if (isset($result->license_badge) && trim($result->license_badge) != '') { ?>
+												<img src="/uploads/employees/<?php echo $result->employee_id; ?>/<?php echo $result->license_badge; ?>"/>
+												<?php } else { ?>
+												<img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=Category Icon Image"/>
+												<?php } ?>
+											</div>
+											<div>
+												<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id="licenseImg" name="licenseImg" title="Please choose license image"></span>
+												<?php if (isset($result->license_badge) && trim($result->license_badge) != '') { ?>
+												<a href="javascript:void(0);" class="btn btn-default" data-dismiss="fileupload" id="oldLicenseImage" onclick="clearLicenseImage()">Clear</a>
+                        <a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."employees". DIRECTORY_SEPARATOR .$result->employee_id. DIRECTORY_SEPARATOR.$result->license_badge; ?>" class="btn btn-primary" data-dismiss="fileupload" id="downloadLicenseImage"><i class="fa fa-download"></i></a>
+												<?php } ?>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+											</div>
+											<?php if (isset($result->license_badge) && $result->license_badge != '') { ?>
+												<input type="hidden" name="existLicenseImage" id="existLicenseImage" value="<?php echo $result->license_badge; ?>"
+												   /><?php
+												   }
+												   ?>
+											<input type="hidden" name="removedLicenseImage" id="removedLicenseImage" value=""/>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Upload Id Proof </label>
+                                <div class="col-lg-6">
+                                    <div class="controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput" id="idProofImgIcon">
+											<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">
+												<?php if (isset($result->id_proof) && trim($result->id_proof) != '') { ?>
+												<img src="/uploads/employees/<?php echo $result->employee_id; ?>/<?php echo $result->id_proof; ?>"/>
+												<?php } else { ?>
+												<img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=Id Proof Image"/>
+												<?php } ?>
+											</div>
+											<div>
+												<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id="idProof" name="idProof" title="Please choose id proof image"></span>
+												<?php if (isset($result->id_proof) && trim($result->id_proof) != '') { ?>
+												<a href="javascript:void(0);" class="btn btn-default" data-dismiss="fileupload" id="oldIdProofImage" onclick="clearIdProofImage()">Clear</a>
+                        <a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."employees". DIRECTORY_SEPARATOR .$result->employee_id. DIRECTORY_SEPARATOR.$result->id_proof; ?>" class="btn btn-primary" data-dismiss="fileupload" id="downloadIdProofImage"><i class="fa fa-download"></i></a>
+												<?php } ?>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+											</div>
+											<?php if (isset($result->id_proof) && trim($result->id_proof) != '') { ?>
+												<input type="hidden" name="existIdProofImage" id="existIdProofImage" value="<?php echo $result->id_proof; ?>"
+												   /><?php
+												   }
+												   ?>
+											<input type="hidden" name="removedIdProofImage" id="removedIdProofImage" value=""/>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Upload Contract Proof </label>
+                                <div class="col-lg-6">
+                                    <div class="controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput" id="contractProofImgIcon">
+											<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">
+												<?php if (isset($result->contract) && trim($result->contract) != '') { ?>
+												<img src="/uploads/employees/<?php echo $result->employee_id; ?>/<?php echo $result->contract; ?>"/>
+												<?php } else { ?>
+												<img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=Contract Image"/>
+												<?php } ?>
+											</div>
+											<div>
+												<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id="contractProof" name="contractProof" title="Please choose contract proof image"></span>
+												<?php if (isset($result->contract) && trim($result->contract) != '') { ?>
+												<a href="javascript:void(0);" class="btn btn-default" data-dismiss="fileupload" id="oldContractProofImage" onclick="clearContractProofImage()">Clear</a>
+                        <a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."employees". DIRECTORY_SEPARATOR .$result->employee_id. DIRECTORY_SEPARATOR.$result->contract; ?>" class="btn btn-primary" data-dismiss="fileupload" id="downloadContractImage"><i class="fa fa-download"></i></a>
+												<?php } ?>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+											</div>
+											<?php if (isset($result->contract) && trim($result->contract) != '') { ?>
+												<input type="hidden" name="existContractProofImage" id="existContractProofImage" value="<?php echo $result->contract; ?>"
+												   /><?php
+												   }
+												   ?>
+											<input type="hidden" name="removedContractProofImage" id="removedContractProofImage" value=""/>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Upload Address Proof </label>
+                                <div class="col-lg-6">
+                                    <div class="controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput" id="addressProofImgIcon">
+											<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">
+												<?php
+                        if (isset($result->address_proof) && trim($result->address_proof) != '') { ?>
+												<img src="/uploads/employees/<?php echo $result->employee_id; ?>/<?php echo $result->address_proof; ?>"/>
+												<?php } else { ?>
+												<img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=Address Image"/>
+												<?php } ?>
+											</div>
+											<div>
+												<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id="addressProof" name="addressProof" title="Please choose address proof image"></span>
+												<?php if (isset($result->address_proof) && trim($result->address_proof) != '') { ?>
+												<a href="javascript:void(0);" class="btn btn-default" data-dismiss="fileupload" id="oldAddressProofImage" onclick="clearAddressProofImage()">Clear</a>
+                        <a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."employees". DIRECTORY_SEPARATOR .$result->employee_id. DIRECTORY_SEPARATOR.$result->address_proof; ?>" class="btn btn-primary" data-dismiss="fileupload" id="downloadAddressProofImage"><i class="fa fa-download"></i></a>
+												<?php } ?>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+											</div>
+											<?php if (isset($result->address_proof) && trim($result->address_proof) != '') { ?>
+												<input type="hidden" name="existAddressProofImage" id="existAddressProofImage" value="<?php echo $result->address_proof; ?>"
+												   /><?php
+												   }
+												   ?>
+											<input type="hidden" name="removedAddressProofImage" id="removedAddressProofImage" value=""/>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-lg-4 control-label">Upload Photo </label>
+                                <div class="col-lg-6">
+                                    <div class="controls">
+                                        <div class="fileinput fileinput-new" data-provides="fileinput" id="photoImgIcon">
+											<div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">
+												<?php if (isset($result->photo) && trim($result->photo) != '') { ?>
+												<img src="/uploads/employees/<?php echo $result->employee_id; ?>/<?php echo $result->photo; ?>"/>
+												<?php } else { ?>
+												<img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=Photo"/>
+												<?php } ?>
+											</div>
+											<div>
+												<span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" id="photo" name="photo" title="Please choose photo"></span>
+												<?php if (isset($result->photo) && trim($result->photo) != '') { ?>
+												<a href="javascript:void(0);" class="btn btn-default" data-dismiss="fileupload" id="oldPhotoImage" onclick="clearPhotoImage()">Clear</a>
+												<a target='_blank' href="<?php echo $this->basePath(). DIRECTORY_SEPARATOR."uploads". DIRECTORY_SEPARATOR."employees". DIRECTORY_SEPARATOR .$result->employee_id. DIRECTORY_SEPARATOR.$result->photo; ?>" class="btn btn-primary" data-dismiss="fileupload" id="downloadPhotoImage"><i class="fa fa-download"></i></a>
+												<?php } ?>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+											</div>
+											<?php if (isset($result->photo) && trim($result->photo) != '') { ?>
+												<input type="hidden" name="existPhotoImage" id="existPhotoImage" value="<?php echo $result->photo; ?>"/>
+                                                   <?php
+												   }
+												   ?>
+											<input type="hidden" name="removedPhotoImage" id="removedPhotoImage" value=""/>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('employee', array('action' => 'index')); ?>" class="btn btn-default">Cancel</a>
+                        <input type="button" class="btn btn-primary" value="Submit" onclick="validateNow();return false;">
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+
+<script src="<?php echo $this->basePath() . '/assets/js/jasny-bootstrap.min.js'; ?>"></script>
+<script type="text/javascript">
+    duplicateName = true;
+    function validateNow() {
+
+        flag = deforayValidator.init({
+            formId: 'addEmployeeInformation'
+        });
+        if (flag) {
+            if (duplicateName) {
+                document.getElementById('addEmployeeInformation').submit();
+            }
+        }
+    }
+    
+    function checkNameValidation(tableName, fieldName, obj, fnct, msg){
+        checkValue = document.getElementById(obj.id).value;
+        $.post("<?php echo $this->url('common', array('action' => 'index')); ?>", {tableName: tableName, fieldName: fieldName, value: checkValue, fnct: fnct},
+        function(data) {
+            if (data > 0)
+            {
+                alert(msg);
+                duplicateName = false;
+                document.getElementById(obj.id).value = "";
+            }
+            else {
+                duplicateName = true;
+            }
+        });
+    }
+    $(function() {
+      //$(".select2").select2({
+      //  placeholder: "--Select--"
+      //});
+		$('.datepicker').datepicker({
+           // todayBtn: "linked",
+            clearBtn: true,
+            autoclose: true,
+            todayHighlight: true,
+			format: 'dd-M-yyyy'
+		});
+	});
+	
+	function clearLicenseImage() {
+      $('#licenseImgIcon').fileinput('clear');
+      $("#oldLicenseImage").addClass("hide");
+      $("#downloadLicenseImage").addClass("hide");
+      existImg = $("#existLicenseImage").val();
+      $("#removedLicenseImage").val(existImg);
+    }
+	function clearIdProofImage(){
+      $('#idProofImgIcon').fileinput('clear');
+      $("#oldIdProofImage").addClass("hide");
+      $("#downloadIdProofImage").addClass("hide");
+      existImg = $("#existIdProofImage").val();
+      $("#removedIdProofImage").val(existImg);
+	}
+	function clearContractProofImage(){
+      $('#contractProofImgIcon').fileinput('clear');
+      $("#oldContractProofImage").addClass("hide");
+      $("#downloadContractImage").addClass("hide");
+      existImg = $("#existContractProofImage").val();
+      $("#removedContractProofImage").val(existImg);
+	}
+	function clearAddressProofImage(){
+      $('#addressProofImgIcon').fileinput('clear');
+      $("#oldAddressProofImage").addClass("hide");
+      $("#downloadAddressProofImage").addClass("hide");
+      existImg = $("#existAddressProofImage").val();
+      $("#removedAddressProofImage").val(existImg);
+	}
+    function clearPhotoImage() {
+      $('#photoImgIcon').fileinput('clear');
+      $("#oldPhotoImage").addClass("hide");
+      $("#downloadPhotoImage").addClass("hide");
+      existImg = $("#existPhotoImage").val();
+      $("#removedPhotoImage").val(existImg);
+    }
+</script>

@@ -1,0 +1,123 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'edit-vendor-payment')) {
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+	$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+$startDate=date('d-M-Y');
+$endDate=date('d-M-Y');
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Vendor Payment</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'add')) {
+					?>
+					<a href="<?php echo $this->url('booking',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Booking</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<form class="form-inline searchBox" style="margin-top:5px;">
+			<div class="form-group">
+			  <label>Search Trip Date</label>
+			  <input type="text" class="form-control" id="searchDate" name="searchDate" placeholder="Search Trip Date" readonly="readonly" value="<?php echo $startDate.' to '.$endDate; ?>"/>
+			</div>
+			<div class="form-group">
+			<input type="button" onclick="javascript:oTable.fnDraw();" value="Search" class="btn btn-default ">
+			<a href="javascript:void(0)" onclick="clearDateRange();" class="btn btn-default" title="Clear"> Clear </i></a>
+			<a href="" class="btn btn-danger">Reset</a>
+			</div>
+		</form>
+		<br/>
+		<div class="row">
+			<div class="col-xs-12 table-responsive">
+					<table id="bookingDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Booking Ref No.</th>
+								<th>Trip Date</th>
+								<th>Booking Type</th>
+								<th>City</th>
+								<th>Duty Type</th>
+								<th>Total Basic</th>
+								<th>Parking/Toll</th>
+								<th>Driver Allowance</th>
+								<th>Service Tax</th>
+								<th>Total Amount</th>
+								<th>Payment Type</th>
+								<th>Vendor</th>
+								<th>Payment Status</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Booking', 'edit-vendor-payment')) { ?>
+								<th>Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="14" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+    $(document).ready(function() {
+		oTable=$('#bookingDataTable').dataTable( {
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			 "aoColumns": [
+			<?php echo $editAction;?>
+				],
+			"aaSorting": [[ 1, "desc" ]],
+			"sAjaxSource": "<?php echo $this->url('booking',array('action' => 'vendor-pending')); ?>",
+			 "fnServerData": function ( sSource, aoData, fnCallback ) {
+				aoData.push({ "name":"searchDate","value": $('#searchDate').val()});
+				$.ajax({
+					"dataType": 'json',
+					"type": "POST",
+					"url": sSource,
+					"data": aoData,
+					"success": fnCallback
+				});
+			}
+		});
+		
+		$('#searchDate').daterangepicker({
+		  format: 'DD-MMM-YYYY',
+		  separator: ' to ',
+		  ranges: {
+			'Today': [moment(), moment()],
+			'This Month': [moment().startOf('month'), moment().endOf('month')],
+			'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+		  }
+		});
+		
+	});
+    
+	function clearDateRange(){
+		$('#searchDate').val('');
+		oTable.fnDraw();
+	}
+</script>

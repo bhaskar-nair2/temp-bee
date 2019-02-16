@@ -1,0 +1,318 @@
+<?php
+//\Zend\Debug\Debug::dump($result);die;
+use Application\Service\CommonService;
+$commonService=new CommonService();
+if(isset($result['trip_from_date']) && trim($result['trip_from_date'])!=""){
+    $result['trip_from_date']=$commonService->humanDateFormat($result['trip_from_date']);
+}
+
+if(isset($result['booking_date']) && trim($result['booking_date'])!=""){
+    $result['booking_date']=$commonService->humanDateFormat($result['booking_date']);
+}
+$billNo=$result['booking_no'];
+$billDate=$result['trip_from_date'];
+$height="600";
+// Extend the TCPDF class to create custom Header and Footer
+class MYPDF extends TCPDF {
+    
+    public function passValue($billNo,$billDate){
+	    $this->billNo=$billNo;
+	    $this->billDate=$billDate;
+	}
+    //Page header
+    public function Header() {
+        // Logo
+        $image_file = K_PATH_IMAGES.'logo.jpg';
+        $this->Image($image_file, 5, 10,'', '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        // Set font
+        $this->SetFont('helvetica', 'B', 12);
+        // Title
+        $this->Cell(80, 10,'INVOICE', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        $this->SetFont('helvetica', '', 9);
+       
+        //$y = $this->getY()-4;
+        $billNoTable='<table style="width:100%;" cellpadding="5" border="1">';
+        $billNoTable.='<tr>';
+        $billNoTable.='<td width="33%" style="font-weight:bold;">Bill No</td>';
+        $billNoTable.='<td>'.$this->billNo.'</td>';
+        $billNoTable.='</tr>';
+        $billNoTable.='<tr>';
+        $billNoTable.='<td style="font-weight:bold;">Bill Date</td>';
+        $billNoTable.='<td>'.$this->billDate.'</td>';
+        $billNoTable.='</tr>';
+        $billNoTable.='</table>';
+        $this->writeHTMLCell(57,0,156,'', $billNoTable, 0, 1, 0, true, 'L', true);
+        //$this->Cell(50,1,'(An Aspa Logistics Company)', 1,1, 'C', 0, '', 0, false, 'L', 'L');
+    }
+
+    // Page footer
+    public function Footer() {
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        // Set font
+        $this->SetFont('helvetica', 'I', 8);
+        // Page number
+        $this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+    }
+}
+
+// create new PDF document
+$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf->passValue($billNo,$billDate);
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Nicola Asuni');
+$pdf->SetTitle('Invoice');
+$pdf->SetSubject('Beecabs Invoice');
+$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+
+// set default header data
+$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+// set header and footer fonts
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+
+// set font
+$pdf->SetFont('helvetica', '', 9);
+
+// add a page
+$pdf->AddPage();
+
+$pdf->SetY(27,true,false);
+
+// set some text to print
+$trip='<table style="width:100%;border:1px solid black;" cellpadding="5">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="12%"> Client Name</td>';
+$trip.='<td width="2%">:</td>';
+$trip.='<td width="49%">'.$result['client_name'].'</td>';
+
+$trip.='<td style="font-weight:bold;" width="12%">Trip No</td>';
+$trip.='<td width="2%">:</td>';
+$trip.='<td width="23%">'.trim($result['booking_no']).'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td rowspan="2">'.$result['clientAddress'].'</td>';
+$trip.='<td style="font-weight:bold;">Trip Date</td>';
+$trip.='<td>:</td>';
+$trip.='<td>'.ucwords($result['trip_from_date']).'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td style="font-weight:bold;">Vehicle Type</td>';
+$trip.='<td>:</td>';
+$trip.='<td>'.ucwords($result['vehicleMake']).'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;text-align:right;">GSTIN</td>';
+$trip.='<td>:</td>';
+$trip.='<td>'.$result['clientGstNo'].'</td>';
+$trip.='<td style="font-weight:bold;">Booked By</td>';
+$trip.='<td>:</td>';
+$trip.='<td>'.ucwords($result['booker_name']).'</td>';
+$trip.='</tr>';
+
+$trip.='</table>';
+
+$trip.='<table style="width:100%;border:1px solid black;" cellpadding="5">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="12%">Name of User</td>';
+$trip.='<td width="2%">:</td>';
+$trip.='<td width="32%">'.ucwords($result['guest_name']).'</td>';
+$trip.='<td style="font-weight:bold;" width="7%">Usage</td>';
+
+$trip.='<td width="2%">:</td>';
+$trip.='<td width="12%">'.$result['total_hrs'].'</td>';
+$trip.='<td style="font-weight:bold;" width="5%">Hrs</td>';
+$trip.='<td width="10%">'.$result['total_kms'].'</td>';
+$trip.='<td style="font-weight:bold;" width="5%">KMS</td>';
+$trip.='<td width="13%">'.$result['dutyType'].'</td>';
+$trip.='</tr>';
+$trip.='</table>';
+
+$trip.='<table style="width:100%;border:1px solid black;" cellpadding="5">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="60%">Description</td>';
+$trip.='<td style="font-weight:bold;" width="12%">Qty</td>';
+$trip.='<td style="font-weight:bold;" width="15%">Rate</td>';
+$trip.='<td style="font-weight:bold;text-align:right;" width="13%">Amount</td>';
+$trip.='</tr>';
+
+$trip.='</table>';
+
+
+$trip.='<table style="width:100%;border:1px solid black;" cellpadding="2">';
+$trip.='<tr>';
+$trip.='<td width="60%">'.$result['tariff_text'].'</td>';
+$trip.='<td width="12%"></td>';
+$trip.='<td width="15%">'.$result['tariff_amount'].'</td>';
+$trip.='<td width="13%" style="text-align:right;">'.money_format('%!i',$result['tariff_amount']).' </td>';
+$trip.='</tr>';
+
+if(isset($result['extra_hrs']) && $result['extra_hrs']>0 && trim($result['extra_hrs'])!=""){
+$trip.='<tr>';
+$trip.='<td>Extra Hours</td>';
+$trip.='<td>'.$result['extra_hrs'].'</td>';
+$trip.='<td>'.$result['ext_amt_per_hrs'].'</td>';
+$trip.='<td style="text-align:right;">'.money_format('%!i',$result['ext_hrs_amount']).'</td>';
+$trip.='</tr>';
+}
+
+if(isset($result['extra_kms']) && $result['extra_kms']>0 && trim($result['extra_kms'])!=""){
+$trip.='<tr>';
+$trip.='<td>Extra KMS</td>';
+$trip.='<td>'.$result['extra_kms'].'</td>';
+$trip.='<td>'.$result['ext_amt_per_km'].'</td>';
+$trip.='<td style="text-align:right;">'.money_format('%!i',$result['ext_kms_amount']).'</td>';
+$trip.='</tr>';
+}
+
+if(isset($result['parking_toll']) && $result['parking_toll']>0 && trim($result['parking_toll'])!=""){
+$trip.='<tr>';
+$trip.='<td>Toll & Parking</td>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td style="text-align:right;">'.money_format('%!i',$result['parking_toll']).'</td>';
+$trip.='</tr>';
+$height=$height-100;
+}
+
+if(isset($result['permit']) && $result['permit']>0 && trim($result['permit'])!=""){
+$trip.='<tr>';
+$trip.='<td>Permit</td>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td style="text-align:right;">'.money_format('%!i',$result['permit']).'</td>';
+$trip.='</tr>';
+$height=$height-100;
+}
+
+if(isset($result['day_time_driver_allowance']) && $result['day_time_driver_allowance']>0 && trim($result['day_time_driver_allowance'])!=""){
+$trip.='<tr>';
+$trip.='<td>Driver Bata</td>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td style="text-align:right;">'.$result['day_time_driver_allowance'].'</td>';
+$trip.='</tr>';
+$height=$height-100;
+}
+
+if(isset($result['night_time_driver_allowance']) && trim($result['night_time_driver_allowance'])>0 && trim($result['day_time_driver_allowance'])!=""){
+$trip.='<tr>';
+$trip.='<td>Night Time Driver Bata</td>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td style="text-align:right;">'.$result['night_time_driver_allowance'].'</td>';
+$trip.='</tr>';
+$height=$height-100;
+}
+
+$trip.='<tr style="line-height:'.$height.'%">';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='<td></td>';
+$trip.='</tr>';
+
+$trip.='</table>';
+
+$trip.='<table style="width:100%;border-left:1px solid black;border-right:1px solid black;" cellpadding="2">';
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="74%"></td>';
+$trip.='<td style="font-weight:bold;" width="11%">Sub-Total</td>';
+$trip.='<td width="15%" style="text-align:right;">'.money_format('%!i',$result['sub_total_amount']).'</td>';
+$trip.='</tr>';
+
+//service_tax_type
+if(isset($result['service_tax_type']) && $result['service_tax_type']=='sgst'){
+$cgstTax=$result['cgst_tax']/100;
+$cgstTaxAmt=$result['sub_total_amount']*$cgstTax;
+$sgstTax=$result['sgst_tax']/100;
+$sgstTaxAmt=$result['sub_total_amount']*$sgstTax;
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="74%"></td>';
+$trip.='<td style="font-weight:bold;" width="11%">CGST '.$result['cgst_tax'].'%</td>';
+$trip.='<td style="text-align:right;" width="15%">'.money_format('%!i',$cgstTaxAmt).'</td>';
+$trip.='</tr>';
+
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="74%"></td>';
+$trip.='<td style="font-weight:bold;" width="11%">SGST '.$result['sgst_tax'].'%</td>';
+$trip.='<td width="15%"><div style="border-bottom:1px line #000;text-align:right;">'.money_format('%!i',$sgstTaxAmt).'</div></td>';
+$trip.='</tr>';
+}
+else if(isset($result['service_tax_type']) && $result['service_tax_type']=='igst'){
+	$serviceTax=$result['igst_tax']/100;
+	$serviceTaxAmt=$result['sub_total_amount']*$serviceTax;
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="74%"></td>';
+$trip.='<td style="font-weight:bold;" width="11%">IGST '.$result['igst_tax'].'%</td>';
+$trip.='<td width="15%" style="text-align:right;border-bottom:1px line #000;">'.money_format('%!i',$serviceTaxAmt).'</td>';
+$trip.='</tr>';
+}
+$trip.='</table>';
+$trip.='<table style="width:100%;border:1px solid black;" cellpadding="2">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="74%"></td>';
+$trip.='<td style="font-weight:bold;" width="11%">Net Payable</td>';
+$trip.='<td style="font-weight:bold;text-align:right;" width="15%">'.money_format('%!i',$result['total_amount']).'</td>';
+$trip.='</tr>';
+
+$trip.='</table>';
+
+$trip.='<table style="width:100%;border:1px solid black;" cellpadding="5">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;" width="16%">Amount in words-</td>';
+$trip.='<td width="84%">'.$commonService->moneyInWords($result['total_amount']).'</td>';
+$trip.='</tr>';
+$trip.='</table>';
+
+$trip.='<table style="width:100%;" cellpadding="5">';
+$trip.='<tr>';
+$trip.='<td style="font-weight:bold;text-align:center;">139,AK Tower,Velachery Main Road Chennai: 600015 Phone: 044-45034294 Email: reservation@beecabs.in</td>';
+$trip.='</tr>';
+$trip.='</table>';
+
+$pdf->writeHTMLCell(200, '',5,'', $trip, 0, 1, 0, true, 'L', true);
+
+
+$attachFileName=trim($result['booking_no']);
+// ---------------------------------------------------------
+$fileName = UPLOAD_PATH . DIRECTORY_SEPARATOR . 'tripsheet' . DIRECTORY_SEPARATOR.$attachFileName.".pdf";
+//Close and output PDF document
+$pdf->Output($fileName, "F");
+$pdf->Output($attachFileName, 'I');
+exit;
+//============================================================+
+// END OF FILE
+//============================================================+

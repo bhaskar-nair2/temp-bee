@@ -1,0 +1,152 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Employee', 'edit')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+$relievedEmployeeAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+$relievedEmployeeAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';
+}
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Employees</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Employee', 'add')) {
+					?>
+					<a href="<?php echo $this->url('employee',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Employee</a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					<div class="nav-tabs-custom">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#workingEmployee" data-toggle="tab">Working Employees </a></li>
+							<li><a href="#relievedEmployee" data-toggle="tab">Relieved Employees</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="workingEmployee">
+								<table id="employeeDataTable" class="beecabsTable table">
+									<thead>
+										<tr>
+											<th>Employee Code</th>
+											<th>Employee Name</th>
+											<th>Phone</th>
+											<th>Role</th>
+											<th>Business Unit</th>
+											<th>Bank Name</th>
+											<th>Acc. No</th>
+											<th>Blood Group</th>
+											<th>Date Of Join</th>
+											<th>Date Of Releving</th>
+											<th>Status</th>
+											<?php if ($acl->isAllowed($role, 'Admin\Controller\Employee', 'edit')) { ?>
+											<th>Action</th>
+											<?php } ?>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="12" class="dataTables_empty">Loading data from server</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="tab-pane" id="relievedEmployee">
+								
+								<table id="serviceDataTable" class="beecabsTable table">
+									<thead>
+										<tr>
+											<th>Employee Code</th>
+											<th>Employee Name</th>
+											<th>Phone</th>
+											<th>Role</th>
+											<th>Business Unit</th>
+											<th>Bank Name</th>
+											<th>Acc. No</th>
+											<th>Blood Group</th>
+											<th>Date Of Join</th>
+											<th>Date Of Releving</th>
+											<th>Status</th>
+											<?php if ($acl->isAllowed($role, 'Admin\Controller\Employee', 'edit')) { ?>
+											<th>Action</th>
+											<?php } ?>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td colspan="12" class="dataTables_empty">Loading data from server</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>	
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+<script type="text/javascript">
+    /* Table initialisation */
+    oTable = null;
+    cTable = null;
+	
+    $(document).ready(function() {
+		oTable=$('#employeeDataTable').dataTable({
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			 "aoColumns": [
+			<?php echo $editAction;?>
+				],
+			"sAjaxSource": "<?php echo $this->url('employee',array('action' => 'index')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				$.ajax({
+					"dataType": 'json',
+					"type": "POST",
+					"url": sSource,
+					"data": aoData,
+					"success": fnCallback
+				});
+			}
+		});
+		
+		cTable=$('#serviceDataTable').dataTable({
+			"bAutoWidth": false,
+			"bProcessing": true,
+			"bServerSide": true,
+			"aoColumns": [
+			<?php echo $relievedEmployeeAction;?>
+            ],
+			"sAjaxSource": "<?php echo $this->url('employee',array('action' => 'relieved')); ?>",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+		});
+	
+	});
+	
+</script>

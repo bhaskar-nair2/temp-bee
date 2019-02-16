@@ -1,0 +1,105 @@
+<?php
+use Zend\Session\Container;
+$sessionLogin = new Container('credo');
+$role = $sessionLogin->employeeCode;
+$acl=$this->layout()->acl;
+if ($acl->isAllowed($role, 'Admin\Controller\Clients', 'edit') || $acl->isAllowed($role, 'Admin\Controller\Clients', 'view')) {
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center","bSortable":false}';
+}else{
+$editAction = '{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"},{"sClass":"center"}';	
+}
+?>
+<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="row" id="pageHeading">
+			<div class="col-xs-6" style="font-size:25px;">
+				<span class="pageHeadingLabel1" >Manage </span>
+				<span class="pageHeadingLabe12"> Client</span>
+			</div>
+			<div class="col-xs-6">
+				<span class="pull-right">
+					<?php
+					if ($acl->isAllowed($role, 'Admin\Controller\Clients', 'add')) {
+					?>
+					<a href="<?php echo $this->url('clients',array('action' => 'add'));?>" class="btn btn-primary " style=""><i class="fa fa-plus"></i>&nbsp;Add Client</a>
+					<a href="javascript:void(0)" onclick="exportToExcel();" class="btn btn-success" title="Download"><i class="fa fa-download"> Export to excel </i></a>
+					<?php } ?>
+				</span>
+			</div>
+		</div>
+    </section>
+	
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					<table id="clientDataTable" class="beecabsTable table">
+						<thead>
+							<tr>
+								<th>Company Name</th>
+								<th>Client Name</th>
+								<th>Client Code</th>
+								<th>Client City</th>
+								<th>Service Tax</th>
+								<th>SBC Tax</th>
+								<th>KKC Tax</th>
+								<th>Contact Name</th>
+								<th>Status</th>
+								<?php if ($acl->isAllowed($role, 'Admin\Controller\Clients', 'edit') || $acl->isAllowed($role, 'Admin\Controller\Clients', 'view')) { ?>
+								<th style="width: 60px;">Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td colspan="10" class="dataTables_empty">Loading data from server</td>
+							</tr>
+						</tbody>
+					  </table>
+				
+				
+			</div>
+			<!-- /.col -->
+		</div>
+      <!-- /.row -->
+	</section>
+    <!-- /.content -->
+	
+<script type="text/javascript">
+    /* Table initialisation */
+     oTable = null;
+        $(document).ready(function() {
+    $('#clientDataTable').dataTable( {
+		"bAutoWidth": false,
+        "bProcessing": true,
+        "bServerSide": true,
+         "aoColumns": [
+		<?php echo $editAction;?>
+            ],
+        "sAjaxSource": "<?php echo $this->url('clients',array('action' => 'index')); ?>",
+         "fnServerData": function ( sSource, aoData, fnCallback ) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+    } );
+
+} );
+	function exportToExcel(){
+		$.blockUI();
+		$.post("<?php echo $this->url('clients',array('action'=>'export-client-details-in-excel')); ?>",
+			function(data){
+			if(data == "" || data == null || data == undefined){
+			$.unblockUI();
+			alert('Unable to generate');
+			}else{
+			$.unblockUI();
+			document.location.href = '/temporary/'+data;
+			}
+		});
+	}
+</script>

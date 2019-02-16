@@ -1,0 +1,8 @@
+<?php
+$typeResult="<option value=''>--Select--</option>";
+if(sizeof($result)>0){
+    foreach($result as $res){
+        $typeResult.='<option value="'.base64_encode($res['type_id']).'">'.$res['type_name'].'</option>';
+    }
+}
+echo $typeResult;

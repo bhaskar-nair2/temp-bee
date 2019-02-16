@@ -1,0 +1,127 @@
+<?php
+use Application\Service\CommonService;
+$commonService=new CommonService();
+$insRenewalDate="";
+$taxRenewalDate="";
+$fcRenewalDate="";
+$permitRenewalDate="";
+$loanClosingDate="";
+if(isset($result->insurance_renewal_date) && trim($result->insurance_renewal_date)!=""){
+	$insRenewalDate=$commonService->humanDateFormat($result->insurance_renewal_date);
+}
+if(isset($result->tax_renewal_date) && trim($result->tax_renewal_date)!=""){
+	$taxRenewalDate=$commonService->humanDateFormat($result->tax_renewal_date);
+}
+if(isset($result->fc_renewal_date) && trim($result->fc_renewal_date)!=""){
+	$fcRenewalDate=$commonService->humanDateFormat($result->fc_renewal_date);
+}
+if(isset($result->permit_renewal_date) && trim($result->permit_renewal_date)!=""){
+	$permitRenewalDate=$commonService->humanDateFormat($result->permit_renewal_date);
+}
+if(isset($result->loan_closing_date) && trim($result->loan_closing_date)!=""){
+	$loanClosingDate=$commonService->humanDateFormat($result->loan_closing_date);
+}
+if(isset($result->pollution_renewal_date) && trim($result->pollution_renewal_date)!=""){
+	$result->pollution_renewal_date=$commonService->humanDateFormat($result->pollution_renewal_date);
+}
+?>
+<!-- Main content -->
+<div class="content-wrapper">
+     <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>View Vehicle</h1>
+      <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="<?php echo $this->url('vehicles', array('action' => 'index')); ?>"> Vehicles</a></li>
+        <li class="active">View Vehicle</li>
+      </ol>
+    </section>
+<section class="content">
+    <!-- left column -->
+    <div class="">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                
+            </div><!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" name="addVehicleInformation" id="addVehicleInformation"  method="post">
+                <div class="box-body">
+					<table class="table table-striped table-bordered table-condensed" align="center" style="width: 70%;">
+						<thead>
+                        <tr>
+                            <th colspan="2" style="text-align: center;" class="bg-aqua">Vehicle Details</th>
+                        </tr>
+                        </thead>
+						<tr>
+							<th style="width: 20%;">Vehicle Type</th>
+							<td><?php echo $result->type_name; ?></td>
+						</tr>
+						<tr>
+							<th>Vehicle Number</th>
+							<td><?php echo $result->vehicle_no; ?></td>
+						</tr>
+						<tr>
+							<th>Vehicle Mode</th>
+							<td><?php echo $result->mode_name; ?></td>
+						</tr>
+						<tr>
+							<th>Vehicle Registration Year</th>
+							<td><?php echo $result->vehicle_registration_year; ?></td>
+						</tr>
+						<tr>
+							<th>No.of.seating</th>
+							<td><?php echo $result->no_of_seating; ?></td>
+						</tr>
+						<tr>
+							<th>Insurance Renewal Date</th>
+							<td><?php echo $insRenewalDate; ?></td>
+						</tr>
+						<tr>
+							<th>Tax Renewal Date</th>
+							<td><?php echo $taxRenewalDate; ?></td>
+						</tr>
+						<tr>
+							<th>FC Renewal Date</th>
+							<td><?php echo $fcRenewalDate; ?></td>
+						</tr>
+						<tr>
+							<th>Permit Renewal Date</th>
+							<td><?php echo $permitRenewalDate; ?></td>
+						</tr>
+						<tr>
+							<th>Pollution Renewal Date</th>
+							<td><?php echo $result->pollution_renewal_date; ?></td>
+						</tr>
+						<tr>
+							<th>Hypothecation</th>
+							<td><?php echo $result->hypothecation; ?></td>
+						</tr>
+						<tr>
+							<th>Loan Amount</th>
+							<td><?php echo $result->loan_amount; ?></td>
+						</tr>
+						<tr>
+							<th>Loan Closing Date</th>
+							<td><?php echo $loanClosingDate; ?></td>
+						</tr>
+						<tr>
+							<th>Status</th>
+							<td><?php echo ucwords($result->vehicle_status); ?></td>
+						</tr>
+					</table>
+					<br/>
+					
+                    <div class="box-footer">
+                        <a href="<?php echo $this->url('vehicles', array('action' => 'index')); ?>" class="btn btn-default">Back</a>
+                    </div>
+            </form>
+        </div><!-- /.box -->
+    </div><!--/.col (left) -->
+</section><!-- /.content -->
+    </div>
+
+<script type="text/javascript">
+    
+   
+</script>
